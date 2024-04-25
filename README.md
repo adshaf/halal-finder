@@ -1,2 +1,2 @@
-# halal-finder
-An app to find halal/muslim friendly restaurants
+# Halal Nyams
+An app to find halal/Muslim-friendly restaurants
