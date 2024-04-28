@@ -3,3 +3,4 @@ export default function Home() {
   <div className="text-rose-500 text-2xl">Halal Finder - Landing Page</div>
   );
 }
+
