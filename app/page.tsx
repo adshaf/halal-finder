@@ -1,5 +1,5 @@
 export default function Home() {
   return (
-  <div>Halal Finder - Landing Page</div>
+  <div className="text-rose-500 text-2xl">Halal Finder - Landing Page</div>
   );
 }
