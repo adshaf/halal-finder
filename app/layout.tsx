@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "./pages/landing/Navbar";
-import NavbarSearch from "./components/navbar/Navbar";
+import Body from "./pages/landing/Body";
 
 
 
@@ -23,7 +23,7 @@ export default function RootLayout({
       <body className={inter.className}>
         {children}
         <Navbar />
-        <NavbarSearch />
+        <Body />
         
       </body>
     </html>
