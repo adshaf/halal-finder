@@ -10,7 +10,7 @@ const Container: FC<ContainerProps> = ({
   children
 }) => {
   return (
-    <div className="max-w-[2520px] mx-auto xl:px-20 mx:px-10 sm:px-2 px-4 flex flex-row justify-between items-center">
+    <div className="max-w-[2520px] flex flex-row justify-between ml-4 mr-4 relative">
       {children}
     </div>
   )
