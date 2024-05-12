@@ -7,7 +7,7 @@ import { FaTiktok } from "react-icons/fa";
 import { RiInstagramFill } from "react-icons/ri";
 import { FaSquareXTwitter } from "react-icons/fa6";
 import { FaSearch } from "react-icons/fa";
-import './Pages/Landing/HomePage.css'
+import './(Pages)/Landing/HomePage.css'
 
 const HomePage = () => {
   return (
@@ -23,7 +23,7 @@ const HomePage = () => {
                         <div>Search by locations.....</div>
                     </div>
                     </div>
-                <Link href={"/Pages/Results"}  className='SearchButton hover:bg-green-950 transition'>Search</Link>
+                <Link href={"/Results"}  className='SearchButton hover:bg-green-950 transition'>Search</Link>
             </div>
         </div>
 
