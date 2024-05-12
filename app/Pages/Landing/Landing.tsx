@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import React from 'react';
 import './Landing.css';
 import { FaFacebook } from "react-icons/fa";
@@ -8,12 +9,12 @@ import { RiInstagramFill } from "react-icons/ri";
 import { FaSquareXTwitter } from "react-icons/fa6";
 import { FaSearch } from "react-icons/fa";
 
-const Body = () => {
+const Landing = () => {
   return (
     <div>
         <div className='Overlay'></div>
 
-        <div className='BgSearch max-w-[2520px] mx-auto xl:px-20 mx:px-10 sm:px-2 px-4 flex border-solid border-[1px] pb-3 flex-col h-[900px] pt-[24rem]'>
+        <div className='BgSearch max-w-[2520px] mx-auto xl:px-20 mx:px-10 sm:px-2 px-4 flex border-solid border-[1px] pb-3 flex-col min-h-[900px] pt-[24rem]'>
             <div className='flex text-white text-[46px] z-20 italic font-bold'>Find halal food near you</div>
             <div className='Search z-10'>
                 <div className='SearchBar'>
@@ -22,7 +23,7 @@ const Body = () => {
                         <div>Search by locations.....</div>
                     </div>
                     </div>
-                <div className='SearchButton hover:bg-green-950 transition'>Search</div>
+                <Link href={""}  className='SearchButton hover:bg-green-950 transition'>Search</Link>
             </div>
         </div>
 
@@ -90,7 +91,7 @@ const Body = () => {
                     </div>
                 </div>
                 <div>
-                    <div className='JoinUsButton'>Join us</div>
+                    <div className='JoinUsButton cursor-pointer'>Join us</div>
                     <div className='FooterEmail'>(c) Halalnyams 2024</div>
                 </div>
             </div>
@@ -100,4 +101,4 @@ const Body = () => {
   )
 }
 
-export default Body
+export default Landing
