@@ -1,26 +1,32 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
+/* Warning below is cosmetic only - compiling still works fine */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-noto-sans);
+  --font-display: var(--font-noto-serif);
+
+  /* Brand tokens */
+  --color-primary: #11d483;
+  --color-background-light: #f6f8f7;
+  --color-background-dark: #10221a;
+  --color-accent-gold: #d4af37;
+  --color-deep-green: #0a3d2e;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  --background: #f6f8f7;
+  --foreground: #0a3d2e;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Islamic geometric star pattern used in hero and newsletter sections */
+.geometric-pattern {
+  background-color: #f6f8f7;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='%23d4af37' fill-opacity='0.08'%3E%3Cpath d='M0 0h80v80H0z' fill='none'/%3E%3Cpath d='M40 0l10 30h30L55 50l10 30-25-20-25 20 10-30L0 30h30z'/%3E%3C/g%3E%3C/svg%3E");
 }
