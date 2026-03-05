@@ -226,7 +226,7 @@ export default function AuthPage() {
 
         {/* Bottom links */}
         <div className="mt-6 text-center text-xs text-slate-500">
-          <span>© 2025 HalalFind. All rights reserved.</span>
+          <span>© 2025 HalalBites. All rights reserved.</span>
           <span className="mx-2">•</span>
           <Link href="/privacy" className="hover:text-gold transition-colors">Privacy Policy</Link>
           <span className="mx-2">•</span>

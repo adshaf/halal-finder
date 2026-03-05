@@ -16,9 +16,9 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "About Us | HalalFind",
+  title: "About Us | HalalBites",
   description:
-    "HalalFind was born from a simple need: to make faith-compliant living accessible, transparent, and joyful for everyone, everywhere.",
+    "HalalBites was born from a simple need: to make finding halal restaurants in Sydney easy, transparent, and trustworthy.",
 };
 
 const values = [

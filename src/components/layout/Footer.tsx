@@ -42,12 +42,11 @@ export default function Footer() {
           <div className="flex items-center gap-3 mb-6">
             <HalalFindStar />
             <span className="font-display text-2xl font-bold tracking-tight text-slate-100">
-              Halal<span className="text-gold">Find</span>
+              Halal<span className="text-gold">Bites</span>
             </span>
           </div>
           <p className="text-slate-400 text-sm leading-relaxed mb-6">
-            Curating the global standard for premium halal dining experiences
-            through meticulous verification and authentic community reviews.
+            Your guide to the best halal restaurants in Sydney — verified information, honest listings, zero compromise.
           </p>
           <div className="flex gap-4">
             <a href="#" aria-label="Twitter" className="text-slate-500 hover:text-gold transition-colors">
@@ -87,7 +86,7 @@ export default function Footer() {
       {/* Bottom bar */}
       <div className="max-w-7xl mx-auto pt-10 border-t border-gold/5">
         <p className="text-slate-500 text-xs">
-          © 2024 HalalFind International. All rights reserved.
+          © 2025 HalalBites. All rights reserved.
         </p>
       </div>
     </footer>

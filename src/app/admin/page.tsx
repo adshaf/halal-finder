@@ -473,7 +473,7 @@ export default function AdminDashboard() {
         {/* Footer */}
         <footer className="mt-auto p-6 border-t border-gold/10 text-center">
           <p className="text-xs text-gold/30">
-            © 2025 HalalFind Inc. All administrative rights reserved.
+            © 2025 HalalBites. All administrative rights reserved.
             <span className="mx-2">|</span>
             v1.0.0 MVP Build
           </p>

@@ -2,9 +2,16 @@
 
 import { useState } from "react";
 import { Search } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function HeroSection() {
   const [query, setQuery] = useState("");
+  const router = useRouter();
+
+  const handleSearch = () => {
+    const q = query.trim();
+    router.push(q ? `/searchResults?q=${encodeURIComponent(q)}` : "/searchResults");
+  };
 
   return (
     <section className="relative pt-36 pb-32 px-6 lg:px-20 bg-dark-bg text-slate-100 overflow-hidden">
@@ -12,16 +19,15 @@ export default function HeroSection() {
         {/* Left: copy + search */}
         <div className="z-10">
           <span className="inline-block px-4 py-1 rounded-full bg-dark-surface border border-gold/20 text-gold text-xs font-bold uppercase tracking-widest mb-6">
-            Premium Dining Selection
+            Sydney&apos;s Halal Restaurant Guide
           </span>
           <h1 className="font-display text-5xl lg:text-7xl font-bold leading-tight mb-8">
-            The Fine Art of <br />
-            <span className="text-gold italic">Halal Dining</span>
+            Find Halal <br />
+            <span className="text-gold italic">Done Right</span>
           </h1>
           <p className="text-lg text-slate-400 max-w-lg mb-10 leading-relaxed">
-            Discover a curated collection of sophisticated halal-certified
-            restaurants. From artisanal grills to authentic fine dining across
-            the globe.
+            Discover Sydney&apos;s best halal restaurants — verified information
+            on cuisine, location, hours, and halal credentials, all in one place.
           </p>
 
           {/* Search */}
@@ -32,19 +38,22 @@ export default function HeroSection() {
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Cuisine, city, or restaurant..."
+                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                placeholder="Cuisine, suburb, or restaurant name..."
                 className="bg-transparent border-none outline-none focus:ring-0 text-slate-100 placeholder:text-slate-500 w-full text-sm"
               />
             </div>
-            <button className="bg-gold text-dark-bg px-8 py-3 rounded-xl font-bold text-sm hover:brightness-110 transition-all">
-              Find Table
+            <button
+              onClick={handleSearch}
+              className="bg-gold text-dark-bg px-8 py-3 rounded-xl font-bold text-sm hover:brightness-110 transition-all"
+            >
+              Find Restaurants
             </button>
           </div>
         </div>
 
         {/* Right: arch image frame */}
         <div className="relative hidden lg:block">
-          {/* Main arch image */}
           <div className="arch-container w-full h-[600px] overflow-hidden border-4 border-gold/10 shadow-2xl relative">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -55,7 +64,7 @@ export default function HeroSection() {
             <div className="absolute inset-0 bg-linear-to-t from-dark-bg via-transparent to-transparent" />
           </div>
 
-          {/* Floating accent image — bottom left */}
+          {/* Floating accent image */}
           <div className="absolute -bottom-10 -left-10 arch-container w-64 h-80 overflow-hidden border-4 border-dark-surface shadow-2xl z-20 hidden xl:block">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img

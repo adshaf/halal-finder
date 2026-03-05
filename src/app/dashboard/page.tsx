@@ -8,9 +8,6 @@ import {
   Heart,
   Star,
   MapPin,
-  Calendar,
-  Users,
-  Clock,
   ChevronRight,
   BookOpen,
   MessageSquare,
@@ -59,46 +56,6 @@ const SAVED_RESTAURANTS = [
   },
 ];
 
-const BOOKINGS = [
-  {
-    id: 1,
-    restaurant: "The Saffron Grill",
-    date: "15 Mar 2025",
-    time: "19:30",
-    guests: 2,
-    status: "Completed",
-  },
-  {
-    id: 2,
-    restaurant: "Masala Street",
-    date: "22 Mar 2025",
-    time: "20:00",
-    guests: 4,
-    status: "Upcoming",
-  },
-  {
-    id: 3,
-    restaurant: "Buns & Grills",
-    date: "10 Feb 2025",
-    time: "18:00",
-    guests: 3,
-    status: "Completed",
-  },
-  {
-    id: 4,
-    restaurant: "Ottoman Kitchen",
-    date: "5 Jan 2025",
-    time: "19:00",
-    guests: 6,
-    status: "No Show",
-  },
-];
-
-const STATUS_STYLES: Record<string, string> = {
-  Completed: "bg-primary/10 text-primary border border-primary/20",
-  Upcoming: "bg-gold/10 text-gold border border-gold/20",
-  "No Show": "bg-red-500/10 text-red-400 border border-red-500/20",
-};
 
 export default function DashboardPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -113,7 +70,7 @@ export default function DashboardPage() {
             <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
               <span className="text-warm-dark font-bold text-sm">H</span>
             </div>
-            <span className="font-bold text-white hidden sm:block">HalalFind</span>
+            <span className="font-bold text-white hidden sm:block">HalalBites</span>
           </Link>
 
           {/* Nav links */}
@@ -121,7 +78,7 @@ export default function DashboardPage() {
             {[
               { label: "Home", href: "/", icon: Home },
               { label: "Explore", href: "/searchResults", icon: Compass },
-              { label: "Bookings", href: "/dashboard", icon: BookOpen },
+              { label: "Saved", href: "/dashboard", icon: BookOpen },
               { label: "Community", href: "#", icon: MessageSquare },
             ].map(({ label, href, icon: Icon }) => (
               <Link
@@ -174,7 +131,7 @@ export default function DashboardPage() {
             {[
               { label: "Home", href: "/" },
               { label: "Explore", href: "/searchResults" },
-              { label: "Bookings", href: "/dashboard" },
+              { label: "Saved", href: "/dashboard" },
               { label: "Community", href: "#" },
             ].map(({ label, href }) => (
               <Link
@@ -207,7 +164,7 @@ export default function DashboardPage() {
         <section className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[
             { label: "Saved Places", value: "12", icon: Heart, sub: "3 new this week" },
-            { label: "Active Bookings", value: "2", icon: Calendar, sub: "Next: 22 Mar" },
+            { label: "Restaurants Viewed", value: "34", icon: Compass, sub: "This month" },
             { label: "Reviews Written", value: "8", icon: Star, sub: "Avg. 4.6 rating" },
           ].map(({ label, value, icon: Icon, sub }) => (
             <div
@@ -289,100 +246,6 @@ export default function DashboardPage() {
           </div>
         </section>
 
-        {/* Booking history */}
-        <section>
-          <div className="flex items-center justify-between mb-5">
-            <h2 className="text-lg font-semibold text-white">Booking History</h2>
-            <button className="text-sm text-primary hover:text-primary/80 flex items-center gap-1 transition-colors">
-              View all <ChevronRight size={14} />
-            </button>
-          </div>
-
-          {/* Desktop table */}
-          <div className="hidden sm:block bg-white/4 border border-white/8 rounded-xl overflow-hidden">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-white/8">
-                  <th className="text-left px-5 py-3.5 text-slate-400 font-medium">Restaurant</th>
-                  <th className="text-left px-5 py-3.5 text-slate-400 font-medium">Date</th>
-                  <th className="text-left px-5 py-3.5 text-slate-400 font-medium">Time</th>
-                  <th className="text-left px-5 py-3.5 text-slate-400 font-medium">Guests</th>
-                  <th className="text-left px-5 py-3.5 text-slate-400 font-medium">Status</th>
-                  <th className="text-left px-5 py-3.5 text-slate-400 font-medium">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {BOOKINGS.map((b, i) => (
-                  <tr
-                    key={b.id}
-                    className={`${i < BOOKINGS.length - 1 ? "border-b border-white/5" : ""} hover:bg-white/3 transition-colors`}
-                  >
-                    <td className="px-5 py-4 text-white font-medium">{b.restaurant}</td>
-                    <td className="px-5 py-4 text-slate-400">
-                      <div className="flex items-center gap-1.5">
-                        <Calendar size={13} className="text-slate-500" />
-                        {b.date}
-                      </div>
-                    </td>
-                    <td className="px-5 py-4 text-slate-400">
-                      <div className="flex items-center gap-1.5">
-                        <Clock size={13} className="text-slate-500" />
-                        {b.time}
-                      </div>
-                    </td>
-                    <td className="px-5 py-4 text-slate-400">
-                      <div className="flex items-center gap-1.5">
-                        <Users size={13} className="text-slate-500" />
-                        {b.guests}
-                      </div>
-                    </td>
-                    <td className="px-5 py-4">
-                      <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${STATUS_STYLES[b.status]}`}>
-                        {b.status}
-                      </span>
-                    </td>
-                    <td className="px-5 py-4">
-                      {b.status === "Upcoming" ? (
-                        <button className="text-xs text-gold hover:text-gold/80 font-medium transition-colors">
-                          Manage
-                        </button>
-                      ) : (
-                        <button className="text-xs text-slate-500 hover:text-slate-300 transition-colors">
-                          View
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Mobile cards */}
-          <div className="sm:hidden space-y-3">
-            {BOOKINGS.map((b) => (
-              <div key={b.id} className="bg-white/4 border border-white/8 rounded-xl p-4">
-                <div className="flex items-start justify-between mb-3">
-                  <p className="font-medium text-white text-sm">{b.restaurant}</p>
-                  <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${STATUS_STYLES[b.status]}`}>
-                    {b.status}
-                  </span>
-                </div>
-                <div className="grid grid-cols-3 gap-2 text-xs text-slate-400">
-                  <div className="flex items-center gap-1">
-                    <Calendar size={12} className="text-slate-500" /> {b.date}
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Clock size={12} className="text-slate-500" /> {b.time}
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Users size={12} className="text-slate-500" /> {b.guests} guests
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
       </main>
 
       {/* ── Footer ── */}
@@ -395,10 +258,10 @@ export default function DashboardPage() {
                 <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
                   <span className="text-warm-dark font-bold text-sm">H</span>
                 </div>
-                <span className="font-bold text-white">HalalFind</span>
+                <span className="font-bold text-white">HalalBites</span>
               </div>
               <p className="text-slate-500 text-xs leading-relaxed">
-                Discover the finest curated Halal dining destinations with uncompromising quality.
+                Your guide to the best halal restaurants in Sydney.
               </p>
             </div>
 
@@ -410,7 +273,7 @@ export default function DashboardPage() {
               },
               {
                 heading: "Account",
-                links: ["My Profile", "My Bookings", "Saved Places", "Reviews"],
+                links: ["My Profile", "Saved Places", "Reviews", "Settings"],
               },
               {
                 heading: "Company",
@@ -439,7 +302,7 @@ export default function DashboardPage() {
 
           <div className="border-t border-white/5 pt-5 flex flex-col sm:flex-row items-center justify-between gap-3">
             <p className="text-slate-600 text-xs">
-              © 2025 HalalFind. All rights reserved.
+              © 2025 HalalBites. All rights reserved.
             </p>
             <p className="text-slate-600 text-xs">Made with ♥ for the Muslim community</p>
           </div>
