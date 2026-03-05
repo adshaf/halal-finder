@@ -1,14 +1,16 @@
 import { UtensilsCrossed } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import Container from "@/components/ui/container";
 
 export default function NewsletterSection() {
   return (
-    <section className="px-6 lg:px-40 py-20 bg-deep-green text-white overflow-hidden relative">
+    <section className="py-20 bg-deep-green text-white overflow-hidden relative">
       {/* Geometric background pattern */}
       <div className="geometric-pattern absolute inset-0 opacity-10 pointer-events-none rotate-45 scale-150" />
 
-      <div className="relative flex flex-col md:flex-row items-center gap-12 z-10">
+      <Container size="lg" className="px-6 relative z-10">
+      <div className="flex flex-col md:flex-row items-center gap-12">
         {/* Left: copy + form */}
         <div className="flex-1">
           <h2 className="text-4xl font-display font-bold mb-6">
@@ -44,6 +46,7 @@ export default function NewsletterSection() {
           </div>
         </div>
       </div>
+      </Container>
     </section>
   );
 }

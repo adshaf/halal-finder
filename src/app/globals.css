@@ -7,12 +7,20 @@
   --font-sans: var(--font-noto-sans);
   --font-display: var(--font-noto-serif);
 
-  /* Brand tokens */
+  /* Brand tokens — site-wide */
   --color-primary: #11d483;
   --color-background-light: #f6f8f7;
   --color-background-dark: #10221a;
   --color-accent-gold: #d4af37;
   --color-deep-green: #0a3d2e;
+
+  /* Home page dark-theme tokens */
+  --color-gold: #caa968;
+  --color-dark-bg: #121212;
+  --color-dark-surface: #062c26;
+
+  /* Site pages dark warm-brown theme */
+  --color-warm-dark: #1e1b14;
 }
 
 :root {
@@ -24,6 +32,22 @@ body {
   background: var(--background);
   color: var(--foreground);
 }
+
+/* Horizontal divider with gradient fade for content sections */
+.section-divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, #0a3d2e, transparent);
+}
+
+/* Arch shape used in home page hero image frame */
+.arch-container {
+  border-top-left-radius: 8rem;
+  border-top-right-radius: 8rem;
+}
+
+/* Hide scrollbar while keeping scroll functionality */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
 /* Islamic geometric star pattern used in hero and newsletter sections */
 .geometric-pattern {

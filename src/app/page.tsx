@@ -1,15 +1,21 @@
+import HomeNavbar from "@/components/home/HomeNavbar";
 import HeroSection from "@/components/home/HeroSection";
-import CuratedCollections from "@/components/home/CuratedCollections";
-import NewsletterSection from "@/components/home/NewsletterSection";
+import CategoriesSection from "@/components/home/CategoriesSection";
+import FeaturedCollections from "@/components/home/FeaturedCollections";
+import CTASection from "@/components/home/CTASection";
+import HomeFooter from "@/components/home/HomeFooter";
 
 export default function Home() {
   return (
-    <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+    <div className="flex flex-col min-h-screen bg-dark-bg overflow-x-hidden">
+      <HomeNavbar />
       <main className="flex flex-col flex-1">
         <HeroSection />
-        <CuratedCollections />
-        <NewsletterSection />
+        <CategoriesSection />
+        <FeaturedCollections />
+        <CTASection />
       </main>
+      <HomeFooter />
     </div>
   );
 }

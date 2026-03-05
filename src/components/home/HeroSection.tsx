@@ -1,57 +1,69 @@
-import { Search, ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+"use client";
+
+import { useState } from "react";
+import { Search } from "lucide-react";
 
 export default function HeroSection() {
+  const [query, setQuery] = useState("");
+
   return (
-    <section className="relative px-6 lg:px-40 py-12 md:py-20">
-      {/* Geometric background pattern */}
-      <div className="geometric-pattern absolute inset-0 opacity-40 pointer-events-none" />
-
-      <div className="relative flex flex-col items-center justify-center gap-10 max-w-4xl mx-auto text-center">
-        {/* Headline block */}
-        <div className="flex flex-col gap-4">
-          <span className="text-accent-gold font-display font-medium tracking-widest uppercase text-sm">
-            Elevated Dining Experience
+    <section className="relative pt-36 pb-32 px-6 lg:px-20 bg-dark-bg text-slate-100 overflow-hidden">
+      <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
+        {/* Left: copy + search */}
+        <div className="z-10">
+          <span className="inline-block px-4 py-1 rounded-full bg-dark-surface border border-gold/20 text-gold text-xs font-bold uppercase tracking-widest mb-6">
+            Premium Dining Selection
           </span>
-          <h1 className="text-deep-green text-5xl md:text-7xl font-display font-black leading-tight tracking-tight">
-            Experience Culinary Excellence
+          <h1 className="font-display text-5xl lg:text-7xl font-bold leading-tight mb-8">
+            The Fine Art of <br />
+            <span className="text-gold italic">Halal Dining</span>
           </h1>
-          <p className="text-slate-600 text-lg md:text-xl font-normal max-w-2xl mx-auto">
-            Discover the finest curated Halal dining destinations with elegant
-            precision and uncompromising quality.
+          <p className="text-lg text-slate-400 max-w-lg mb-10 leading-relaxed">
+            Discover a curated collection of sophisticated halal-certified
+            restaurants. From artisanal grills to authentic fine dining across
+            the globe.
           </p>
-        </div>
 
-        {/* Search bar */}
-        <div className="w-full max-w-2xl px-4">
-          <div className="flex w-full items-stretch rounded-full h-16 bg-white shadow-xl border border-slate-100 overflow-hidden ring-4 ring-primary/5">
-            <div className="text-deep-green flex items-center justify-center pl-6">
-              <Search size={24} aria-hidden="true" />
+          {/* Search */}
+          <div className="flex flex-col sm:flex-row gap-2 p-2 bg-dark-surface/30 border border-gold/10 rounded-2xl backdrop-blur-sm max-w-xl">
+            <div className="flex flex-1 items-center gap-3 px-4 py-3">
+              <Search size={20} className="text-gold shrink-0" aria-hidden="true" />
+              <input
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Cuisine, city, or restaurant..."
+                className="bg-transparent border-none outline-none focus:ring-0 text-slate-100 placeholder:text-slate-500 w-full text-sm"
+              />
             </div>
-            <Input
-              className="flex w-full border-none shadow-none bg-transparent focus-visible:ring-0 px-4 text-slate-900 placeholder:text-slate-400 text-base"
-              placeholder="Search premium restaurants, cuisines, or locations..."
-              aria-label="Search restaurants"
-            />
-            <div className="flex items-center pr-2">
-              <Button className="bg-primary text-deep-green h-12 px-8 rounded-full font-bold text-sm hover:bg-primary/90 flex items-center gap-2">
-                <span>Discover</span>
-                <ArrowRight size={18} aria-hidden="true" />
-              </Button>
-            </div>
+            <button className="bg-gold text-dark-bg px-8 py-3 rounded-xl font-bold text-sm hover:brightness-110 transition-all">
+              Find Table
+            </button>
           </div>
         </div>
 
-        {/* CTA */}
-        <div className="flex gap-4">
-          <Button
-            variant="dark"
-            size="lg"
-            className="min-w-[180px] rounded-full"
-          >
-            Discover Excellence
-          </Button>
+        {/* Right: arch image frame */}
+        <div className="relative hidden lg:block">
+          {/* Main arch image */}
+          <div className="arch-container w-full h-[600px] overflow-hidden border-4 border-gold/10 shadow-2xl relative">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCF-TH9T_zLYXf-Risj-78wDwpONEs-KgQZWze-V6CpQNTHTfr2qRVyRBwZxe_ymtKyRpIaoppO7XNroetN5LlnWsQR1PZopM0ozo8RNUdH58aLX94en5EshP0zSeme1A4lc4GNc39u0_5nkwyE8dIKzuoG2NHaLeODJSFhEvtxkvG2Pv8STfD_tf94nOkSO2fYSTuas0vF7RBkaCcH77japW97UA5ITFEDDBOxIsAgPmbViZjBWTb5ZIsoN_wBWRDVTD_4afIJXj6"
+              alt="Modern upscale restaurant interior with golden lighting"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-linear-to-t from-dark-bg via-transparent to-transparent" />
+          </div>
+
+          {/* Floating accent image — bottom left */}
+          <div className="absolute -bottom-10 -left-10 arch-container w-64 h-80 overflow-hidden border-4 border-dark-surface shadow-2xl z-20 hidden xl:block">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBsHRiA66-zelb63p_TNa6HYZBmQTqFB9LRAQU0lIGv-ynYcC5fztPq1ZD-YOc41YCP5z9JO6jPZ97KG7yBza9XA-4ACGuGW3EjpLeDOuOmJnGG_JpAOHEm5UODgtkFu-BqDTtuZ3bXxLu9vMh1kM_VHr9Hz9hSXkquYsmkT-Dneann1uVx5Aa7so1QXN2YE2w78ElnAjGgLIJReYpZD539qndWqspqKRrE9CM6pQqlRS0Wo4a2_j_ZyK7d5uBPL-4_mJdmXU6Tdb6v"
+              alt="Exotic gourmet halal dish with vibrant colors"
+              className="w-full h-full object-cover"
+            />
+          </div>
         </div>
       </div>
     </section>

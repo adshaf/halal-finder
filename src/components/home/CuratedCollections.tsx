@@ -1,4 +1,5 @@
 import { ChevronRight } from "lucide-react";
+import Container from "@/components/ui/container";
 
 interface CollectionCard {
   label: string;
@@ -37,7 +38,8 @@ const collections: CollectionCard[] = [
 
 export default function CuratedCollections() {
   return (
-    <section className="px-6 lg:px-40 py-16 bg-white">
+    <section className="py-16 bg-white">
+      <Container size="lg" className="px-6">
       {/* Section header */}
       <div className="flex items-end justify-between mb-10">
         <div className="flex flex-col gap-2">
@@ -59,7 +61,7 @@ export default function CuratedCollections() {
         {collections.map((card) => (
           <div
             key={card.title}
-            className="group relative overflow-hidden rounded-xl aspect-[4/5] cursor-pointer"
+            className="group relative overflow-hidden rounded-xl aspect-4/5 cursor-pointer"
           >
             {/* Background image with gradient overlay */}
             <div
@@ -86,6 +88,7 @@ export default function CuratedCollections() {
           </div>
         ))}
       </div>
+      </Container>
     </section>
   );
 }
