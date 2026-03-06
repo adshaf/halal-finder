@@ -2,6 +2,22 @@
 //  Shared types — mirrors the Supabase schema
 // ─────────────────────────────────────────────
 
+// Maps each boolean attribute to its icon filename in /public/assets/halal-icons/
+// Each icon has a -true.png and -false.png variant.
+// Note: vegan_options has no icon file yet, so it is excluded.
+export const HALAL_ICONS: { key: keyof Restaurant; label: string; file: string }[] = [
+  { key: "halal_certified",    label: "Halal Certified", file: "halal-certified"   },
+  { key: "no_alcohol",         label: "No Alcohol",       file: "no-alcohol"        },
+  { key: "no_pork",            label: "No Pork",          file: "no-pork"           },
+  { key: "muslim_owned",       label: "Muslim Owned",     file: "muslim-owned"      },
+  { key: "muslim_chefs",       label: "Muslim Chefs",     file: "muslim-chef"       },
+  { key: "prayer_room",        label: "Prayer Room",      file: "prayer-room"       },
+  { key: "halal_chicken_only", label: "Halal Chicken",    file: "halal-chicken"     },
+  { key: "halal_beef_only",    label: "Halal Beef",       file: "halal-beef"        },
+  { key: "seafood_options",    label: "Halal Seafood",          file: "halal-seafood"     },
+  { key: "vegetarian_options", label: "Vegetarian Options",       file: "vegetarian-option" },
+];
+
 export type Restaurant = {
   id: number;
   slug: string;

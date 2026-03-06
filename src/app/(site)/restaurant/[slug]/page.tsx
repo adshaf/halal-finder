@@ -12,25 +12,28 @@ import {
   Heart,
   ChevronRight,
   FileText,
-  CheckCircle2,
+  CheckCircle2, // used in hero Verified badge (also referenced in OLD attributes bar below)
   Loader2,
 } from "lucide-react";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
+import { HALAL_ICONS } from "@/lib/constants";
 import type { Restaurant } from "@/lib/constants";
 
-const ATTRIBUTE_LABELS: { key: keyof Restaurant; label: string }[] = [
-  { key: "halal_certified", label: "Halal Certified" },
-  { key: "no_alcohol", label: "No Alcohol" },
-  { key: "no_pork", label: "No Pork" },
-  { key: "muslim_owned", label: "Muslim Owned" },
-  { key: "muslim_chefs", label: "Muslim Chefs" },
-  { key: "prayer_room", label: "Prayer Room" },
-  { key: "halal_chicken_only", label: "Halal Chicken Only" },
-  { key: "halal_beef_only", label: "Halal Beef Only" },
-  { key: "seafood_options", label: "Seafood Options" },
-  { key: "vegetarian_options", label: "Vegetarian Options" },
-  { key: "vegan_options", label: "Vegan Options" },
-];
+// OLD — ATTRIBUTE_LABELS used by the text-pill attributes bar below (commented out)
+// const ATTRIBUTE_LABELS: { key: keyof Restaurant; label: string }[] = [
+//   { key: "halal_certified", label: "Halal Certified" },
+//   { key: "no_alcohol", label: "No Alcohol" },
+//   { key: "no_pork", label: "No Pork" },
+//   { key: "muslim_owned", label: "Muslim Owned" },
+//   { key: "muslim_chefs", label: "Muslim Chefs" },
+//   { key: "prayer_room", label: "Prayer Room" },
+//   { key: "halal_chicken_only", label: "Halal Chicken Only" },
+//   { key: "halal_beef_only", label: "Halal Beef Only" },
+//   { key: "seafood_options", label: "Seafood Options" },
+//   { key: "vegetarian_options", label: "Vegetarian Options" },
+//   { key: "vegan_options", label: "Vegan Options" },
+// ];
 
 export default function RestaurantPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -64,11 +67,10 @@ export default function RestaurantPage() {
   if (notFoundFlag) notFound();
 
   const r = restaurant!;
-  const activeAttributes = ATTRIBUTE_LABELS.filter((a) => r[a.key]);
+  // const activeAttributes = ATTRIBUTE_LABELS.filter((a) => r[a.key]); // OLD — used by text-pill bar
 
   return (
     <main className="bg-warm-dark min-h-screen">
-
       {/* ── Hero ── */}
       <section className="relative h-[65vh] w-full overflow-hidden">
         <div
@@ -83,9 +85,16 @@ export default function RestaurantPage() {
         {/* Breadcrumb */}
         <nav className="absolute top-28 left-0 right-0 px-6 md:px-20">
           <div className="max-w-7xl mx-auto flex items-center gap-1.5 text-xs text-slate-400">
-            <Link href="/" className="hover:text-gold transition-colors">Home</Link>
+            <Link href="/" className="hover:text-gold transition-colors">
+              Home
+            </Link>
             <ChevronRight size={12} />
-            <Link href="/searchResults" className="hover:text-gold transition-colors">Restaurants</Link>
+            <Link
+              href="/searchResults"
+              className="hover:text-gold transition-colors"
+            >
+              Restaurants
+            </Link>
             <ChevronRight size={12} />
             <span className="text-slate-300">{r.name}</span>
           </div>
@@ -112,8 +121,18 @@ export default function RestaurantPage() {
             <p className="text-slate-400 text-sm mb-6 flex items-center gap-2">
               <MapPin size={14} className="text-gold" />
               {r.location}
-              {r.cuisine && <><span className="text-slate-600">·</span><span>{r.cuisine}</span></>}
-              {r.price && <><span className="text-slate-600">·</span><span>{r.price}</span></>}
+              {r.cuisine && (
+                <>
+                  <span className="text-slate-600">·</span>
+                  <span>{r.cuisine}</span>
+                </>
+              )}
+              {r.price && (
+                <>
+                  <span className="text-slate-600">·</span>
+                  <span>{r.price}</span>
+                </>
+              )}
             </p>
             <div className="flex gap-3 flex-wrap">
               {r.website && (
@@ -143,7 +162,9 @@ export default function RestaurantPage() {
               >
                 <Heart
                   size={18}
-                  className={wishlisted ? "text-red-400 fill-red-400" : "text-slate-400"}
+                  className={
+                    wishlisted ? "text-red-400 fill-red-400" : "text-slate-400"
+                  }
                 />
               </button>
             </div>
@@ -151,7 +172,7 @@ export default function RestaurantPage() {
         </div>
       </section>
 
-      {/* ── Attributes bar ── */}
+      {/* OLD — text-pill attributes bar (commented out, revert if icon approach not preferred)
       {activeAttributes.length > 0 && (
         <div className="bg-black/30 border-y border-white/5">
           <div className="max-w-7xl mx-auto px-6 md:px-20 py-4 flex flex-wrap gap-2">
@@ -167,30 +188,65 @@ export default function RestaurantPage() {
           </div>
         </div>
       )}
+      END OLD */}
+
+      {/* ── Halal attribute icons — all 10, icon + label, green=true grey=false ── */}
+      <div className="bg-black/30 border-y border-white/5">
+        <div className="max-w-7xl mx-auto px-6 md:px-20 py-6">
+          <div className="grid grid-cols-5 sm:grid-cols-10 gap-x-3 gap-y-4">
+            {HALAL_ICONS.map(({ key, label, file }) => {
+              const active = r[key] as boolean;
+              return (
+                <div key={key} className="flex flex-col items-center gap-1.5">
+                  <div className="relative w-15 h-15 md:w-20 md:h-20 rounded-lg overflow-hidden">
+                    <Image
+                      src={`/assets/halal-icons/${file}-${active ? "true" : "false"}.png`}
+                      alt={label}
+                      fill
+                      className="object-cover scale-[1.15]"
+                      unoptimized
+                    />
+                  </div>
+                  <span
+                    className={`text-[10px] font-medium text-center leading-tight ${active ? "text-primary" : "text-slate-500"}`}
+                  >
+                    {label}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
 
       {/* ── Main content ── */}
       <div className="max-w-7xl mx-auto px-6 md:px-20 py-14 grid grid-cols-1 lg:grid-cols-3 gap-12">
-
         {/* Left: About + Gallery */}
         <div className="lg:col-span-2 space-y-12">
-
           {/* About */}
           {r.long_description && (
             <section>
               <h2 className="text-2xl font-display font-bold mb-4 text-slate-100">
                 About
               </h2>
-              <p className="text-slate-400 leading-relaxed">{r.long_description}</p>
+              <p className="text-slate-400 leading-relaxed">
+                {r.long_description}
+              </p>
             </section>
           )}
 
           {/* Gallery */}
           {r.gallery && r.gallery.length > 0 && (
             <section>
-              <h2 className="text-2xl font-display font-bold mb-6 text-slate-100">Gallery</h2>
+              <h2 className="text-2xl font-display font-bold mb-6 text-slate-100">
+                Gallery
+              </h2>
               <div className="grid grid-cols-2 gap-4">
                 {r.gallery.map((src, i) => (
-                  <div key={i} className="aspect-video rounded-xl overflow-hidden">
+                  <div
+                    key={i}
+                    className="aspect-video rounded-xl overflow-hidden"
+                  >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={src}
@@ -206,10 +262,11 @@ export default function RestaurantPage() {
 
         {/* Right: Contact + Hours */}
         <aside className="space-y-5">
-
           {/* Location & Hours */}
           <div className="p-6 border border-gold/15 rounded-xl space-y-4 bg-black/20">
-            <h4 className="font-display font-bold text-slate-100 text-lg">Location &amp; Hours</h4>
+            <h4 className="font-display font-bold text-slate-100 text-lg">
+              Location &amp; Hours
+            </h4>
 
             {r.address && (
               <div className="flex gap-3 text-sm text-slate-400">
@@ -222,7 +279,9 @@ export default function RestaurantPage() {
               <div className="flex gap-3 text-sm text-slate-400">
                 <Clock size={16} className="text-gold shrink-0 mt-0.5" />
                 <div className="space-y-1">
-                  {r.hours.map((h) => <p key={h}>{h}</p>)}
+                  {r.hours.map((h) => (
+                    <p key={h}>{h}</p>
+                  ))}
                 </div>
               </div>
             )}
@@ -230,12 +289,17 @@ export default function RestaurantPage() {
 
           {/* Contact */}
           <div className="p-6 border border-gold/15 rounded-xl space-y-4 bg-black/20">
-            <h4 className="font-display font-bold text-slate-100 text-lg">Contact</h4>
+            <h4 className="font-display font-bold text-slate-100 text-lg">
+              Contact
+            </h4>
 
             {r.phone && (
               <div className="flex gap-3 text-sm text-slate-400">
                 <Phone size={16} className="text-gold shrink-0 mt-0.5" />
-                <a href={`tel:${r.phone}`} className="hover:text-gold transition-colors">
+                <a
+                  href={`tel:${r.phone}`}
+                  className="hover:text-gold transition-colors"
+                >
                   {r.phone}
                 </a>
               </div>
@@ -244,7 +308,10 @@ export default function RestaurantPage() {
             {r.email && (
               <div className="flex gap-3 text-sm text-slate-400">
                 <Mail size={16} className="text-gold shrink-0 mt-0.5" />
-                <a href={`mailto:${r.email}`} className="hover:text-gold transition-colors break-all">
+                <a
+                  href={`mailto:${r.email}`}
+                  className="hover:text-gold transition-colors break-all"
+                >
                   {r.email}
                 </a>
               </div>

@@ -11,10 +11,12 @@ import {
   X,
   ChevronDown,
   Loader2,
+  Award,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { HALAL_ICONS } from "@/lib/constants";
 import type { Restaurant } from "@/lib/constants";
 
 const priceOptions = ["$", "$$", "$$$"];
@@ -29,72 +31,28 @@ const FEATURE_FILTERS: { label: string; key: keyof Restaurant }[] = [
   { label: "Vegan Options", key: "vegan_options" },
 ];
 
-function SearchResultsInner() {
-  const searchParams = useSearchParams();
-  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState(searchParams.get("q") ?? "");
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [selectedCuisines, setSelectedCuisines] = useState<string[]>([]);
-  const [selectedPrice, setSelectedPrice] = useState("");
-  const [selectedFeatures, setSelectedFeatures] = useState<string[]>([]);
-  const [wishlist, setWishlist] = useState<number[]>([]);
+type FilterPanelProps = {
+  cuisineOptions: string[];
+  selectedCuisines: string[];
+  selectedPrice: string;
+  selectedFeatures: string[];
+  toggleCuisine: (c: string) => void;
+  setSelectedPrice: (p: string) => void;
+  toggleFeature: (f: string) => void;
+  resetFilters: () => void;
+};
 
-  useEffect(() => {
-    const supabase = createClient();
-    supabase
-      .from("restaurants")
-      .select("*")
-      .order("featured", { ascending: false })
-      .order("name")
-      .then(({ data }) => {
-        setRestaurants(data ?? []);
-        setLoading(false);
-      });
-  }, []);
-
-  const cuisineOptions = [...new Set(restaurants.map((r) => r.cuisine).filter(Boolean))] as string[];
-
-  const toggleCuisine = (c: string) =>
-    setSelectedCuisines((prev) =>
-      prev.includes(c) ? prev.filter((x) => x !== c) : [...prev, c]
-    );
-
-  const toggleFeature = (f: string) =>
-    setSelectedFeatures((prev) =>
-      prev.includes(f) ? prev.filter((x) => x !== f) : [...prev, f]
-    );
-
-  const toggleWishlist = (id: number) =>
-    setWishlist((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-    );
-
-  const filtered = restaurants.filter((r) => {
-    if (
-      searchQuery &&
-      !r.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-      !r.cuisine?.toLowerCase().includes(searchQuery.toLowerCase()) &&
-      !r.location?.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-      return false;
-    if (selectedCuisines.length && !selectedCuisines.includes(r.cuisine ?? ""))
-      return false;
-    if (selectedPrice && r.price !== selectedPrice) return false;
-    for (const feat of selectedFeatures) {
-      const match = FEATURE_FILTERS.find((f) => f.label === feat);
-      if (match && !r[match.key]) return false;
-    }
-    return true;
-  });
-
-  const resetFilters = () => {
-    setSelectedCuisines([]);
-    setSelectedPrice("");
-    setSelectedFeatures([]);
-  };
-
-  const FilterPanel = () => (
+function FilterPanel({
+  cuisineOptions,
+  selectedCuisines,
+  selectedPrice,
+  selectedFeatures,
+  toggleCuisine,
+  setSelectedPrice,
+  toggleFeature,
+  resetFilters,
+}: FilterPanelProps) {
+  return (
     <div className="bg-zinc-900/60 border border-white/10 rounded-xl p-5 space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="font-bold text-slate-100 flex items-center gap-2 text-sm">
@@ -115,7 +73,10 @@ function SearchResultsInner() {
           Cuisine
         </h3>
         {cuisineOptions.map((c) => (
-          <label key={c} className="flex items-center gap-3 mb-2.5 cursor-pointer group">
+          <label
+            key={c}
+            className="flex items-center gap-3 mb-2.5 cursor-pointer group"
+          >
             <input
               type="checkbox"
               checked={selectedCuisines.includes(c)}
@@ -161,7 +122,10 @@ function SearchResultsInner() {
           Features
         </h3>
         {FEATURE_FILTERS.map(({ label }) => (
-          <label key={label} className="flex items-center gap-3 mb-2.5 cursor-pointer group">
+          <label
+            key={label}
+            className="flex items-center gap-3 mb-2.5 cursor-pointer group"
+          >
             <input
               type="checkbox"
               checked={selectedFeatures.includes(label)}
@@ -176,14 +140,83 @@ function SearchResultsInner() {
       </div>
     </div>
   );
+}
+
+function SearchResultsInner() {
+  const searchParams = useSearchParams();
+  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState(searchParams.get("q") ?? "");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [selectedCuisines, setSelectedCuisines] = useState<string[]>([]);
+  const [selectedPrice, setSelectedPrice] = useState("");
+  const [selectedFeatures, setSelectedFeatures] = useState<string[]>([]);
+  const [wishlist, setWishlist] = useState<number[]>([]);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase
+      .from("restaurants")
+      .select("*")
+      .order("featured", { ascending: false })
+      .order("name")
+      .then(({ data }) => {
+        setRestaurants(data ?? []);
+        setLoading(false);
+      });
+  }, []);
+
+  const cuisineOptions = [
+    ...new Set(restaurants.map((r) => r.cuisine).filter(Boolean)),
+  ] as string[];
+
+  const toggleCuisine = (c: string) =>
+    setSelectedCuisines((prev) =>
+      prev.includes(c) ? prev.filter((x) => x !== c) : [...prev, c],
+    );
+
+  const toggleFeature = (f: string) =>
+    setSelectedFeatures((prev) =>
+      prev.includes(f) ? prev.filter((x) => x !== f) : [...prev, f],
+    );
+
+  const toggleWishlist = (id: number) =>
+    setWishlist((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
+    );
+
+  const filtered = restaurants.filter((r) => {
+    if (
+      searchQuery &&
+      !r.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+      !r.cuisine?.toLowerCase().includes(searchQuery.toLowerCase()) &&
+      !r.location?.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+      return false;
+    if (selectedCuisines.length && !selectedCuisines.includes(r.cuisine ?? ""))
+      return false;
+    if (selectedPrice && r.price !== selectedPrice) return false;
+    for (const feat of selectedFeatures) {
+      const match = FEATURE_FILTERS.find((f) => f.label === feat);
+      if (match && !r[match.key]) return false;
+    }
+    return true;
+  });
+
+  const resetFilters = () => {
+    setSelectedCuisines([]);
+    setSelectedPrice("");
+    setSelectedFeatures([]);
+  };
 
   return (
     <main className="bg-warm-dark min-h-screen pt-24 pb-16">
       <div className="max-w-7xl mx-auto px-6">
-
         {/* Breadcrumb */}
         <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-4 pt-6">
-          <Link href="/" className="hover:text-gold transition-colors">Home</Link>
+          <Link href="/" className="hover:text-gold transition-colors">
+            Home
+          </Link>
           <ChevronRight size={12} />
           <span className="text-slate-400">Sydney</span>
           <ChevronRight size={12} />
@@ -212,7 +245,10 @@ function SearchResultsInner() {
               className="flex-1 bg-transparent px-3 text-slate-200 placeholder:text-slate-500 text-sm outline-none"
             />
             {searchQuery && (
-              <button onClick={() => setSearchQuery("")} className="mr-3 text-slate-500 hover:text-slate-300">
+              <button
+                onClick={() => setSearchQuery("")}
+                className="mr-3 text-slate-500 hover:text-slate-300"
+              >
                 <X size={16} />
               </button>
             )}
@@ -221,7 +257,7 @@ function SearchResultsInner() {
 
         {/* Sort pills + mobile filter toggle */}
         <div className="flex items-center gap-3 mb-8 flex-wrap">
-          {["Top Rated", "Price: Low to High", "Newest"].map((sort) => (
+          {/* {["Top Rated", "Price: Low to High", "Newest"].map((sort) => (
             <button
               key={sort}
               className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium bg-zinc-900/60 border border-white/10 text-slate-300 hover:border-gold/30 transition-colors"
@@ -229,7 +265,7 @@ function SearchResultsInner() {
               {sort}
               <ChevronDown size={14} />
             </button>
-          ))}
+          ))} */}
           <button
             onClick={() => setSidebarOpen(true)}
             className="lg:hidden ml-auto flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-zinc-900/60 border border-white/10 text-slate-300"
@@ -240,7 +276,6 @@ function SearchResultsInner() {
         </div>
 
         <div className="flex gap-6">
-
           {/* Mobile overlay */}
           {sidebarOpen && (
             <div
@@ -259,16 +294,37 @@ function SearchResultsInner() {
           >
             <div className="flex items-center justify-between mb-6">
               <span className="font-bold text-slate-100">Filters</span>
-              <button onClick={() => setSidebarOpen(false)} className="text-slate-400 hover:text-white">
+              <button
+                onClick={() => setSidebarOpen(false)}
+                className="text-slate-400 hover:text-white"
+              >
                 <X size={20} />
               </button>
             </div>
-            <FilterPanel />
+            <FilterPanel
+              cuisineOptions={cuisineOptions}
+              selectedCuisines={selectedCuisines}
+              selectedPrice={selectedPrice}
+              selectedFeatures={selectedFeatures}
+              toggleCuisine={toggleCuisine}
+              setSelectedPrice={setSelectedPrice}
+              toggleFeature={toggleFeature}
+              resetFilters={resetFilters}
+            />
           </aside>
 
           {/* Desktop sidebar */}
           <aside className="hidden lg:block w-64 shrink-0 space-y-4">
-            <FilterPanel />
+            <FilterPanel
+              cuisineOptions={cuisineOptions}
+              selectedCuisines={selectedCuisines}
+              selectedPrice={selectedPrice}
+              selectedFeatures={selectedFeatures}
+              toggleCuisine={toggleCuisine}
+              setSelectedPrice={setSelectedPrice}
+              toggleFeature={toggleFeature}
+              resetFilters={resetFilters}
+            />
           </aside>
 
           {/* ── Main content ── */}
@@ -281,8 +337,13 @@ function SearchResultsInner() {
             ) : filtered.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-64 text-slate-500">
                 <p className="text-lg font-medium mb-2">No restaurants found</p>
-                <p className="text-sm">Try adjusting your filters or search term</p>
-                <button onClick={resetFilters} className="mt-4 text-gold text-sm hover:underline">
+                <p className="text-sm">
+                  Try adjusting your filters or search term
+                </p>
+                <button
+                  onClick={resetFilters}
+                  className="mt-4 text-gold text-sm hover:underline"
+                >
                   Clear all filters
                 </button>
               </div>
@@ -297,7 +358,10 @@ function SearchResultsInner() {
                     {/* Image */}
                     <div className="relative overflow-hidden">
                       <Image
-                        src={r.image ?? "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600"}
+                        src={
+                          r.image ??
+                          "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600"
+                        }
                         alt={r.name}
                         width={600}
                         height={220}
@@ -307,8 +371,8 @@ function SearchResultsInner() {
                       {/* Badges */}
                       <div className="absolute top-3 left-3 flex gap-1.5">
                         {r.halal_certified && (
-                          <span className="bg-deep-green text-white text-xs font-bold px-2.5 py-1 rounded-full">
-                            ✓ Certified
+                          <span className="bg-deep-green text-white text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
+                            <Award size={14} /> Certified
                           </span>
                         )}
                         {r.featured && (
@@ -319,13 +383,20 @@ function SearchResultsInner() {
                       </div>
                       {/* Wishlist */}
                       <button
-                        onClick={(e) => { e.preventDefault(); toggleWishlist(r.id); }}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          toggleWishlist(r.id);
+                        }}
                         aria-label="Save to wishlist"
                         className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center hover:bg-black/60 transition-colors"
                       >
                         <Heart
                           size={15}
-                          className={wishlist.includes(r.id) ? "text-red-400 fill-red-400" : "text-white"}
+                          className={
+                            wishlist.includes(r.id)
+                              ? "text-red-400 fill-red-400"
+                              : "text-white"
+                          }
                         />
                       </button>
                     </div>
@@ -337,11 +408,15 @@ function SearchResultsInner() {
                           {r.name}
                         </h3>
                         {r.verified && (
-                          <span className="text-primary text-xs font-bold shrink-0">✓ Verified</span>
+                          <span className="text-primary text-xs font-bold shrink-0">
+                            ✓ Verified
+                          </span>
                         )}
                       </div>
 
-                      <p className="text-slate-500 text-xs mb-3 line-clamp-2">{r.description}</p>
+                      <p className="text-slate-500 text-xs mb-3 line-clamp-2">
+                        {r.description}
+                      </p>
 
                       <div className="flex items-center gap-3 text-xs text-slate-500 mb-3">
                         <span className="flex items-center gap-1">
@@ -361,7 +436,7 @@ function SearchResultsInner() {
                         )}
                       </div>
 
-                      {/* Feature pills */}
+                      {/* OLD — feature text pills (commented out, revert if icon approach not preferred)
                       <div className="flex flex-wrap gap-1.5 mb-4">
                         {r.no_alcohol && (
                           <span className="text-xs px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-slate-400">
@@ -378,6 +453,27 @@ function SearchResultsInner() {
                             Muslim Owned
                           </span>
                         )}
+                      </div>
+                      END OLD */}
+
+                      {/* Halal attribute icons — all 10, green=true grey=false */}
+                      <div className="grid grid-cols-5 gap-1.5 mb-4">
+                        {HALAL_ICONS.map(({ key, label, file }) => (
+                          <div
+                            key={key}
+                            className="flex flex-col items-center gap-0.5"
+                          >
+                            <div className="relative w-12 h-12 rounded-lg overflow-hidden">
+                              <Image
+                                src={`/assets/halal-icons/${file}-${r[key] ? "true" : "false"}.png`}
+                                alt={label}
+                                fill
+                                className="object-cover scale-[1.1]"
+                                unoptimized
+                              />
+                            </div>
+                          </div>
+                        ))}
                       </div>
 
                       <div className="w-full py-2.5 rounded-lg border border-gold/40 text-gold text-sm font-bold text-center hover:bg-gold/10 transition-colors">
