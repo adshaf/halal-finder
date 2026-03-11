@@ -20,6 +20,7 @@ const navLinks = [
   { label: "Home", href: "/" },
   { label: "Explore", href: "/searchResults" },
   { label: "About Us", href: "/about" },
+  { label: "Contact", href: "/contact" },
 ];
 
 export default function Navbar() {

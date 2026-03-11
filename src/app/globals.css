@@ -45,6 +45,59 @@ body {
   border-top-right-radius: 8rem;
 }
 
+/* Leaflet dark-theme overrides (Leaflet injects its own DOM, Tailwind can't reach it) */
+
+/* Map pin name/cuisine tooltip — styled like Google Maps labels */
+.map-pin-label {
+  background: rgba(18, 18, 18, 0.85) !important;
+  border: 1px solid rgba(202, 169, 104, 0.25) !important;
+  border-radius: 6px !important;
+  color: #e2e8f0 !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  padding: 3px 8px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5) !important;
+  white-space: nowrap !important;
+  pointer-events: none !important;
+}
+.map-pin-label::before { display: none !important; }
+.map-pin-cuisine { color: #94a3b8; font-weight: 400; }
+.leaflet-control-attribution {
+  background: rgba(18, 18, 18, 0.8) !important;
+  color: #6b7280 !important;
+}
+.leaflet-control-attribution a { color: #caa968 !important; }
+.leaflet-control-zoom a {
+  background: #062c26 !important;
+  color: #e2e8f0 !important;
+  border-color: rgba(202, 169, 104, 0.2) !important;
+}
+.leaflet-control-zoom a:hover {
+  background: #0a3d2e !important;
+  color: #caa968 !important;
+}
+
+/* Marker cluster bubble — gold/dark theme */
+.map-cluster-icon {
+  background: #caa968;
+  color: #0a3d2e;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+  border: 2.5px solid rgba(202, 169, 104, 0.4);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+/* Hide the default Leaflet cluster CSS that ships with the package */
+.marker-cluster-small,
+.marker-cluster-medium,
+.marker-cluster-large { background: transparent !important; }
+.marker-cluster-small div,
+.marker-cluster-medium div,
+.marker-cluster-large div { background: transparent !important; }
+
 /* Hide scrollbar while keeping scroll functionality */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }

@@ -17,10 +17,10 @@ const HalalFindStar = () => (
 );
 
 const navLinks = [
+  { label: "Home", href: "/" },
   { label: "Explore", href: "/searchResults" },
-  { label: "Cuisines", href: "/searchResults" },
-  { label: "Collections", href: "/searchResults" },
-  { label: "About", href: "/about" },
+  { label: "About Us", href: "/about" },
+  { label: "Contact", href: "/contact" },
 ];
 
 export default function HomeNavbar() {
@@ -40,7 +40,7 @@ export default function HomeNavbar() {
           <Link href="/" className="flex items-center gap-3">
             <HalalFindStar />
             <span className="font-display text-2xl font-bold tracking-tight text-slate-100">
-              Halal<span className="text-gold">Find</span>
+              Halal<span className="text-gold">Bites</span>
             </span>
           </Link>
 
@@ -106,7 +106,7 @@ export default function HomeNavbar() {
           <div className="flex items-center gap-2">
             <HalalFindStar />
             <span className="font-display text-lg font-bold text-slate-100">
-              Halal<span className="text-gold">Find</span>
+              Halal<span className="text-gold">Bites</span>
             </span>
           </div>
           <button

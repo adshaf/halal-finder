@@ -21,16 +21,13 @@ export default function CTASection() {
         <div className="absolute top-0 right-0 w-64 h-64 bg-gold opacity-5 blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-dark-surface opacity-10 blur-[100px] translate-y-1/2 -translate-x-1/2 pointer-events-none" />
 
-        <span className="inline-block px-4 py-1 rounded-full bg-dark-surface border border-gold/20 text-gold text-xs font-bold uppercase tracking-widest mb-6 relative z-10">
-          Stay in the Loop
-        </span>
-
         <h2 className="font-display text-4xl md:text-5xl font-bold mb-4 max-w-2xl leading-tight text-slate-100 relative z-10">
           New Restaurants,{" "}
           <span className="text-gold italic">Straight to You</span>
         </h2>
         <p className="text-slate-400 mb-10 max-w-lg relative z-10">
-          Get notified when new halal restaurants are added in Sydney. No spam — just the good stuff.
+          Get notified when new halal restaurants are added in Sydney. No spam —
+          just the good stuff.
         </p>
 
         {submitted ? (

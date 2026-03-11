@@ -1,5 +1,5 @@
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
+import HomeNavbar from "@/components/home/HomeNavbar";
+import HomeFooter from "@/components/home/HomeFooter";
 
 export default function SiteLayout({
   children,
@@ -7,10 +7,12 @@ export default function SiteLayout({
   children: React.ReactNode;
 }) {
   return (
-    <>
-      <Navbar />
-      {children}
-      <Footer />
-    </>
+    <div className="flex flex-col min-h-screen bg-dark-bg overflow-x-hidden">
+      <HomeNavbar />
+      <main className="flex flex-col flex-1">
+        {children}
+      </main>
+      <HomeFooter />
+    </div>
   );
 }

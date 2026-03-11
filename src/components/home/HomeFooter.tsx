@@ -26,7 +26,7 @@ const footerLinks = {
     { label: "Verification Services", href: "/join" },
   ],
   Support: [
-    { label: "Help Center", href: "#" },
+    { label: "FAQ", href: "#" },
     { label: "Safety Guidelines", href: "#" },
     { label: "Terms of Service", href: "/terms" },
     { label: "Privacy Policy", href: "/privacy" },
@@ -46,16 +46,29 @@ export default function HomeFooter() {
             </span>
           </div>
           <p className="text-slate-400 text-sm leading-relaxed mb-6">
-            Your guide to the best halal restaurants in Sydney — verified information, honest listings, zero compromise.
+            Your guide to the best halal restaurants in Sydney - verified
+            information, honest listings, zero compromise.
           </p>
           <div className="flex gap-4">
-            <a href="#" aria-label="Twitter" className="text-slate-500 hover:text-gold transition-colors">
+            <a
+              href="#"
+              aria-label="Twitter"
+              className="text-slate-500 hover:text-gold transition-colors"
+            >
               <Twitter size={20} />
             </a>
-            <a href="#" aria-label="Instagram" className="text-slate-500 hover:text-gold transition-colors">
+            <a
+              href="#"
+              aria-label="Instagram"
+              className="text-slate-500 hover:text-gold transition-colors"
+            >
               <Instagram size={20} />
             </a>
-            <a href="#" aria-label="Email" className="text-slate-500 hover:text-gold transition-colors">
+            <a
+              href="#"
+              aria-label="Email"
+              className="text-slate-500 hover:text-gold transition-colors"
+            >
               <Mail size={20} />
             </a>
           </div>
@@ -86,7 +99,7 @@ export default function HomeFooter() {
       {/* Bottom bar */}
       <div className="max-w-7xl mx-auto pt-10 border-t border-gold/5">
         <p className="text-slate-500 text-xs">
-          © 2025 HalalBites. All rights reserved.
+          © {new Date().getFullYear()} HalalBites. All rights reserved.
         </p>
       </div>
     </footer>

@@ -1,5 +1,4 @@
 import {
-  Sparkles,
   ShieldCheck,
   Users,
   Wand2,
@@ -24,21 +23,21 @@ export const metadata: Metadata = {
 const values = [
   {
     icon: ShieldCheck,
-    title: "Unmatched Trust",
+    title: "Transparent Information",
     description:
-      "Every listing undergoes a rigorous verification process to ensure authentic halal certification and standards.",
+      "We aim to provide clear and transparent information about each restaurant so that users can make informed decisions based on their own level of halal observance.",
   },
   {
     icon: Users,
-    title: "Community Driven",
+    title: "Community Contributions",
     description:
-      "Built by the community, for the community. We value real voices and honest reviews to maintain excellence.",
+      "HalalBites grows through community input. Users can suggest restaurants and share information, helping build a directory that reflects the diverse needs of Muslims across Australia.",
   },
   {
     icon: Wand2,
-    title: "Seamless Tech",
+    title: "Simple & Accessible",
     description:
-      "Leveraging AI and modern UI to provide an intuitive experience across mobile and web platforms.",
+      "Built with modern technology to provide a fast, intuitive experience that makes discovering halal dining options easy across both web and mobile devices.",
   },
 ];
 
@@ -79,36 +78,31 @@ const team = [
 
 export default function AboutPage() {
   return (
-    <main className="bg-warm-dark min-h-screen pt-24">
+    <div className="pt-24">
       {/* ── Hero ── */}
       <section className="py-20 overflow-hidden">
         <Container size="lg" className="px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             {/* Left: copy */}
             <div className="space-y-8">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold/10 border border-gold/20 text-gold text-xs font-bold uppercase tracking-widest">
-                <Sparkles size={14} aria-hidden="true" />
-                Our Journey
-              </div>
               <h1 className="font-display text-5xl md:text-7xl font-black leading-[1.1] text-slate-100">
-                Nourishing the{" "}
-                <span className="text-gold italic">Global</span> Community.
+                Nourishing the <span className="text-gold italic">Muslim</span>{" "}
+                Community.
               </h1>
               <p className="text-lg text-slate-400 leading-relaxed max-w-xl">
-                HalalFind was born from a simple need: to make faith-compliant
-                living accessible, transparent, and joyful for everyone,
-                everywhere.
+                HalalBites was created to help Muslims in Australia easily
+                discover halal dining options. We recognise that halal
+                observance can vary from person to person, so our goal is to
+                provide transparent information that allows everyone to decide
+                for themselves what they are comfortable with.
               </p>
               <div className="flex gap-4 flex-wrap">
                 <Link
                   href="/searchResults"
                   className="bg-gold text-dark-bg font-bold px-8 py-4 rounded-xl hover:brightness-110 hover:shadow-lg hover:shadow-gold/20 transition-all"
                 >
-                  Get Started
+                  Find Restaurants
                 </Link>
-                <button className="border border-gold/30 text-gold font-bold px-8 py-4 rounded-xl hover:bg-gold/10 transition-all">
-                  Our Story
-                </button>
               </div>
             </div>
 
@@ -124,7 +118,7 @@ export default function AboutPage() {
                 <div className="absolute inset-0 bg-linear-to-t from-dark-bg/60 to-transparent" />
               </div>
               {/* Floating accent circle */}
-              <div className="absolute -bottom-8 -left-8 w-48 h-48 rounded-full border-8 border-warm-dark overflow-hidden shadow-xl hidden md:block">
+              <div className="absolute -bottom-8 -left-8 w-48 h-48 rounded-full border-8 border-dark-bg overflow-hidden shadow-xl hidden md:block">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="https://lh3.googleusercontent.com/aida-public/AB6AXuCkKAe3MsExgLPURiJEYJCmzOn7ro52ExOlkK5kK-o13vO5RLICIKYminDMXZvvUOK4pa-STMdHQ3fhmDhtQyQiHTHNQvi7-oEgD-QOOIbTkh7v3QgqIVPFxG0k6yKwDrLPdb1bZaAD5ZD0_jLlPiqXIF_Iw9hDcQOIlzTIxO2hWUOz5mtyPSvb0Axto2oWeuwVUBIGyNC-ExhSG2fI3mAZEjthPzIuP49gagZsZDNrfvP1Qejm0zPsVtsGKyPraxV4u0Fvq6u08Xl3"
@@ -138,7 +132,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── Mission & Values ── */}
-      <section className="py-24 bg-black/20">
+      <section className="py-24 bg-dark-surface/30">
         <Container size="lg" className="px-6">
           <div className="text-center max-w-3xl mx-auto mb-20 space-y-4">
             <h2 className="font-display text-4xl font-bold text-slate-100">
@@ -146,9 +140,10 @@ export default function AboutPage() {
             </h2>
             <div className="h-1 w-20 bg-gold mx-auto rounded-full" />
             <p className="text-slate-400 text-lg">
-              We bridge the gap between quality halal services and the global
-              Muslim community through cutting-edge technology and radical
-              transparency.
+              Our mission is to make halal dining easier to navigate by
+              providing transparent and accessible information, empowering
+              Muslims to decide for themselves what aligns with their own level
+              of halal observance.
             </p>
           </div>
 
@@ -156,7 +151,7 @@ export default function AboutPage() {
             {values.map(({ icon: Icon, title, description }) => (
               <div
                 key={title}
-                className="bg-white/5 p-10 rounded-2xl border border-gold/10 hover:border-gold/40 transition-colors group"
+                className="bg-dark-surface/60 p-10 rounded-2xl border border-gold/15 hover:border-gold/40 transition-colors group"
               >
                 <Icon
                   size={44}
@@ -257,6 +252,6 @@ export default function AboutPage() {
           </div>
         </Container>
       </section>
-    </main>
+    </div>
   );
 }

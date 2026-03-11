@@ -58,7 +58,7 @@ export default function RestaurantPage() {
 
   if (loading) {
     return (
-      <main className="bg-warm-dark min-h-screen flex items-center justify-center">
+      <main className="bg-dark-bg min-h-screen flex items-center justify-center">
         <Loader2 size={32} className="animate-spin text-gold" />
       </main>
     );
@@ -70,13 +70,13 @@ export default function RestaurantPage() {
   // const activeAttributes = ATTRIBUTE_LABELS.filter((a) => r[a.key]); // OLD — used by text-pill bar
 
   return (
-    <main className="bg-warm-dark min-h-screen">
+    <div className="bg-dark-bg min-h-screen">
       {/* ── Hero ── */}
       <section className="relative h-[65vh] w-full overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
-            backgroundImage: `linear-gradient(0deg, rgba(30,27,20,0.92) 0%, rgba(30,27,20,0.35) 55%, rgba(30,27,20,0.15) 100%), url('${r.hero_image}')`,
+            backgroundImage: `linear-gradient(0deg, rgba(18,18,18,0.95) 0%, rgba(18,18,18,0.40) 55%, rgba(18,18,18,0.15) 100%), url('${r.hero_image}')`,
           }}
           role="img"
           aria-label={r.name}
@@ -174,7 +174,7 @@ export default function RestaurantPage() {
 
       {/* OLD — text-pill attributes bar (commented out, revert if icon approach not preferred)
       {activeAttributes.length > 0 && (
-        <div className="bg-black/30 border-y border-white/5">
+        <div className="bg-dark-surface/40 border-y border-gold/10">
           <div className="max-w-7xl mx-auto px-6 md:px-20 py-4 flex flex-wrap gap-2">
             {activeAttributes.map(({ label }) => (
               <span
@@ -191,7 +191,7 @@ export default function RestaurantPage() {
       END OLD */}
 
       {/* ── Halal attribute icons — all 10, icon + label, green=true grey=false ── */}
-      <div className="bg-black/30 border-y border-white/5">
+      <div className="bg-dark-surface/40 border-y border-gold/10">
         <div className="max-w-7xl mx-auto px-6 md:px-20 py-6">
           <div className="grid grid-cols-5 sm:grid-cols-10 gap-x-3 gap-y-4">
             {HALAL_ICONS.map(({ key, label, file }) => {
@@ -263,7 +263,7 @@ export default function RestaurantPage() {
         {/* Right: Contact + Hours */}
         <aside className="space-y-5">
           {/* Location & Hours */}
-          <div className="p-6 border border-gold/15 rounded-xl space-y-4 bg-black/20">
+          <div className="p-6 border border-gold/15 rounded-xl space-y-4 bg-dark-surface/60">
             <h4 className="font-display font-bold text-slate-100 text-lg">
               Location &amp; Hours
             </h4>
@@ -288,7 +288,7 @@ export default function RestaurantPage() {
           </div>
 
           {/* Contact */}
-          <div className="p-6 border border-gold/15 rounded-xl space-y-4 bg-black/20">
+          <div className="p-6 border border-gold/15 rounded-xl space-y-4 bg-dark-surface/60">
             <h4 className="font-display font-bold text-slate-100 text-lg">
               Contact
             </h4>
@@ -346,6 +346,6 @@ export default function RestaurantPage() {
           )}
         </aside>
       </div>
-    </main>
+    </div>
   );
 }

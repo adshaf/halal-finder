@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { useEffect, useRef, useState, Suspense } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 import {
   Search,
   MapPin,
@@ -9,85 +10,227 @@ import {
   ChevronRight,
   SlidersHorizontal,
   X,
-  ChevronDown,
   Loader2,
-  Award,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import { HALAL_ICONS } from "@/lib/constants";
+import { HALAL_ICONS, CUISINE_REGIONS } from "@/lib/constants";
 import type { Restaurant } from "@/lib/constants";
+import ViewToggle from "@/components/search/ViewToggle";
+import RestaurantMapModal from "@/components/search/RestaurantMapModal";
+import { useGeolocation } from "@/hooks/useGeolocation";
+
+// Leaflet is browser-only — must be loaded dynamically with SSR disabled
+const MapView = dynamic(() => import("@/components/search/MapView"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full flex items-center justify-center text-slate-500">
+      <Loader2 size={28} className="animate-spin mr-3" />
+      Loading map...
+    </div>
+  ),
+});
 
 const priceOptions = ["$", "$$", "$$$"];
 
-const FEATURE_FILTERS: { label: string; key: keyof Restaurant }[] = [
-  { label: "No Alcohol", key: "no_alcohol" },
-  { label: "No Pork", key: "no_pork" },
-  { label: "Halal Certified", key: "halal_certified" },
-  { label: "Muslim Owned", key: "muslim_owned" },
-  { label: "Prayer Room", key: "prayer_room" },
-  { label: "Vegetarian Options", key: "vegetarian_options" },
-  { label: "Vegan Options", key: "vegan_options" },
-];
+// Three-state checkbox for region headers (checked / indeterminate / unchecked)
+function RegionCheckbox({
+  checked,
+  indeterminate,
+  onChange,
+}: {
+  checked: boolean;
+  indeterminate: boolean;
+  onChange: (e: React.MouseEvent) => void;
+}) {
+  const ref = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (ref.current) ref.current.indeterminate = indeterminate;
+  }, [indeterminate]);
+  return (
+    <input
+      ref={ref}
+      type="checkbox"
+      checked={checked}
+      onChange={() => {}}
+      onClick={onChange}
+      className="w-4 h-4 rounded accent-primary border-zinc-600 cursor-pointer shrink-0"
+    />
+  );
+}
+
+// Grouped cuisine filter — collapsible regions with child cuisine checkboxes
+function CuisineSection({
+  selectedCuisines,
+  toggleCuisine,
+  toggleRegion,
+}: {
+  selectedCuisines: string[];
+  toggleCuisine: (c: string) => void;
+  toggleRegion: (region: string, cuisines: string[]) => void;
+}) {
+  const [expandedRegions, setExpandedRegions] = useState<string[]>([]);
+
+  // Auto-expand any region that has active selections
+  useEffect(() => {
+    setExpandedRegions((prev) => {
+      const toAdd = CUISINE_REGIONS.filter(({ cuisines }) =>
+        cuisines.some((c) => selectedCuisines.includes(c))
+      ).map(({ region }) => region);
+      return [...new Set([...prev, ...toAdd])];
+    });
+  }, [selectedCuisines]);
+
+  const toggleExpand = (region: string) =>
+    setExpandedRegions((prev) =>
+      prev.includes(region) ? prev.filter((r) => r !== region) : [...prev, region]
+    );
+
+  return (
+    <div className="space-y-0.5">
+      {CUISINE_REGIONS.map(({ region, cuisines }) => {
+        const selectedCount = cuisines.filter((c) =>
+          selectedCuisines.includes(c)
+        ).length;
+        const allSelected = selectedCount === cuisines.length;
+        const someSelected = selectedCount > 0 && !allSelected;
+        const isExpanded = expandedRegions.includes(region);
+
+        return (
+          <div key={region}>
+            {/* Region header */}
+            <div className="flex items-center gap-2 py-1.5 px-1 rounded-lg hover:bg-white/5 transition-colors group">
+              <RegionCheckbox
+                checked={allSelected}
+                indeterminate={someSelected}
+                onChange={(e) => {
+                  e.stopPropagation();
+                  toggleRegion(region, cuisines);
+                }}
+              />
+              <button
+                onClick={() => toggleExpand(region)}
+                className="flex items-center justify-between flex-1 text-left gap-2 min-w-0"
+              >
+                <span
+                  className={`text-sm font-medium transition-colors truncate ${
+                    selectedCount > 0 ? "text-slate-200" : "text-slate-400 group-hover:text-slate-300"
+                  }`}
+                >
+                  {region}
+                </span>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  {selectedCount > 0 && (
+                    <span className="text-xs text-gold font-bold">
+                      {selectedCount}
+                    </span>
+                  )}
+                  <ChevronRight
+                    size={13}
+                    className={`text-slate-600 transition-transform duration-200 ${
+                      isExpanded ? "rotate-90" : ""
+                    }`}
+                  />
+                </div>
+              </button>
+            </div>
+
+            {/* Cuisine children */}
+            {isExpanded && (
+              <div className="ml-6 mb-1 border-l border-white/8 pl-3 space-y-0.5">
+                {cuisines.map((c) => {
+                  const active = selectedCuisines.includes(c);
+                  return (
+                    <label
+                      key={c}
+                      className="flex items-center gap-2.5 py-1 cursor-pointer group/item"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={active}
+                        onChange={() => toggleCuisine(c)}
+                        className="w-3.5 h-3.5 rounded accent-primary border-zinc-700 cursor-pointer shrink-0"
+                      />
+                      <span
+                        className={`text-sm transition-colors ${
+                          active
+                            ? "text-slate-200 font-medium"
+                            : "text-slate-500 group-hover/item:text-slate-300"
+                        }`}
+                      >
+                        {c}
+                      </span>
+                    </label>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 
 type FilterPanelProps = {
-  cuisineOptions: string[];
   selectedCuisines: string[];
   selectedPrice: string;
   selectedFeatures: string[];
   toggleCuisine: (c: string) => void;
+  toggleRegion: (region: string, cuisines: string[]) => void;
   setSelectedPrice: (p: string) => void;
   toggleFeature: (f: string) => void;
   resetFilters: () => void;
 };
 
 function FilterPanel({
-  cuisineOptions,
   selectedCuisines,
   selectedPrice,
   selectedFeatures,
   toggleCuisine,
+  toggleRegion,
   setSelectedPrice,
   toggleFeature,
   resetFilters,
 }: FilterPanelProps) {
+  const totalActive =
+    selectedCuisines.length +
+    (selectedPrice ? 1 : 0) +
+    selectedFeatures.length;
+
   return (
-    <div className="bg-zinc-900/60 border border-white/10 rounded-xl p-5 space-y-6">
+    <div className="bg-dark-surface/60 border border-gold/15 rounded-xl p-5 space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="font-bold text-slate-100 flex items-center gap-2 text-sm">
           <SlidersHorizontal size={15} />
           Filters
+          {totalActive > 0 && (
+            <span className="bg-gold text-dark-bg text-xs font-bold px-1.5 py-0.5 rounded-full leading-none">
+              {totalActive}
+            </span>
+          )}
         </h2>
-        <button
-          onClick={resetFilters}
-          className="text-xs text-gold hover:text-gold/80 font-semibold transition-colors"
-        >
-          RESET
-        </button>
+        {totalActive > 0 && (
+          <button
+            onClick={resetFilters}
+            className="text-xs text-gold hover:text-gold/80 font-semibold transition-colors"
+          >
+            RESET
+          </button>
+        )}
       </div>
 
-      {/* Cuisine */}
+      {/* Cuisine — grouped by region */}
       <div>
         <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">
           Cuisine
         </h3>
-        {cuisineOptions.map((c) => (
-          <label
-            key={c}
-            className="flex items-center gap-3 mb-2.5 cursor-pointer group"
-          >
-            <input
-              type="checkbox"
-              checked={selectedCuisines.includes(c)}
-              onChange={() => toggleCuisine(c)}
-              className="w-4 h-4 rounded accent-deep-green border-zinc-600"
-            />
-            <span className="text-sm text-slate-400 group-hover:text-slate-200 transition-colors">
-              {c}
-            </span>
-          </label>
-        ))}
+        <CuisineSection
+          selectedCuisines={selectedCuisines}
+          toggleCuisine={toggleCuisine}
+          toggleRegion={toggleRegion}
+        />
       </div>
 
       <div className="h-px bg-white/5" />
@@ -116,42 +259,80 @@ function FilterPanel({
 
       <div className="h-px bg-white/5" />
 
-      {/* Features */}
+      {/* Features — halal icons as toggles */}
       <div>
         <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">
           Features
         </h3>
-        {FEATURE_FILTERS.map(({ label }) => (
-          <label
-            key={label}
-            className="flex items-center gap-3 mb-2.5 cursor-pointer group"
-          >
-            <input
-              type="checkbox"
-              checked={selectedFeatures.includes(label)}
-              onChange={() => toggleFeature(label)}
-              className="w-4 h-4 rounded accent-deep-green border-zinc-600"
-            />
-            <span className="text-sm text-slate-400 group-hover:text-slate-200 transition-colors">
-              {label}
-            </span>
-          </label>
-        ))}
+        <div className="space-y-2">
+          {HALAL_ICONS.map(({ key, label, file }) => {
+            const active = selectedFeatures.includes(String(key));
+            return (
+              <button
+                key={String(key)}
+                onClick={() => toggleFeature(String(key))}
+                className={`flex items-center gap-3 w-full rounded-lg px-2 py-1.5 transition-colors ${
+                  active ? "bg-primary/10" : "hover:bg-white/5"
+                }`}
+              >
+                <div className="relative w-8 h-8 shrink-0 rounded-md overflow-hidden">
+                  <Image
+                    src={`/assets/halal-icons/${file}-${active ? "true" : "false"}.png`}
+                    alt={label}
+                    fill
+                    className="object-cover scale-[1.1]"
+                    unoptimized
+                  />
+                </div>
+                <span
+                  className={`text-sm transition-colors ${
+                    active ? "text-primary font-medium" : "text-slate-400"
+                  }`}
+                >
+                  {label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
 }
 
 function SearchResultsInner() {
+  const router = useRouter();
   const searchParams = useSearchParams();
+  // searchQuery is the committed query (from URL) — drives filtering and map centre
+  const searchQuery = searchParams.get("q") ?? "";
+  // inputValue is what's in the text box — only committed when the user fires the search
+  const [inputValue, setInputValue] = useState(searchQuery);
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState(searchParams.get("q") ?? "");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedCuisines, setSelectedCuisines] = useState<string[]>([]);
   const [selectedPrice, setSelectedPrice] = useState("");
   const [selectedFeatures, setSelectedFeatures] = useState<string[]>([]);
   const [wishlist, setWishlist] = useState<number[]>([]);
+  const [view, setView] = useState<"cards" | "map">("cards");
+  const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | null>(null);
+  const { position: userPosition, request: requestGeo } = useGeolocation();
+
+  // Responsive page size: 30 on desktop (≥768px), 12 on mobile
+  const [pageSize, setPageSize] = useState(12);
+  useEffect(() => {
+    const update = () => setPageSize(window.innerWidth >= 768 ? 30 : 12);
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Reset to page 1 whenever filters or search change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, selectedCuisines, selectedPrice, selectedFeatures]);
 
   useEffect(() => {
     const supabase = createClient();
@@ -166,14 +347,36 @@ function SearchResultsInner() {
       });
   }, []);
 
-  const cuisineOptions = [
-    ...new Set(restaurants.map((r) => r.cuisine).filter(Boolean)),
-  ] as string[];
-
   const toggleCuisine = (c: string) =>
     setSelectedCuisines((prev) =>
       prev.includes(c) ? prev.filter((x) => x !== c) : [...prev, c],
     );
+
+  const toggleRegion = (region: string, cuisines: string[]) => {
+    const allSelected = cuisines.every((c) => selectedCuisines.includes(c));
+    if (allSelected) {
+      setSelectedCuisines((prev) => prev.filter((c) => !cuisines.includes(c)));
+    } else {
+      setSelectedCuisines((prev) => [...new Set([...prev, ...cuisines])]);
+    }
+  };
+
+  // Auto-detect cuisine/region keywords from the search query and pre-select them
+  useEffect(() => {
+    if (!searchQuery) return;
+    const q = searchQuery.toLowerCase();
+    const matched: string[] = [];
+    for (const { region, cuisines } of CUISINE_REGIONS) {
+      if (region.toLowerCase().includes(q)) {
+        matched.push(...cuisines);
+      } else {
+        for (const c of cuisines) {
+          if (c.toLowerCase().includes(q)) matched.push(c);
+        }
+      }
+    }
+    if (matched.length > 0) setSelectedCuisines(matched);
+  }, [searchQuery]);
 
   const toggleFeature = (f: string) =>
     setSelectedFeatures((prev) =>
@@ -196,12 +399,14 @@ function SearchResultsInner() {
     if (selectedCuisines.length && !selectedCuisines.includes(r.cuisine ?? ""))
       return false;
     if (selectedPrice && r.price !== selectedPrice) return false;
-    for (const feat of selectedFeatures) {
-      const match = FEATURE_FILTERS.find((f) => f.label === feat);
-      if (match && !r[match.key]) return false;
+    for (const key of selectedFeatures) {
+      if (!r[key as keyof Restaurant]) return false;
     }
     return true;
   });
+
+  const totalPages = Math.ceil(filtered.length / pageSize);
+  const paginated = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const resetFilters = () => {
     setSelectedCuisines([]);
@@ -209,8 +414,13 @@ function SearchResultsInner() {
     setSelectedFeatures([]);
   };
 
+  const handleSearch = () => {
+    const q = inputValue.trim();
+    router.push(`/searchResults?q=${encodeURIComponent(q)}`);
+  };
+
   return (
-    <main className="bg-warm-dark min-h-screen pt-24 pb-16">
+    <div className="pt-24 pb-16">
       <div className="max-w-7xl mx-auto px-6">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-4 pt-6">
@@ -235,40 +445,46 @@ function SearchResultsInner() {
 
         {/* Search bar */}
         <div className="mb-6">
-          <div className="flex items-center h-12 bg-zinc-900/80 border border-white/10 rounded-lg overflow-hidden focus-within:border-gold/30 transition-colors">
+          <div className="flex items-center h-12 bg-dark-surface/60 border border-gold/15 rounded-lg overflow-hidden focus-within:border-gold/40 transition-colors">
             <Search className="ml-4 text-slate-500 shrink-0" size={18} />
             <input
               type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
               placeholder="Search restaurants, cuisines, or suburbs..."
               className="flex-1 bg-transparent px-3 text-slate-200 placeholder:text-slate-500 text-sm outline-none"
             />
-            {searchQuery && (
+            {inputValue && (
               <button
-                onClick={() => setSearchQuery("")}
-                className="mr-3 text-slate-500 hover:text-slate-300"
+                onClick={() => { setInputValue(""); router.push("/searchResults"); }}
+                className="text-slate-500 hover:text-slate-300 px-2"
               >
                 <X size={16} />
               </button>
             )}
+            <button
+              onClick={handleSearch}
+              className="h-full px-4 bg-gold/10 border-l border-gold/15 text-gold text-sm font-semibold hover:bg-gold/20 transition-colors"
+            >
+              Search
+            </button>
           </div>
         </div>
 
-        {/* Sort pills + mobile filter toggle */}
+        {/* View toggle + mobile filter toggle */}
         <div className="flex items-center gap-3 mb-8 flex-wrap">
-          {/* {["Top Rated", "Price: Low to High", "Newest"].map((sort) => (
-            <button
-              key={sort}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium bg-zinc-900/60 border border-white/10 text-slate-300 hover:border-gold/30 transition-colors"
-            >
-              {sort}
-              <ChevronDown size={14} />
-            </button>
-          ))} */}
+          <ViewToggle
+            view={view}
+            onToggle={(v) => {
+              setView(v);
+              if (v === "map") requestGeo();
+              if (v === "cards") setSelectedRestaurant(null);
+            }}
+          />
           <button
             onClick={() => setSidebarOpen(true)}
-            className="lg:hidden ml-auto flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-zinc-900/60 border border-white/10 text-slate-300"
+            className="lg:hidden ml-auto flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-dark-surface/60 border border-gold/15 text-slate-300"
           >
             <SlidersHorizontal size={14} />
             Filters
@@ -279,7 +495,7 @@ function SearchResultsInner() {
           {/* Mobile overlay */}
           {sidebarOpen && (
             <div
-              className="fixed inset-0 z-40 bg-black/60 lg:hidden"
+              className="fixed inset-0 z-[1500] bg-black/60 lg:hidden"
               onClick={() => setSidebarOpen(false)}
             />
           )}
@@ -287,9 +503,9 @@ function SearchResultsInner() {
           {/* Mobile sidebar */}
           <aside
             className={`
-              fixed top-0 left-0 bottom-0 z-50 w-72 overflow-y-auto transition-transform duration-300 lg:hidden
+              fixed top-0 left-0 bottom-0 z-[2000] w-72 overflow-y-auto transition-transform duration-300 lg:hidden
               ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
-              bg-zinc-900 border-r border-white/10 p-6
+              bg-dark-bg border-r border-gold/15 p-6
             `}
           >
             <div className="flex items-center justify-between mb-6">
@@ -302,11 +518,11 @@ function SearchResultsInner() {
               </button>
             </div>
             <FilterPanel
-              cuisineOptions={cuisineOptions}
               selectedCuisines={selectedCuisines}
               selectedPrice={selectedPrice}
               selectedFeatures={selectedFeatures}
               toggleCuisine={toggleCuisine}
+              toggleRegion={toggleRegion}
               setSelectedPrice={setSelectedPrice}
               toggleFeature={toggleFeature}
               resetFilters={resetFilters}
@@ -316,11 +532,11 @@ function SearchResultsInner() {
           {/* Desktop sidebar */}
           <aside className="hidden lg:block w-64 shrink-0 space-y-4">
             <FilterPanel
-              cuisineOptions={cuisineOptions}
               selectedCuisines={selectedCuisines}
               selectedPrice={selectedPrice}
               selectedFeatures={selectedFeatures}
               toggleCuisine={toggleCuisine}
+              toggleRegion={toggleRegion}
               setSelectedPrice={setSelectedPrice}
               toggleFeature={toggleFeature}
               resetFilters={resetFilters}
@@ -333,6 +549,15 @@ function SearchResultsInner() {
               <div className="flex items-center justify-center h-64 text-slate-500">
                 <Loader2 size={28} className="animate-spin mr-3" />
                 Loading restaurants...
+              </div>
+            ) : view === "map" ? (
+              <div key={searchQuery} className="h-[calc(100vh-220px)] min-h-[400px] rounded-xl overflow-hidden">
+                <MapView
+                  restaurants={filtered}
+                  userPosition={userPosition}
+                  searchQuery={searchQuery}
+                  onSelectRestaurant={setSelectedRestaurant}
+                />
               </div>
             ) : filtered.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-64 text-slate-500">
@@ -348,12 +573,15 @@ function SearchResultsInner() {
                 </button>
               </div>
             ) : (
+              <>
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-                {filtered.map((r) => (
+                {paginated.map((r) => (
                   <Link
                     key={r.id}
                     href={`/restaurant/${r.slug}`}
-                    className="bg-zinc-900/60 border border-white/10 rounded-xl overflow-hidden hover:border-gold/30 transition-all cursor-pointer group block"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-dark-surface/0 border border-green rounded-xl overflow-hidden hover:border-gold transition-all cursor-pointer group block"
                   >
                     {/* Image */}
                     <div className="relative overflow-hidden">
@@ -370,11 +598,6 @@ function SearchResultsInner() {
                       />
                       {/* Badges */}
                       <div className="absolute top-3 left-3 flex gap-1.5">
-                        {r.halal_certified && (
-                          <span className="bg-deep-green text-white text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
-                            <Award size={14} /> Certified
-                          </span>
-                        )}
                         {r.featured && (
                           <span className="bg-gold text-dark-bg text-xs font-bold px-2.5 py-1 rounded-full">
                             Featured
@@ -483,11 +706,67 @@ function SearchResultsInner() {
                   </Link>
                 ))}
               </div>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-center gap-1.5 mt-10">
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    className="px-3 py-1.5 rounded-lg text-sm font-medium border border-white/10 text-slate-400 hover:border-gold/40 hover:text-gold disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                  >
+                    ← Prev
+                  </button>
+
+                  {Array.from({ length: totalPages }, (_, i) => i + 1)
+                    .filter((p) =>
+                      p === 1 || p === totalPages ||
+                      (p >= currentPage - 2 && p <= currentPage + 2)
+                    )
+                    .reduce<(number | "…")[]>((acc, p, idx, arr) => {
+                      if (idx > 0 && p - (arr[idx - 1] as number) > 1) acc.push("…");
+                      acc.push(p);
+                      return acc;
+                    }, [])
+                    .map((p, i) =>
+                      p === "…" ? (
+                        <span key={`ellipsis-${i}`} className="px-2 text-slate-600 text-sm">…</span>
+                      ) : (
+                        <button
+                          key={p}
+                          onClick={() => setCurrentPage(p as number)}
+                          className={`w-9 h-9 rounded-lg text-sm font-medium transition-colors ${
+                            currentPage === p
+                              ? "bg-gold text-dark-bg font-bold"
+                              : "border border-white/10 text-slate-400 hover:border-gold/40 hover:text-gold"
+                          }`}
+                        >
+                          {p}
+                        </button>
+                      )
+                    )}
+
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={currentPage === totalPages}
+                    className="px-3 py-1.5 rounded-lg text-sm font-medium border border-white/10 text-slate-400 hover:border-gold/40 hover:text-gold disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                  >
+                    Next →
+                  </button>
+                </div>
+              )}
+              </>
             )}
           </div>
         </div>
       </div>
-    </main>
+
+      {/* Map pin modal — rendered outside the map container so Tailwind classes work */}
+      <RestaurantMapModal
+        restaurant={selectedRestaurant}
+        onClose={() => setSelectedRestaurant(null)}
+      />
+    </div>
   );
 }
 

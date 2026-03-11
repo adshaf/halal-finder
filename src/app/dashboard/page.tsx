@@ -61,9 +61,9 @@ export default function DashboardPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-warm-dark text-slate-100 flex flex-col">
+    <div className="min-h-screen bg-dark-bg text-slate-100 flex flex-col">
       {/* ── Header ── */}
-      <header className="sticky top-0 z-50 bg-warm-dark/95 backdrop-blur-md border-b border-white/5">
+      <header className="sticky top-0 z-50 bg-dark-bg/95 backdrop-blur-md border-b border-gold/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center gap-4">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 shrink-0">
@@ -84,7 +84,7 @@ export default function DashboardPage() {
               <Link
                 key={label}
                 href={href}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-white hover:bg-dark-surface transition-colors"
               >
                 <Icon size={14} />
                 {label}
@@ -96,7 +96,7 @@ export default function DashboardPage() {
           <div className="flex-1" />
 
           {/* Search */}
-          <div className="hidden sm:flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-2 w-56 focus-within:border-primary/40 transition-colors">
+          <div className="hidden sm:flex items-center gap-2 bg-dark-surface/60 border border-gold/15 rounded-lg px-3 py-2 w-56 focus-within:border-primary/40 transition-colors">
             <Search size={14} className="text-slate-500 shrink-0" />
             <input
               type="text"
@@ -106,7 +106,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Bell */}
-          <button className="relative p-2 rounded-lg hover:bg-white/5 transition-colors">
+          <button className="relative p-2 rounded-lg hover:bg-dark-surface transition-colors">
             <Bell size={18} className="text-slate-400" />
             <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-gold" />
           </button>
@@ -118,7 +118,7 @@ export default function DashboardPage() {
 
           {/* Mobile menu toggle */}
           <button
-            className="md:hidden p-2 rounded-lg hover:bg-white/5 transition-colors"
+            className="md:hidden p-2 rounded-lg hover:bg-dark-surface transition-colors"
             onClick={() => setMobileMenuOpen((v) => !v)}
           >
             {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
@@ -127,7 +127,7 @@ export default function DashboardPage() {
 
         {/* Mobile nav */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-white/5 px-4 py-3 flex flex-col gap-1">
+          <div className="md:hidden border-t border-gold/10 px-4 py-3 flex flex-col gap-1">
             {[
               { label: "Home", href: "/" },
               { label: "Explore", href: "/searchResults" },
@@ -137,7 +137,7 @@ export default function DashboardPage() {
               <Link
                 key={label}
                 href={href}
-                className="px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
+                className="px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-white hover:bg-dark-surface transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {label}
@@ -169,7 +169,7 @@ export default function DashboardPage() {
           ].map(({ label, value, icon: Icon, sub }) => (
             <div
               key={label}
-              className="bg-white/4 border border-white/8 rounded-xl p-5 flex items-start gap-4 hover:border-gold/20 transition-colors"
+              className="bg-dark-surface/60 border border-gold/15 rounded-xl p-5 flex items-start gap-4 hover:border-gold/20 transition-colors"
             >
               <div className="w-11 h-11 rounded-xl bg-gold/10 border border-gold/20 flex items-center justify-center shrink-0">
                 <Icon size={20} className="text-gold" />
@@ -200,7 +200,9 @@ export default function DashboardPage() {
               <Link
                 key={r.id}
                 href={`/restaurant/${r.id}`}
-                className="group bg-white/4 border border-white/8 rounded-xl overflow-hidden hover:border-gold/20 hover:shadow-lg transition-all"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group bg-dark-surface/60 border border-gold/15 rounded-xl overflow-hidden hover:border-gold/20 hover:shadow-lg transition-all"
               >
                 {/* Image */}
                 <div className="relative h-36 overflow-hidden">
@@ -211,7 +213,7 @@ export default function DashboardPage() {
                   />
                   {/* Heart */}
                   <button
-                    className="absolute top-2 right-2 w-7 h-7 rounded-full bg-warm-dark/70 backdrop-blur-sm flex items-center justify-center"
+                    className="absolute top-2 right-2 w-7 h-7 rounded-full bg-dark-bg/70 backdrop-blur-sm flex items-center justify-center"
                     onClick={(e) => e.preventDefault()}
                   >
                     <Heart size={13} className="text-gold fill-gold" />
@@ -249,7 +251,7 @@ export default function DashboardPage() {
       </main>
 
       {/* ── Footer ── */}
-      <footer className="bg-black/30 border-t border-white/5 mt-10">
+      <footer className="bg-dark-surface/30 border-t border-gold/10 mt-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 mb-8">
             {/* Brand */}
@@ -300,7 +302,7 @@ export default function DashboardPage() {
             ))}
           </div>
 
-          <div className="border-t border-white/5 pt-5 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="border-t border-gold/10 pt-5 flex flex-col sm:flex-row items-center justify-between gap-3">
             <p className="text-slate-600 text-xs">
               © 2025 HalalBites. All rights reserved.
             </p>

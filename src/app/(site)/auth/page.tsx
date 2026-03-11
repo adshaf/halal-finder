@@ -40,11 +40,11 @@ export default function AuthPage() {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <main className="bg-warm-dark min-h-screen flex flex-col items-center justify-center p-6 pt-28">
+    <main className="min-h-screen flex flex-col items-center justify-center p-6 pt-28">
       <div className="w-full max-w-md">
 
         {/* Auth Card */}
-        <div className="bg-zinc-900/60 border border-gold/20 rounded-xl shadow-2xl overflow-hidden backdrop-blur-sm">
+        <div className="bg-dark-surface/80 border border-gold/20 rounded-xl shadow-2xl overflow-hidden backdrop-blur-sm">
 
           {/* Decorative top bar */}
           <div className="h-1.5 w-full bg-gradient-to-r from-gold via-deep-green to-gold" />
@@ -94,7 +94,7 @@ export default function AuthPage() {
                   <input
                     type="text"
                     placeholder="Your name"
-                    className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg focus:ring-2 focus:ring-deep-green focus:border-deep-green outline-none transition-all text-slate-100 placeholder:text-slate-500"
+                    className="w-full px-4 py-3 bg-dark-bg border border-gold/15 rounded-lg focus:ring-2 focus:ring-gold/30 focus:border-gold/40 outline-none transition-all text-slate-100 placeholder:text-slate-500"
                   />
                 </div>
               )}
@@ -108,7 +108,7 @@ export default function AuthPage() {
                   <input
                     type="email"
                     placeholder="name@example.com"
-                    className="w-full pl-11 pr-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg focus:ring-2 focus:ring-deep-green focus:border-deep-green outline-none transition-all text-slate-100 placeholder:text-slate-500"
+                    className="w-full pl-11 pr-4 py-3 bg-dark-bg border border-gold/15 rounded-lg focus:ring-2 focus:ring-gold/30 focus:border-gold/40 outline-none transition-all text-slate-100 placeholder:text-slate-500"
                   />
                 </div>
               </div>
@@ -129,7 +129,7 @@ export default function AuthPage() {
                   <input
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
-                    className="w-full pl-11 pr-12 py-3 bg-zinc-800 border border-zinc-700 rounded-lg focus:ring-2 focus:ring-deep-green focus:border-deep-green outline-none transition-all text-slate-100 placeholder:text-slate-500"
+                    className="w-full pl-11 pr-12 py-3 bg-dark-bg border border-gold/15 rounded-lg focus:ring-2 focus:ring-gold/30 focus:border-gold/40 outline-none transition-all text-slate-100 placeholder:text-slate-500"
                   />
                   <button
                     type="button"
@@ -157,7 +157,7 @@ export default function AuthPage() {
 
               <button
                 type="submit"
-                className="w-full bg-deep-green hover:brightness-110 text-white font-bold py-3 px-4 rounded-lg shadow-lg shadow-deep-green/20 transition-all flex items-center justify-center gap-2 group"
+                className="w-full bg-gold hover:brightness-110 text-dark-bg font-bold py-3 px-4 rounded-lg shadow-lg shadow-gold/20 transition-all flex items-center justify-center gap-2 group"
               >
                 <span>{tab === "signin" ? "Sign In" : "Create Account"}</span>
                 <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" aria-hidden="true" />
@@ -170,7 +170,7 @@ export default function AuthPage() {
                 <div className="w-full border-t border-gold/10" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-zinc-900 px-3 text-slate-500 tracking-wider">
+                <span className="bg-dark-surface px-3 text-slate-500 tracking-wider">
                   Or continue with
                 </span>
               </div>
@@ -178,11 +178,11 @@ export default function AuthPage() {
 
             {/* Social Login */}
             <div className="grid grid-cols-2 gap-4">
-              <button className="flex items-center justify-center gap-2 px-4 py-2.5 border border-zinc-700 rounded-lg hover:bg-zinc-800 transition-colors text-slate-300">
+              <button className="flex items-center justify-center gap-2 px-4 py-2.5 border border-gold/15 rounded-lg hover:bg-dark-surface transition-colors text-slate-300">
                 <GoogleIcon />
                 <span className="text-sm font-medium">Google</span>
               </button>
-              <button className="flex items-center justify-center gap-2 px-4 py-2.5 border border-zinc-700 rounded-lg hover:bg-zinc-800 transition-colors text-slate-300">
+              <button className="flex items-center justify-center gap-2 px-4 py-2.5 border border-gold/15 rounded-lg hover:bg-dark-surface transition-colors text-slate-300">
                 <FacebookIcon />
                 <span className="text-sm font-medium">Facebook</span>
               </button>

@@ -10,6 +10,7 @@ create table if not exists restaurants (
   description         text,                  -- short blurb for cards
   long_description    text,                  -- full detail page description
   cuisine             text,
+  cuisine_id          int references cuisine_categories(id),
   price               text,                  -- '$', '$$', '$$$' (AUD)
   location            text,                  -- suburb, e.g. "Lakemba, Sydney"
   address             text,
@@ -30,17 +31,28 @@ create table if not exists restaurants (
   muslim_owned        boolean default false,
   muslim_chefs        boolean default false,
   prayer_room         boolean default false,
-  halal_chicken_only  boolean default false,
-  halal_beef_only     boolean default false,
+  halal_chicken       boolean default false,
+  halal_beef          boolean default false,
   seafood_options     boolean default false,
   vegetarian_options  boolean default false,
   vegan_options       boolean default false,
+
+  -- Geo
+  latitude            double precision,
+  longitude           double precision,
 
   -- Admin
   featured            boolean default false,
   verified            boolean default false,
 
   created_at          timestamptz default now()
+);
+
+-- Cuisine categories (region → cuisine mapping for grouped filter)
+create table if not exists cuisine_categories (
+  id      serial primary key,
+  region  text not null,
+  cuisine text not null unique
 );
 
 -- Menu items
@@ -71,10 +83,15 @@ create table if not exists saved_restaurants (
 
 -- ── Row Level Security ──────────────────────────────────────────
 
+alter table cuisine_categories enable row level security;
 alter table restaurants        enable row level security;
 alter table menu_items         enable row level security;
 alter table profiles           enable row level security;
 alter table saved_restaurants  enable row level security;
+
+-- Cuisine categories are public
+create policy "Public read cuisine_categories"
+  on cuisine_categories for select using (true);
 
 -- Restaurants and menus are public (anyone can read)
 create policy "Public read restaurants"

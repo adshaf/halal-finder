@@ -66,7 +66,7 @@ export default function FeaturedCollections() {
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {restaurants.map((r) => (
-              <Link key={r.id} href={`/restaurant/${r.slug}`} className="group cursor-pointer block">
+              <Link key={r.id} href={`/restaurant/${r.slug}`} target="_blank" rel="noopener noreferrer" className="group cursor-pointer block">
                 <div className="relative overflow-hidden rounded-2xl mb-4 aspect-4/5">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img

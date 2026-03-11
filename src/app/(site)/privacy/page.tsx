@@ -9,14 +9,14 @@ import {
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | HalalFind",
+  title: "Privacy Policy | HalalBites",
   description:
-    "How HalalFind collects, uses, and protects your personal information.",
+    "How HalalBites collects, uses, and protects your personal information.",
 };
 
 export default function PrivacyPage() {
   return (
-    <main className="bg-warm-dark min-h-screen pt-24">
+    <div className="pt-24">
       <div className="max-w-4xl mx-auto px-6 py-16 lg:py-24">
 
         {/* Page header */}
@@ -35,7 +35,7 @@ export default function PrivacyPage() {
           {/* Intro */}
           <section>
             <p className="text-lg leading-relaxed text-slate-300 font-display italic">
-              At HalalFind, we take your privacy seriously. This policy outlines
+              At HalalBites, we take your privacy seriously. This policy outlines
               how we collect, use, and protect your personal information when you
               use our platform to discover premium Halal-certified establishments
               worldwide.
@@ -74,7 +74,7 @@ export default function PrivacyPage() {
               </h2>
             </div>
             <div className="grid md:grid-cols-2 gap-6">
-              <div className="p-6 rounded-xl bg-white/5 border border-white/10">
+              <div className="p-6 rounded-xl bg-dark-surface/60 border border-gold/15">
                 <h3 className="font-bold mb-2 text-slate-100 flex items-center gap-2">
                   <CheckCircle2 size={16} className="text-gold" aria-hidden="true" />
                   Service Optimisation
@@ -84,7 +84,7 @@ export default function PrivacyPage() {
                   restaurants that match your dietary standards.
                 </p>
               </div>
-              <div className="p-6 rounded-xl bg-white/5 border border-white/10">
+              <div className="p-6 rounded-xl bg-dark-surface/60 border border-gold/15">
                 <h3 className="font-bold mb-2 text-slate-100 flex items-center gap-2">
                   <CheckCircle2 size={16} className="text-gold" aria-hidden="true" />
                   Safety &amp; Security
@@ -160,10 +160,10 @@ export default function PrivacyPage() {
                   contact our data protection officer.
                 </p>
                 <a
-                  href="mailto:privacy@halalfind.com"
+                  href="mailto:privacy@halalbites.com.au"
                   className="inline-flex items-center gap-2 text-gold font-bold hover:underline underline-offset-4"
                 >
-                  privacy@halalfind.com
+                  privacy@halalbites.com.au
                 </a>
               </div>
             </div>
@@ -171,6 +171,6 @@ export default function PrivacyPage() {
 
         </div>
       </div>
-    </main>
+    </div>
   );
 }

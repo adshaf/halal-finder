@@ -22,6 +22,8 @@ import {
   ChevronRight,
   CheckCircle2,
   AlertTriangle,
+  MapPin as MapPinIcon,
+  Loader2,
 } from "lucide-react";
 
 // ── Mock data ────────────────────────────────────────────
@@ -157,7 +159,7 @@ const SYSTEM_LINKS = [
 ];
 
 // ── Star logo ─────────────────────────────────────────────
-const HalalFindStar = () => (
+const HalalBitesStar = () => (
   <svg className="size-5 text-dark-bg" fill="currentColor" viewBox="0 0 48 48">
     <path d="M12.0799 24L4 19.2479L9.95537 8.75216L18.04 13.4961L18.0446 4H29.9554L29.96 13.4961L38.0446 8.75216L44 19.2479L35.92 24L44 28.7521L38.0446 39.2479L29.96 34.5039L29.9554 44H18.0446L18.04 34.5039L9.95537 39.2479L4 28.7521L12.0799 24Z" />
   </svg>
@@ -182,19 +184,35 @@ function StatusBadge({ status }: { status: string }) {
 // ── Page ──────────────────────────────────────────────────
 export default function AdminDashboard() {
   const [activeNav, setActiveNav] = useState("Dashboard");
+  const [geocoding, setGeocoding] = useState(false);
+  const [geocodeResult, setGeocodeResult] = useState<string | null>(null);
+
+  async function handleGeocodeClick() {
+    setGeocoding(true);
+    setGeocodeResult(null);
+    try {
+      const res = await fetch("/api/admin/geocode-missing", { method: "POST" });
+      const data = await res.json();
+      setGeocodeResult(data.message ?? data.error ?? "Done");
+    } catch {
+      setGeocodeResult("Request failed");
+    } finally {
+      setGeocoding(false);
+    }
+  }
 
   return (
-    <div className="bg-warm-dark text-slate-100 min-h-screen flex font-sans">
+    <div className="bg-dark-bg text-slate-100 min-h-screen flex font-sans">
       {/* ── Sidebar ── */}
-      <aside className="w-64 xl:w-72 bg-[#15130f] border-r border-gold/10 flex flex-col h-screen sticky top-0 shrink-0">
+      <aside className="w-64 xl:w-72 bg-dark-surface border-r border-gold/10 flex flex-col h-screen sticky top-0 shrink-0">
         {/* Logo */}
         <div className="p-6 flex items-center gap-3 border-b border-gold/10">
           <div className="size-10 rounded-full bg-gold flex items-center justify-center shrink-0">
-            <HalalFindStar />
+            <HalalBitesStar />
           </div>
           <div>
             <h1 className="text-white text-lg font-display font-bold leading-none">
-              HalalFind
+              HalalBites
             </h1>
             <p className="text-slate-500 text-xs mt-1">Admin Console</p>
           </div>
@@ -209,7 +227,7 @@ export default function AdminDashboard() {
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
                 activeNav === label
                   ? "bg-gold text-dark-bg font-bold"
-                  : "text-slate-400 hover:bg-white/5 hover:text-white"
+                  : "text-slate-400 hover:bg-dark-surface/60 hover:text-white"
               }`}
             >
               <Icon size={18} />
@@ -233,7 +251,7 @@ export default function AdminDashboard() {
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
                 activeNav === label
                   ? "bg-gold text-dark-bg font-bold"
-                  : "text-slate-400 hover:bg-white/5 hover:text-white"
+                  : "text-slate-400 hover:bg-dark-surface/60 hover:text-white"
               }`}
             >
               <Icon size={18} />
@@ -244,7 +262,7 @@ export default function AdminDashboard() {
 
         {/* User card */}
         <div className="p-4 border-t border-gold/10">
-          <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5">
+          <div className="flex items-center gap-3 p-3 rounded-xl bg-dark-surface/60">
             <div className="size-9 rounded-full bg-gold/20 border border-gold/30 flex items-center justify-center text-gold font-bold text-sm shrink-0">
               A
             </div>
@@ -267,7 +285,7 @@ export default function AdminDashboard() {
       {/* ── Main ── */}
       <main className="flex-1 flex flex-col min-w-0">
         {/* Header */}
-        <header className="h-16 bg-warm-dark/80 backdrop-blur-md border-b border-gold/10 px-8 flex items-center justify-between sticky top-0 z-10">
+        <header className="h-16 bg-dark-bg/80 backdrop-blur-md border-b border-gold/10 px-8 flex items-center justify-between sticky top-0 z-10">
           <div className="flex items-center flex-1 max-w-xl">
             <div className="relative w-full">
               <Search
@@ -278,18 +296,33 @@ export default function AdminDashboard() {
               <input
                 type="text"
                 placeholder="Search restaurants, users, or applications..."
-                className="w-full pl-10 pr-4 py-2 rounded-xl bg-white/5 border border-white/5 focus:border-gold/30 focus:outline-none text-sm text-slate-200 placeholder:text-slate-600 transition-colors"
+                className="w-full pl-10 pr-4 py-2 rounded-xl bg-dark-surface/60 border border-gold/15 focus:border-gold/40 focus:outline-none text-sm text-slate-200 placeholder:text-slate-600 transition-colors"
               />
             </div>
           </div>
           <div className="flex items-center gap-4 ml-6">
             <button
-              className="size-9 rounded-full flex items-center justify-center bg-white/5 hover:bg-gold/10 transition-colors relative"
+              className="size-9 rounded-full flex items-center justify-center bg-dark-surface/60 hover:bg-gold/10 transition-colors relative"
               aria-label="Notifications"
             >
               <Bell size={16} className="text-slate-400" />
               <span className="absolute top-2 right-2 size-2 bg-amber-400 rounded-full border-2 border-warm-dark" />
             </button>
+            <div className="h-6 w-px bg-gold/10" />
+            <div className="flex flex-col items-end gap-1">
+              <button
+                onClick={handleGeocodeClick}
+                disabled={geocoding}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gold/20 text-slate-400 hover:text-slate-200 hover:border-gold/40 text-sm transition-colors disabled:opacity-50"
+                title="Geocode all restaurants missing lat/lng coordinates"
+              >
+                {geocoding ? <Loader2 size={14} className="animate-spin" /> : <MapPinIcon size={14} />}
+                {geocoding ? "Geocoding…" : "Geocode Missing"}
+              </button>
+              {geocodeResult && (
+                <span className="text-xs text-slate-500">{geocodeResult}</span>
+              )}
+            </div>
             <div className="h-6 w-px bg-gold/10" />
             <button className="bg-gold text-dark-bg px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-1.5 hover:brightness-110 transition-all">
               <Plus size={16} />
@@ -306,7 +339,7 @@ export default function AdminDashboard() {
               Overview Dashboard
             </h2>
             <p className="text-gold/60 mt-1 text-sm">
-              Welcome back. Here is a summary of HalalFind activities for today.
+              Welcome back. Here is a summary of HalalBites activities for today.
             </p>
           </div>
 
@@ -325,7 +358,7 @@ export default function AdminDashboard() {
               }) => (
                 <div
                   key={label}
-                  className="bg-white/5 p-6 rounded-2xl border border-gold/10 relative overflow-hidden"
+                  className="bg-dark-surface/60 p-6 rounded-2xl border border-gold/10 relative overflow-hidden"
                 >
                   <div className="flex justify-between items-start mb-4">
                     <div
@@ -353,7 +386,7 @@ export default function AdminDashboard() {
           </div>
 
           {/* Applications Table */}
-          <div className="bg-white/5 rounded-2xl border border-gold/10 overflow-hidden">
+          <div className="bg-dark-surface/60 rounded-2xl border border-gold/10 overflow-hidden">
             <div className="p-6 border-b border-gold/10 flex flex-wrap items-center justify-between gap-4">
               <div>
                 <h3 className="text-xl font-display font-bold text-slate-100">
@@ -364,10 +397,10 @@ export default function AdminDashboard() {
                 </p>
               </div>
               <div className="flex items-center gap-3">
-                <button className="flex items-center gap-2 px-4 py-2 border border-gold/20 rounded-lg text-sm text-slate-400 hover:bg-white/5 hover:text-slate-200 transition-colors">
+                <button className="flex items-center gap-2 px-4 py-2 border border-gold/20 rounded-lg text-sm text-slate-400 hover:bg-dark-surface/60 hover:text-slate-200 transition-colors">
                   <Filter size={15} /> Filter
                 </button>
-                <button className="flex items-center gap-2 px-4 py-2 border border-gold/20 rounded-lg text-sm text-slate-400 hover:bg-white/5 hover:text-slate-200 transition-colors">
+                <button className="flex items-center gap-2 px-4 py-2 border border-gold/20 rounded-lg text-sm text-slate-400 hover:bg-dark-surface/60 hover:text-slate-200 transition-colors">
                   <Download size={15} /> Export
                 </button>
               </div>
@@ -376,7 +409,7 @@ export default function AdminDashboard() {
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-white/5 text-gold/40 text-xs uppercase tracking-wider font-bold">
+                  <tr className="bg-dark-surface/60 text-gold/40 text-xs uppercase tracking-wider font-bold">
                     <th className="px-6 py-4">Restaurant</th>
                     <th className="px-6 py-4">Category</th>
                     <th className="px-6 py-4">Submission Date</th>
@@ -389,7 +422,7 @@ export default function AdminDashboard() {
                   {APPLICATIONS.map((app) => (
                     <tr
                       key={app.name}
-                      className="hover:bg-white/5 transition-colors"
+                      className="hover:bg-dark-surface/60 transition-colors"
                     >
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
@@ -456,13 +489,13 @@ export default function AdminDashboard() {
                     className={`size-8 rounded flex items-center justify-center text-xs font-bold transition-colors ${
                       p === 1
                         ? "bg-gold text-dark-bg"
-                        : "border border-gold/20 text-slate-400 hover:bg-white/5"
+                        : "border border-gold/20 text-slate-400 hover:bg-dark-surface/60"
                     }`}
                   >
                     {p}
                   </button>
                 ))}
-                <button className="size-8 rounded flex items-center justify-center border border-gold/20 text-slate-400 hover:bg-white/5 transition-colors">
+                <button className="size-8 rounded flex items-center justify-center border border-gold/20 text-slate-400 hover:bg-dark-surface/60 transition-colors">
                   <ChevronRight size={14} />
                 </button>
               </div>

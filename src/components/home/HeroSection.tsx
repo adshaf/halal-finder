@@ -10,7 +10,9 @@ export default function HeroSection() {
 
   const handleSearch = () => {
     const q = query.trim();
-    router.push(q ? `/searchResults?q=${encodeURIComponent(q)}` : "/searchResults");
+    router.push(
+      q ? `/searchResults?q=${encodeURIComponent(q)}` : "/searchResults",
+    );
   };
 
   return (
@@ -18,22 +20,24 @@ export default function HeroSection() {
       <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
         {/* Left: copy + search */}
         <div className="z-10">
-          <span className="inline-block px-4 py-1 rounded-full bg-dark-surface border border-gold/20 text-gold text-xs font-bold uppercase tracking-widest mb-6">
-            Sydney&apos;s Halal Restaurant Guide
-          </span>
           <h1 className="font-display text-5xl lg:text-7xl font-bold leading-tight mb-8">
             Find Halal <br />
             <span className="text-gold italic">Done Right</span>
           </h1>
           <p className="text-lg text-slate-400 max-w-lg mb-10 leading-relaxed">
-            Discover Sydney&apos;s best halal restaurants — verified information
-            on cuisine, location, hours, and halal credentials, all in one place.
+            Discover Sydney&apos;s best halal restaurants - verified information
+            on cuisine, location, hours, and halal credentials, all in one
+            place.
           </p>
 
           {/* Search */}
           <div className="flex flex-col sm:flex-row gap-2 p-2 bg-dark-surface/30 border border-gold/10 rounded-2xl backdrop-blur-sm max-w-xl">
             <div className="flex flex-1 items-center gap-3 px-4 py-3">
-              <Search size={20} className="text-gold shrink-0" aria-hidden="true" />
+              <Search
+                size={20}
+                className="text-gold shrink-0"
+                aria-hidden="true"
+              />
               <input
                 type="text"
                 value={query}
@@ -45,7 +49,7 @@ export default function HeroSection() {
             </div>
             <button
               onClick={handleSearch}
-              className="bg-gold text-dark-bg px-8 py-3 rounded-xl font-bold text-sm hover:brightness-110 transition-all"
+              className="bg-gold text-dark-bg px-8 py-3 rounded-xl cursor-pointer font-bold text-sm hover:brightness-110 transition-all"
             >
               Find Restaurants
             </button>

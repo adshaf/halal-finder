@@ -12,14 +12,14 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Terms & Conditions | HalalFind",
+  title: "Terms & Conditions | HalalBites",
   description:
-    "HalalFind terms and conditions — guidelines for using our platform, built on transparency, trust, and respect.",
+    "HalalBites terms and conditions — guidelines for using our platform, built on transparency, trust, and respect.",
 };
 
 export default function TermsPage() {
   return (
-    <main className="bg-warm-dark min-h-screen pt-24">
+    <div className="pt-24">
       <div className="max-w-4xl mx-auto px-6 py-16 lg:py-24">
 
         {/* Page header */}
@@ -38,8 +38,8 @@ export default function TermsPage() {
           {/* Intro */}
           <section>
             <p className="text-lg leading-relaxed text-slate-300 font-display italic">
-              Welcome to HalalFind. These Terms and Conditions govern your use of
-              our platform and services. By accessing or using HalalFind, you
+              Welcome to HalalBites. These Terms and Conditions govern your use of
+              our platform and services. By accessing or using HalalBites, you
               agree to be bound by these guidelines, which are built upon
               principles of transparency, honesty, and mutual respect.
             </p>
@@ -72,7 +72,7 @@ export default function TermsPage() {
               </h2>
             </div>
             <div className="grid md:grid-cols-2 gap-6">
-              <div className="p-6 rounded-xl bg-white/5 border border-white/10">
+              <div className="p-6 rounded-xl bg-dark-surface/60 border border-gold/15">
                 <h3 className="font-bold mb-2 text-slate-100 flex items-center gap-2">
                   <CheckCircle2 size={16} className="text-gold" aria-hidden="true" />
                   Your Rights
@@ -84,7 +84,7 @@ export default function TermsPage() {
                   <li>Right to close your account at any time.</li>
                 </ul>
               </div>
-              <div className="p-6 rounded-xl bg-white/5 border border-white/10">
+              <div className="p-6 rounded-xl bg-dark-surface/60 border border-gold/15">
                 <h3 className="font-bold mb-2 text-slate-100 flex items-center gap-2">
                   <AlertCircle size={16} className="text-gold" aria-hidden="true" />
                   Your Responsibilities
@@ -108,16 +108,16 @@ export default function TermsPage() {
               </h2>
             </div>
             <p className="text-slate-300 leading-relaxed">
-              All content on HalalFind — including restaurant listings,
+              All content on HalalBites — including restaurant listings,
               photography, written descriptions, brand identity, and design
-              elements — is the property of HalalFind or its respective content
+              elements — is the property of HalalBites or its respective content
               partners. This material is protected under applicable copyright and
               intellectual property laws.
             </p>
-            <div className="bg-white/5 p-6 rounded-xl border-l-4 border-primary">
+            <div className="bg-dark-surface/60 p-6 rounded-xl border-l-4 border-gold">
               <p className="italic text-slate-300 font-medium">
                 &ldquo;We encourage the sharing of our curated recommendations,
-                provided content is attributed to HalalFind and used for personal,
+                provided content is attributed to HalalBites and used for personal,
                 non-commercial purposes only.&rdquo;
               </p>
             </div>
@@ -159,10 +159,10 @@ export default function TermsPage() {
                   shared responsibilities.
                 </p>
                 <a
-                  href="mailto:support@halalfind.com"
+                  href="mailto:support@halalbites.com.au"
                   className="inline-flex items-center gap-2 text-gold font-bold hover:underline underline-offset-4"
                 >
-                  support@halalfind.com
+                  support@halalbites.com.au
                 </a>
               </div>
             </div>
@@ -170,6 +170,6 @@ export default function TermsPage() {
 
         </div>
       </div>
-    </main>
+    </div>
   );
 }
