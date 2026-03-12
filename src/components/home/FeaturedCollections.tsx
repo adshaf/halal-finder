@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { ArrowRight, MapPin, CheckCircle2, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { HALAL_ICONS } from "@/lib/constants";
 import type { Restaurant } from "@/lib/constants";
 
 export default function FeaturedCollections() {
@@ -12,7 +13,6 @@ export default function FeaturedCollections() {
 
   useEffect(() => {
     const supabase = createClient();
-    // Try to get featured ones first; if fewer than 3, fill with others
     supabase
       .from("restaurants")
       .select("*")
@@ -22,13 +22,16 @@ export default function FeaturedCollections() {
         if ((featured?.length ?? 0) >= 3) {
           setRestaurants(featured!);
         } else {
-          // Pad with non-featured restaurants
           const needed = 3 - (featured?.length ?? 0);
           const featuredIds = (featured ?? []).map((r) => r.id);
           const { data: rest } = await supabase
             .from("restaurants")
             .select("*")
-            .not("id", "in", featuredIds.length ? `(${featuredIds.join(",")})` : "(0)")
+            .not(
+              "id",
+              "in",
+              featuredIds.length ? `(${featuredIds.join(",")})` : "(0)",
+            )
             .limit(needed);
           setRestaurants([...(featured ?? []), ...(rest ?? [])]);
         }
@@ -66,11 +69,20 @@ export default function FeaturedCollections() {
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {restaurants.map((r) => (
-              <Link key={r.id} href={`/restaurant/${r.slug}`} target="_blank" rel="noopener noreferrer" className="group cursor-pointer block">
+              <Link
+                key={r.id}
+                href={`/restaurant/${r.slug}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group cursor-pointer block"
+              >
                 <div className="relative overflow-hidden rounded-2xl mb-4 aspect-4/5">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={r.image ?? "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600"}
+                    src={
+                      r.image ??
+                      "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600"
+                    }
                     alt={r.name}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   />
@@ -87,25 +99,13 @@ export default function FeaturedCollections() {
                 <p className="text-slate-400 text-sm mb-3 flex items-center gap-1.5">
                   <MapPin size={13} className="text-gold shrink-0" />
                   {r.location}
-                  {r.cuisine && <><span className="text-slate-600">·</span>{r.cuisine}</>}
+                  {r.cuisine && (
+                    <>
+                      <span className="text-slate-600">·</span>
+                      {r.cuisine}
+                    </>
+                  )}
                 </p>
-                <div className="flex gap-2 flex-wrap">
-                  {r.halal_certified && (
-                    <span className="text-[10px] uppercase tracking-widest bg-dark-surface px-2 py-1 rounded border border-gold/10 text-gold">
-                      Halal Certified
-                    </span>
-                  )}
-                  {r.no_alcohol && (
-                    <span className="text-[10px] uppercase tracking-widest bg-dark-surface px-2 py-1 rounded border border-gold/10 text-gold">
-                      No Alcohol
-                    </span>
-                  )}
-                  {r.muslim_owned && (
-                    <span className="text-[10px] uppercase tracking-widest bg-dark-surface px-2 py-1 rounded border border-gold/10 text-gold">
-                      Muslim Owned
-                    </span>
-                  )}
-                </div>
               </Link>
             ))}
           </div>

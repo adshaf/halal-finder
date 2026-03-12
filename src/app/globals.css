@@ -102,6 +102,16 @@ body {
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
+/* Subtle scrollbar for dark-theme selects and modals */
+select::-webkit-scrollbar,
+.admin-scroll::-webkit-scrollbar { width: 4px; }
+select::-webkit-scrollbar-track,
+.admin-scroll::-webkit-scrollbar-track { background: transparent; }
+select::-webkit-scrollbar-thumb,
+.admin-scroll::-webkit-scrollbar-thumb { background: rgba(202, 169, 104, 0.2); border-radius: 4px; }
+select::-webkit-scrollbar-thumb:hover,
+.admin-scroll::-webkit-scrollbar-thumb:hover { background: rgba(202, 169, 104, 0.4); }
+
 /* Islamic geometric star pattern used in hero and newsletter sections */
 .geometric-pattern {
   background-color: #f6f8f7;

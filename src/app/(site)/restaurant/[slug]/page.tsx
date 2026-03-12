@@ -40,6 +40,7 @@ export default function RestaurantPage() {
   const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
   const [loading, setLoading] = useState(true);
   const [wishlisted, setWishlisted] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
   const [notFoundFlag, setNotFoundFlag] = useState(false);
 
   useEffect(() => {
@@ -50,9 +51,21 @@ export default function RestaurantPage() {
       .eq("slug", slug)
       .single()
       .then(({ data }) => {
-        if (!data) setNotFoundFlag(true);
-        else setRestaurant(data);
+        if (!data) { setNotFoundFlag(true); setLoading(false); return; }
+        setRestaurant(data);
         setLoading(false);
+        // Check if user has saved this restaurant
+        supabase.auth.getUser().then(({ data: { user } }) => {
+          if (!user) return;
+          setUserId(user.id);
+          supabase
+            .from("saved_restaurants")
+            .select("restaurant_id")
+            .eq("user_id", user.id)
+            .eq("restaurant_id", data.id)
+            .maybeSingle()
+            .then(({ data: saved }) => setWishlisted(!!saved));
+        });
       });
   }, [slug]);
 
@@ -156,7 +169,22 @@ export default function RestaurantPage() {
                 </a>
               )}
               <button
-                onClick={() => setWishlisted((v) => !v)}
+                onClick={async () => {
+                  const supabase = createClient();
+                  if (!userId) {
+                    const { data: { user } } = await supabase.auth.getUser();
+                    if (!user) { window.location.href = "/auth"; return; }
+                    setUserId(user.id);
+                  }
+                  const uid = userId ?? (await supabase.auth.getUser()).data.user?.id;
+                  if (!uid || !restaurant) return;
+                  setWishlisted((v) => !v); // optimistic
+                  if (wishlisted) {
+                    await supabase.from("saved_restaurants").delete().eq("user_id", uid).eq("restaurant_id", restaurant.id);
+                  } else {
+                    await supabase.from("saved_restaurants").insert({ user_id: uid, restaurant_id: restaurant.id });
+                  }
+                }}
                 aria-label="Save to wishlist"
                 className="px-4 py-2.5 bg-transparent border border-white/20 rounded-lg hover:border-gold/40 transition-all"
               >

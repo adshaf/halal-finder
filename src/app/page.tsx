@@ -1,6 +1,6 @@
 import HomeNavbar from "@/components/home/HomeNavbar";
 import HeroSection from "@/components/home/HeroSection";
-import CategoriesSection from "@/components/home/CategoriesSection";
+import MissionSection from "@/components/home/MissionSection";
 import FeaturedCollections from "@/components/home/FeaturedCollections";
 import CTASection from "@/components/home/CTASection";
 import HomeFooter from "@/components/home/HomeFooter";
@@ -11,7 +11,7 @@ export default function Home() {
       <HomeNavbar />
       <main className="flex flex-col flex-1">
         <HeroSection />
-        <CategoriesSection />
+        <MissionSection />
         <FeaturedCollections />
         <CTASection />
       </main>

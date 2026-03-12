@@ -17,7 +17,7 @@ const footerLinks = {
     { label: "Popular Cities", href: "/searchResults" },
     { label: "Featured Lists", href: "/searchResults" },
     { label: "Cuisine Guide", href: "/searchResults" },
-    { label: "Halal Standards", href: "/about" },
+    { label: "Halal Standards", href: "/searchResults" },
   ],
   "For Businesses": [
     { label: "Partner with Us", href: "/join" },

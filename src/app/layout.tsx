@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Noto_Serif, Noto_Sans } from "next/font/google";
 import "./globals.css";
+import { AuthProvider } from "@/components/providers/AuthProvider";
 
 const notoSerif = Noto_Serif({
   variable: "--font-noto-serif",
@@ -32,7 +33,7 @@ export default function RootLayout({
       <body
         className={`${notoSerif.variable} ${notoSans.variable} bg-background-light font-sans text-slate-900 antialiased`}
       >
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

@@ -11,7 +11,14 @@ import "leaflet/dist/leaflet.css";
 import "react-leaflet-cluster/dist/assets/MarkerCluster.css";
 import "react-leaflet-cluster/dist/assets/MarkerCluster.Default.css";
 import L from "leaflet";
-import { MapContainer, TileLayer, Marker, Tooltip, CircleMarker, useMap } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Tooltip,
+  CircleMarker,
+  useMap,
+} from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import { useEffect } from "react";
 import type { Restaurant } from "@/lib/constants";
@@ -38,10 +45,10 @@ function createPinIcon(color: string) {
 }
 
 const goldPin = createPinIcon("#caa968");
-const greenPin = createPinIcon("#11d483");
+const greenPin = createPinIcon("#045606");
 
 // Custom cluster icon — gold bubble matching the site's dark/gold theme
-function createClusterIcon(cluster: L.MarkerCluster) {
+function createClusterIcon(cluster: { getChildCount: () => number }) {
   const count = cluster.getChildCount();
   const size = count < 10 ? 36 : count < 100 ? 42 : 48;
   return L.divIcon({
@@ -53,7 +60,11 @@ function createClusterIcon(cluster: L.MarkerCluster) {
 
 // Re-centres programmatically — only used when there is no location-based query
 // (i.e. user searched "lebanese food" and we want to follow their live position)
-function UserPositionCenterer({ userPosition }: { userPosition: { lat: number; lng: number } | null }) {
+function UserPositionCenterer({
+  userPosition,
+}: {
+  userPosition: { lat: number; lng: number } | null;
+}) {
   const map = useMap();
   useEffect(() => {
     if (userPosition) map.setView([userPosition.lat, userPosition.lng], 13);
@@ -68,7 +79,12 @@ type Props = {
   onSelectRestaurant: (r: Restaurant) => void;
 };
 
-export default function MapView({ restaurants, userPosition, searchQuery, onSelectRestaurant }: Props) {
+export default function MapView({
+  restaurants,
+  userPosition,
+  searchQuery,
+  onSelectRestaurant,
+}: Props) {
   const pinned = restaurants.filter(
     (r) => r.latitude !== null && r.longitude !== null,
   );
@@ -78,8 +94,7 @@ export default function MapView({ restaurants, userPosition, searchQuery, onSele
   // A food-type search ("lebanese food") won't match location fields, so we follow the user instead.
   const q = searchQuery.toLowerCase().trim();
   const isLocationSearch =
-    q.length > 0 &&
-    pinned.some((r) => r.location?.toLowerCase().includes(q));
+    q.length > 0 && pinned.some((r) => r.location?.toLowerCase().includes(q));
 
   const centroid: [number, number] | null =
     pinned.length > 0
@@ -93,11 +108,12 @@ export default function MapView({ restaurants, userPosition, searchQuery, onSele
   //   location query  → centroid of matching pins (overrides live position)
   //   no location     → user's live position
   //   fallback        → Sydney CBD
-  const centre: [number, number] = isLocationSearch && centroid
-    ? centroid
-    : userPosition
-      ? [userPosition.lat, userPosition.lng]
-      : centroid ?? SYDNEY_CBD;
+  const centre: [number, number] =
+    isLocationSearch && centroid
+      ? centroid
+      : userPosition
+        ? [userPosition.lat, userPosition.lng]
+        : (centroid ?? SYDNEY_CBD);
 
   return (
     <MapContainer
@@ -115,7 +131,9 @@ export default function MapView({ restaurants, userPosition, searchQuery, onSele
       />
 
       {/* Only follow live position when the search is NOT location-based */}
-      {!isLocationSearch && <UserPositionCenterer userPosition={userPosition} />}
+      {!isLocationSearch && (
+        <UserPositionCenterer userPosition={userPosition} />
+      )}
 
       {userPosition && (
         <>
@@ -123,13 +141,23 @@ export default function MapView({ restaurants, userPosition, searchQuery, onSele
           <CircleMarker
             center={[userPosition.lat, userPosition.lng]}
             radius={18}
-            pathOptions={{ color: "#3b82f6", fillColor: "#3b82f6", fillOpacity: 0.15, weight: 0 }}
+            pathOptions={{
+              color: "#3b82f6",
+              fillColor: "#3b82f6",
+              fillOpacity: 0.15,
+              weight: 0,
+            }}
           />
           {/* Blue dot */}
           <CircleMarker
             center={[userPosition.lat, userPosition.lng]}
             radius={8}
-            pathOptions={{ color: "#fff", fillColor: "#3b82f6", fillOpacity: 1, weight: 2.5 }}
+            pathOptions={{
+              color: "#fff",
+              fillColor: "#3b82f6",
+              fillOpacity: 1,
+              weight: 2.5,
+            }}
           />
         </>
       )}
@@ -146,12 +174,11 @@ export default function MapView({ restaurants, userPosition, searchQuery, onSele
           <Marker
             key={r.id}
             position={[r.latitude!, r.longitude!]}
-            icon={r.featured ? greenPin : goldPin}
+            icon={r.featured ? goldPin : greenPin}
             eventHandlers={{ click: () => onSelectRestaurant(r) }}
           >
-            {/* Permanent label shown next to the pin, like Google Maps */}
             <Tooltip
-              permanent
+              permanent={!!r.featured}
               direction="right"
               offset={[10, -18]}
               className="map-pin-label"

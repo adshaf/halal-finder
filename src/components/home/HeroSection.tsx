@@ -21,13 +21,13 @@ export default function HeroSection() {
         {/* Left: copy + search */}
         <div className="z-10">
           <h1 className="font-display text-5xl lg:text-7xl font-bold leading-tight mb-8">
-            Find Halal <br />
-            <span className="text-gold italic">Done Right</span>
+            Discover Halal Dining <br />
+            <span className="text-gold italic">Your Way</span>
           </h1>
           <p className="text-lg text-slate-400 max-w-lg mb-10 leading-relaxed">
-            Discover Sydney&apos;s best halal restaurants - verified information
-            on cuisine, location, hours, and halal credentials, all in one
-            place.
+            Explore halal dining options across Sydney with transparent
+            information on halal practices, cuisine, location, and hours -
+            helping you make the choice that feels right for you.
           </p>
 
           {/* Search */}

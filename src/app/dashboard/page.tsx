@@ -1,315 +1,484 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
-  Bell,
-  Search,
   Heart,
   Star,
   MapPin,
-  ChevronRight,
-  BookOpen,
+  FileText,
   MessageSquare,
-  Home,
-  Compass,
-  Menu,
-  X,
+  LogOut,
+  Loader2,
+  Trash2,
+  ExternalLink,
+  Clock,
+  CheckCircle2,
+  XCircle,
+  ChevronRight,
 } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
+import type { User } from "@supabase/supabase-js";
+import type { Restaurant } from "@/lib/constants";
 
-const SAVED_RESTAURANTS = [
-  {
-    id: 1,
-    name: "The Saffron Grill",
-    cuisine: "Persian · Fine Dining",
-    rating: 4.8,
-    location: "Mayfair, London",
-    image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600",
-    certified: true,
-  },
-  {
-    id: 2,
-    name: "Masala Street",
-    cuisine: "Indian · Street Food",
-    rating: 4.7,
-    location: "Soho, London",
-    image: "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600",
-    certified: true,
-  },
-  {
-    id: 3,
-    name: "Ottoman Kitchen",
-    cuisine: "Turkish · Group Dining",
-    rating: 4.2,
-    location: "Camden, London",
-    image: "https://images.unsplash.com/photo-1544025162-d76694265947?w=600",
-    certified: false,
-  },
-  {
-    id: 4,
-    name: "The Prime Cut",
-    cuisine: "Steakhouse · Gourmet",
-    rating: 4.6,
-    location: "Kensington, London",
-    image: "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=600",
-    certified: false,
-  },
-];
+// ── Types ────────────────────────────────────────────────────────────────────
 
+type SavedRow = {
+  restaurant_id: number;
+  created_at: string;
+  restaurants: Restaurant;
+};
+
+type Application = {
+  id: string;
+  name: string;
+  cuisine: string | null;
+  suburb: string | null;
+  submitted_at: string;
+  status: "pending" | "approved" | "rejected";
+  admin_notes: string | null;
+};
+
+type Review = {
+  id: number;
+  rating: number;
+  body: string | null;
+  created_at: string;
+  restaurants: { name: string; slug: string };
+};
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
+function StatusBadge({ status }: { status: Application["status"] }) {
+  if (status === "approved")
+    return (
+      <span className="flex items-center gap-1 text-xs font-semibold text-primary bg-primary/10 border border-primary/20 px-2 py-0.5 rounded-full">
+        <CheckCircle2 size={11} /> Approved
+      </span>
+    );
+  if (status === "rejected")
+    return (
+      <span className="flex items-center gap-1 text-xs font-semibold text-red-400 bg-red-400/10 border border-red-400/20 px-2 py-0.5 rounded-full">
+        <XCircle size={11} /> Rejected
+      </span>
+    );
+  return (
+    <span className="flex items-center gap-1 text-xs font-semibold text-gold bg-gold/10 border border-gold/20 px-2 py-0.5 rounded-full">
+      <Clock size={11} /> Pending
+    </span>
+  );
+}
+
+function Stars({ rating }: { rating: number }) {
+  return (
+    <div className="flex gap-0.5">
+      {[1, 2, 3, 4, 5].map((n) => (
+        <Star
+          key={n}
+          size={13}
+          className={n <= rating ? "text-gold fill-gold" : "text-slate-600"}
+        />
+      ))}
+    </div>
+  );
+}
+
+// ── Main component ────────────────────────────────────────────────────────────
+
+type Tab = "saved" | "applications" | "reviews";
 
 export default function DashboardPage() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const router = useRouter();
+  const [user, setUser] = useState<User | null>(null);
+  const [tab, setTab] = useState<Tab>("saved");
+
+  const [saved, setSaved] = useState<SavedRow[]>([]);
+  const [applications, setApplications] = useState<Application[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function load() {
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        router.replace("/auth");
+        return;
+      }
+
+      setUser(user);
+
+      const [savedIdsRes, appRes, reviewRes] = await Promise.all([
+        supabase
+          .from("saved_restaurants")
+          .select("restaurant_id, created_at")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false }),
+        supabase
+          .from("restaurant_applications")
+          .select("id, name, cuisine, suburb, submitted_at, status, admin_notes")
+          .eq("submitted_by", user.id)
+          .order("submitted_at", { ascending: false }),
+        supabase
+          .from("reviews")
+          .select("id, rating, body, created_at, restaurant_id")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false }),
+      ]);
+
+      if (savedIdsRes.error) console.error("saved_restaurants query error:", savedIdsRes.error);
+      if (appRes.error) console.error("applications query error:", appRes.error);
+      if (reviewRes.error) console.error("reviews query error:", reviewRes.error);
+
+      // Fetch full restaurant data for saved rows
+      const savedIds = (savedIdsRes.data ?? []).map((r) => r.restaurant_id);
+      let savedRestaurants: Restaurant[] = [];
+      if (savedIds.length > 0) {
+        const { data } = await supabase
+          .from("restaurants")
+          .select("*")
+          .in("id", savedIds);
+        savedRestaurants = (data as Restaurant[]) ?? [];
+      }
+      const savedRows: SavedRow[] = (savedIdsRes.data ?? []).map((row) => ({
+        restaurant_id: row.restaurant_id,
+        created_at: row.created_at,
+        restaurants: savedRestaurants.find((r) => r.id === row.restaurant_id)!,
+      })).filter((row) => row.restaurants);
+
+      // Fetch restaurant name/slug for reviews
+      const reviewRestaurantIds = (reviewRes.data ?? []).map((r) => r.restaurant_id);
+      let reviewRestaurants: { id: number; name: string; slug: string }[] = [];
+      if (reviewRestaurantIds.length > 0) {
+        const { data } = await supabase
+          .from("restaurants")
+          .select("id, name, slug")
+          .in("id", reviewRestaurantIds);
+        reviewRestaurants = data ?? [];
+      }
+      const reviewRows: Review[] = (reviewRes.data ?? []).map((r) => ({
+        id: r.id,
+        rating: r.rating,
+        body: r.body,
+        created_at: r.created_at,
+        restaurants: reviewRestaurants.find((rest) => rest.id === r.restaurant_id) ?? { name: "Unknown", slug: "" },
+      }));
+
+      setSaved(savedRows);
+      setApplications((appRes.data as Application[]) ?? []);
+      setReviews(reviewRows);
+      setLoading(false);
+    }
+
+    load();
+  }, [router]);
+
+  async function unsaveRestaurant(restaurantId: number) {
+    if (!user) return;
+    const supabase = createClient();
+    await supabase
+      .from("saved_restaurants")
+      .delete()
+      .eq("user_id", user.id)
+      .eq("restaurant_id", restaurantId);
+    setSaved((prev) => prev.filter((r) => r.restaurant_id !== restaurantId));
+  }
+
+  async function deleteReview(reviewId: number) {
+    const supabase = createClient();
+    await supabase.from("reviews").delete().eq("id", reviewId);
+    setReviews((prev) => prev.filter((r) => r.id !== reviewId));
+  }
+
+  async function handleLogout() {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/");
+    router.refresh();
+  }
+
+  const userInitial =
+    user?.user_metadata?.full_name?.[0]?.toUpperCase() ??
+    user?.email?.[0]?.toUpperCase() ??
+    "U";
+
+  const displayName =
+    user?.user_metadata?.full_name ?? user?.email?.split("@")[0] ?? "User";
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-dark-bg flex items-center justify-center">
+        <Loader2 size={28} className="animate-spin text-gold" />
+      </div>
+    );
+  }
+
+  const tabs: { id: Tab; label: string; icon: React.ReactNode; count: number }[] = [
+    { id: "saved", label: "Saved", icon: <Heart size={16} />, count: saved.length },
+    { id: "applications", label: "Applications", icon: <FileText size={16} />, count: applications.length },
+    { id: "reviews", label: "My Reviews", icon: <MessageSquare size={16} />, count: reviews.length },
+  ];
 
   return (
-    <div className="min-h-screen bg-dark-bg text-slate-100 flex flex-col">
-      {/* ── Header ── */}
-      <header className="sticky top-0 z-50 bg-dark-bg/95 backdrop-blur-md border-b border-gold/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center gap-4">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 shrink-0">
-            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-              <span className="text-warm-dark font-bold text-sm">H</span>
+    <div className="min-h-screen bg-dark-bg text-slate-200">
+      {/* Header */}
+      <div className="border-b border-gold/10 bg-warm-dark/60 backdrop-blur-sm px-6 py-5">
+        <div className="max-w-4xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="size-11 rounded-full bg-gold/20 border border-gold/30 flex items-center justify-center text-gold font-bold text-lg">
+              {userInitial}
             </div>
-            <span className="font-bold text-white hidden sm:block">HalalBites</span>
-          </Link>
-
-          {/* Nav links */}
-          <nav className="hidden md:flex items-center gap-1 ml-6">
-            {[
-              { label: "Home", href: "/", icon: Home },
-              { label: "Explore", href: "/searchResults", icon: Compass },
-              { label: "Saved", href: "/dashboard", icon: BookOpen },
-              { label: "Community", href: "#", icon: MessageSquare },
-            ].map(({ label, href, icon: Icon }) => (
-              <Link
-                key={label}
-                href={href}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-white hover:bg-dark-surface transition-colors"
-              >
-                <Icon size={14} />
-                {label}
-              </Link>
-            ))}
-          </nav>
-
-          {/* Spacer */}
-          <div className="flex-1" />
-
-          {/* Search */}
-          <div className="hidden sm:flex items-center gap-2 bg-dark-surface/60 border border-gold/15 rounded-lg px-3 py-2 w-56 focus-within:border-primary/40 transition-colors">
-            <Search size={14} className="text-slate-500 shrink-0" />
-            <input
-              type="text"
-              placeholder="Search restaurants..."
-              className="bg-transparent text-sm text-slate-300 placeholder-slate-500 outline-none w-full"
-            />
-          </div>
-
-          {/* Bell */}
-          <button className="relative p-2 rounded-lg hover:bg-dark-surface transition-colors">
-            <Bell size={18} className="text-slate-400" />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-gold" />
-          </button>
-
-          {/* Avatar */}
-          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-gold to-primary flex items-center justify-center shrink-0">
-            <span className="text-warm-dark font-bold text-sm">A</span>
-          </div>
-
-          {/* Mobile menu toggle */}
-          <button
-            className="md:hidden p-2 rounded-lg hover:bg-dark-surface transition-colors"
-            onClick={() => setMobileMenuOpen((v) => !v)}
-          >
-            {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
-          </button>
-        </div>
-
-        {/* Mobile nav */}
-        {mobileMenuOpen && (
-          <div className="md:hidden border-t border-gold/10 px-4 py-3 flex flex-col gap-1">
-            {[
-              { label: "Home", href: "/" },
-              { label: "Explore", href: "/searchResults" },
-              { label: "Saved", href: "/dashboard" },
-              { label: "Community", href: "#" },
-            ].map(({ label, href }) => (
-              <Link
-                key={label}
-                href={href}
-                className="px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-white hover:bg-dark-surface transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {label}
-              </Link>
-            ))}
-          </div>
-        )}
-      </header>
-
-      {/* ── Main ── */}
-      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-8 space-y-10">
-        {/* Welcome */}
-        <section>
-          <p className="text-slate-400 text-sm mb-1">Welcome back</p>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white">
-            Assalamu Alaikum, <span className="text-primary">Ahmed</span> 👋
-          </h1>
-          <p className="text-slate-400 mt-1 text-sm">
-            Here&apos;s what&apos;s happening with your halal dining journey
-          </p>
-        </section>
-
-        {/* Quick stats */}
-        <section className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {[
-            { label: "Saved Places", value: "12", icon: Heart, sub: "3 new this week" },
-            { label: "Restaurants Viewed", value: "34", icon: Compass, sub: "This month" },
-            { label: "Reviews Written", value: "8", icon: Star, sub: "Avg. 4.6 rating" },
-          ].map(({ label, value, icon: Icon, sub }) => (
-            <div
-              key={label}
-              className="bg-dark-surface/60 border border-gold/15 rounded-xl p-5 flex items-start gap-4 hover:border-gold/20 transition-colors"
-            >
-              <div className="w-11 h-11 rounded-xl bg-gold/10 border border-gold/20 flex items-center justify-center shrink-0">
-                <Icon size={20} className="text-gold" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-white">{value}</p>
-                <p className="text-sm text-slate-300 font-medium">{label}</p>
-                <p className="text-xs text-slate-500 mt-0.5">{sub}</p>
-              </div>
+            <div>
+              <p className="font-bold text-slate-100">{displayName}</p>
+              <p className="text-xs text-slate-500">{user?.email}</p>
             </div>
-          ))}
-        </section>
-
-        {/* Saved restaurants */}
-        <section>
-          <div className="flex items-center justify-between mb-5">
-            <h2 className="text-lg font-semibold text-white">Saved Restaurants</h2>
+          </div>
+          <div className="flex items-center gap-4">
             <Link
               href="/searchResults"
-              className="text-sm text-primary hover:text-primary/80 flex items-center gap-1 transition-colors"
+              className="hidden sm:flex items-center gap-1.5 text-sm text-slate-400 hover:text-gold transition-colors"
             >
-              View all <ChevronRight size={14} />
+              Explore <ChevronRight size={14} />
             </Link>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {SAVED_RESTAURANTS.map((r) => (
-              <Link
-                key={r.id}
-                href={`/restaurant/${r.id}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group bg-dark-surface/60 border border-gold/15 rounded-xl overflow-hidden hover:border-gold/20 hover:shadow-lg transition-all"
-              >
-                {/* Image */}
-                <div className="relative h-36 overflow-hidden">
-                  <img
-                    src={r.image}
-                    alt={r.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  {/* Heart */}
-                  <button
-                    className="absolute top-2 right-2 w-7 h-7 rounded-full bg-dark-bg/70 backdrop-blur-sm flex items-center justify-center"
-                    onClick={(e) => e.preventDefault()}
-                  >
-                    <Heart size={13} className="text-gold fill-gold" />
-                  </button>
-                  {/* Certified badge */}
-                  {r.certified && (
-                    <span className="absolute top-2 left-2 bg-primary/90 text-warm-dark text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-                      HMC ✓
-                    </span>
-                  )}
-                </div>
-
-                {/* Info */}
-                <div className="p-3">
-                  <h3 className="font-semibold text-white text-sm truncate group-hover:text-gold transition-colors">
-                    {r.name}
-                  </h3>
-                  <p className="text-xs text-slate-400 mt-0.5 truncate">{r.cuisine}</p>
-                  <div className="flex items-center justify-between mt-2">
-                    <div className="flex items-center gap-1">
-                      <Star size={11} className="text-gold fill-gold" />
-                      <span className="text-xs text-slate-300">{r.rating}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <MapPin size={11} className="text-slate-500" />
-                      <span className="text-xs text-slate-500 truncate max-w-[80px]">{r.location}</span>
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </section>
-
-      </main>
-
-      {/* ── Footer ── */}
-      <footer className="bg-dark-surface/30 border-t border-gold/10 mt-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 mb-8">
-            {/* Brand */}
-            <div className="col-span-2 sm:col-span-1">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                  <span className="text-warm-dark font-bold text-sm">H</span>
-                </div>
-                <span className="font-bold text-white">HalalBites</span>
-              </div>
-              <p className="text-slate-500 text-xs leading-relaxed">
-                Your guide to the best halal restaurants in Sydney.
-              </p>
-            </div>
-
-            {/* Links */}
-            {[
-              {
-                heading: "Explore",
-                links: ["All Restaurants", "Fine Dining", "Casual Eats", "Takeaway"],
-              },
-              {
-                heading: "Account",
-                links: ["My Profile", "Saved Places", "Reviews", "Settings"],
-              },
-              {
-                heading: "Company",
-                links: ["About Us", "Careers", "Privacy Policy", "Terms"],
-              },
-            ].map(({ heading, links }) => (
-              <div key={heading}>
-                <p className="text-gold text-xs font-semibold uppercase tracking-widest mb-3">
-                  {heading}
-                </p>
-                <ul className="space-y-2">
-                  {links.map((l) => (
-                    <li key={l}>
-                      <Link
-                        href="#"
-                        className="text-slate-500 text-xs hover:text-slate-300 transition-colors"
-                      >
-                        {l}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-
-          <div className="border-t border-gold/10 pt-5 flex flex-col sm:flex-row items-center justify-between gap-3">
-            <p className="text-slate-600 text-xs">
-              © 2025 HalalBites. All rights reserved.
-            </p>
-            <p className="text-slate-600 text-xs">Made with ♥ for the Muslim community</p>
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 text-sm text-slate-500 hover:text-red-400 transition-colors"
+            >
+              <LogOut size={15} />
+              <span className="hidden sm:inline">Sign Out</span>
+            </button>
           </div>
         </div>
-      </footer>
+      </div>
+
+      <div className="max-w-4xl mx-auto px-6 py-8">
+        {/* Tabs */}
+        <div className="flex gap-1 bg-dark-surface/60 border border-gold/10 rounded-xl p-1 mb-8 w-fit">
+          {tabs.map((t) => (
+            <button
+              key={t.id}
+              onClick={() => setTab(t.id)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                tab === t.id
+                  ? "bg-gold text-dark-bg shadow"
+                  : "text-slate-400 hover:text-slate-200"
+              }`}
+            >
+              {t.icon}
+              {t.label}
+              {t.count > 0 && (
+                <span
+                  className={`text-xs px-1.5 py-0.5 rounded-full font-bold ${
+                    tab === t.id ? "bg-dark-bg/20 text-dark-bg" : "bg-gold/10 text-gold"
+                  }`}
+                >
+                  {t.count}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+
+        {/* ── Saved Restaurants ─────────────────────────────────────────────── */}
+        {tab === "saved" && (
+          <div>
+            {saved.length === 0 ? (
+              <EmptyState
+                icon={<Heart size={32} className="text-gold/40" />}
+                title="No saved restaurants yet"
+                description="Bookmark restaurants while exploring to find them here."
+                cta={{ label: "Explore restaurants", href: "/searchResults" }}
+              />
+            ) : (
+              <div className="grid sm:grid-cols-2 gap-4">
+                {saved.map((row) => {
+                  const r = row.restaurants;
+                  return (
+                    <div
+                      key={row.restaurant_id}
+                      className="bg-dark-surface/60 border border-gold/10 rounded-xl overflow-hidden hover:border-gold/25 transition-colors"
+                    >
+                      {r.image && (
+                        <img
+                          src={r.image}
+                          alt={r.name}
+                          className="w-full h-36 object-cover"
+                        />
+                      )}
+                      <div className="p-4">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <p className="font-bold text-slate-100 truncate">{r.name}</p>
+                            <p className="text-xs text-slate-500 mt-0.5">
+                              {[r.cuisine, r.location].filter(Boolean).join(" · ")}
+                            </p>
+                          </div>
+                          <button
+                            onClick={() => unsaveRestaurant(row.restaurant_id)}
+                            className="text-slate-600 hover:text-red-400 transition-colors shrink-0 mt-0.5"
+                            title="Remove from saved"
+                          >
+                            <Trash2 size={15} />
+                          </button>
+                        </div>
+                        <Link
+                          href={`/restaurant/${r.slug}`}
+                          target="_blank"
+                          className="mt-3 flex items-center gap-1 text-xs font-semibold text-gold hover:text-gold/80 transition-colors"
+                        >
+                          View Details <ExternalLink size={11} />
+                        </Link>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ── Applications ──────────────────────────────────────────────────── */}
+        {tab === "applications" && (
+          <div>
+            {applications.length === 0 ? (
+              <EmptyState
+                icon={<FileText size={32} className="text-gold/40" />}
+                title="No applications submitted"
+                description="Submit a restaurant listing and track its status here."
+                cta={{ label: "Submit a restaurant", href: "/application" }}
+              />
+            ) : (
+              <div className="space-y-3">
+                <div className="flex justify-end mb-1">
+                  <Link
+                    href="/application"
+                    className="inline-flex items-center gap-2 text-sm font-semibold text-gold hover:text-gold/80 transition-colors"
+                  >
+                    + Submit another restaurant
+                  </Link>
+                </div>
+                {applications.map((app) => (
+                  <div
+                    key={app.id}
+                    className="bg-dark-surface/60 border border-gold/10 rounded-xl p-5 hover:border-gold/25 transition-colors"
+                  >
+                    <div className="flex items-start justify-between gap-4 flex-wrap">
+                      <div>
+                        <p className="font-bold text-slate-100">{app.name}</p>
+                        <p className="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
+                          <MapPin size={11} />
+                          {[app.cuisine, app.suburb].filter(Boolean).join(" · ") || "—"}
+                        </p>
+                      </div>
+                      <StatusBadge status={app.status} />
+                    </div>
+                    {app.admin_notes && (
+                      <p className="mt-3 text-xs text-slate-400 bg-dark-bg/40 rounded-lg px-3 py-2 border border-gold/5">
+                        <span className="font-semibold text-slate-300">Admin note: </span>
+                        {app.admin_notes}
+                      </p>
+                    )}
+                    <p className="mt-3 text-xs text-slate-600">
+                      Submitted{" "}
+                      {new Date(app.submitted_at).toLocaleDateString("en-AU", {
+                        dateStyle: "medium",
+                      })}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ── Reviews ───────────────────────────────────────────────────────── */}
+        {tab === "reviews" && (
+          <div>
+            {reviews.length === 0 ? (
+              <EmptyState
+                icon={<MessageSquare size={32} className="text-gold/40" />}
+                title="No reviews written yet"
+                description="Visit a restaurant page and share your experience."
+                cta={{ label: "Explore restaurants", href: "/searchResults" }}
+              />
+            ) : (
+              <div className="space-y-3">
+                {reviews.map((review) => (
+                  <div
+                    key={review.id}
+                    className="bg-dark-surface/60 border border-gold/10 rounded-xl p-5 hover:border-gold/25 transition-colors"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="min-w-0">
+                        <Link
+                          href={`/restaurant/${review.restaurants.slug}`}
+                          target="_blank"
+                          className="font-bold text-slate-100 hover:text-gold transition-colors flex items-center gap-1"
+                        >
+                          {review.restaurants.name}
+                          <ExternalLink size={12} />
+                        </Link>
+                        <div className="mt-1">
+                          <Stars rating={review.rating} />
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => deleteReview(review.id)}
+                        className="text-slate-600 hover:text-red-400 transition-colors shrink-0"
+                        title="Delete review"
+                      >
+                        <Trash2 size={15} />
+                      </button>
+                    </div>
+                    {review.body && (
+                      <p className="mt-3 text-sm text-slate-400 leading-relaxed">
+                        {review.body}
+                      </p>
+                    )}
+                    <p className="mt-3 text-xs text-slate-600">
+                      {new Date(review.created_at).toLocaleDateString("en-AU", {
+                        dateStyle: "medium",
+                      })}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ── Empty state helper ────────────────────────────────────────────────────────
+
+function EmptyState({
+  icon,
+  title,
+  description,
+  cta,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  cta: { label: string; href: string };
+}) {
+  return (
+    <div className="text-center py-16 px-6">
+      <div className="flex justify-center mb-4">{icon}</div>
+      <p className="font-bold text-slate-300 mb-2">{title}</p>
+      <p className="text-sm text-slate-500 mb-6">{description}</p>
+      <Link
+        href={cta.href}
+        className="inline-flex items-center gap-2 bg-gold text-dark-bg text-sm font-bold px-5 py-2.5 rounded-full hover:brightness-110 transition-all"
+      >
+        {cta.label} <ChevronRight size={15} />
+      </Link>
     </div>
   );
 }
