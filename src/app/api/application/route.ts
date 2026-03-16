@@ -3,6 +3,7 @@ import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { NextRequest } from "next/server";
 import { applyRateLimit, getIp } from "@/lib/ratelimit";
+import { verifyRecaptcha } from "@/lib/recaptcha";
 
 function adminClient() {
   return createAdminClient(
@@ -36,11 +37,21 @@ export async function POST(req: NextRequest) {
   // ── Parse body ───────────────────────────────────────────────
   const body = await req.json();
   const {
+    captchaToken,
     name, cuisine, address, suburb, phone, email, website,
     hours, description, long_description, banner_url, image_urls,
     halal_certified, no_alcohol, no_pork, muslim_owned, muslim_chefs,
     prayer_room, halal_chicken, halal_beef, seafood_options, vegetarian_options,
   } = body;
+
+  // ── reCAPTCHA verification ───────────────────────────────────
+  if (!captchaToken) {
+    return Response.json({ error: "Captcha token missing." }, { status: 400 });
+  }
+  const { ok: captchaOk } = await verifyRecaptcha(captchaToken);
+  if (!captchaOk) {
+    return Response.json({ error: "Captcha verification failed. Please try again." }, { status: 400 });
+  }
 
   if (!name?.trim()) {
     return Response.json({ error: "Restaurant name is required." }, { status: 400 });

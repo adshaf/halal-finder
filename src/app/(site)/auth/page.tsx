@@ -5,11 +5,13 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Mail, Lock, Eye, EyeOff, ArrowRight, Star, Loader2, User } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 
 export default function AuthPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get("next") ?? "/dashboard";
+  const { executeRecaptcha } = useGoogleReCaptcha();
   const [tab, setTab] = useState<"signin" | "register">("signin");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -25,6 +27,25 @@ export default function AuthPage() {
 
     setLoading(true);
     setError("");
+
+    // reCAPTCHA v3
+    if (!executeRecaptcha) {
+      setError("reCAPTCHA not ready. Please refresh and try again.");
+      setLoading(false);
+      return;
+    }
+    const action = tab === "signin" ? "signin" : "register";
+    const captchaToken = await executeRecaptcha(action);
+    const captchaRes = await fetch("/api/verify-captcha", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token: captchaToken }),
+    });
+    if (!captchaRes.ok) {
+      setError("Captcha verification failed. Please try again.");
+      setLoading(false);
+      return;
+    }
 
     const supabase = createClient();
 
@@ -221,9 +242,9 @@ export default function AuthPage() {
 
         {/* Bottom decorative motif */}
         <div className="mt-8 flex justify-center items-center opacity-30">
-          <div className="w-24 h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
+          <div className="w-24 h-px bg-linear-to-r from-transparent via-gold to-transparent" />
           <Star size={16} className="text-gold mx-4" />
-          <div className="w-24 h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
+          <div className="w-24 h-px bg-linear-to-r from-transparent via-gold to-transparent" />
         </div>
 
         {/* Bottom links */}

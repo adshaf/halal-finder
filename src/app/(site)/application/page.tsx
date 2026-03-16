@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -50,6 +51,7 @@ const DEBOUNCE_MS = 400;
 export default function ApplicationPage() {
   const router = useRouter();
   const supabase = createClient();
+  const { executeRecaptcha } = useGoogleReCaptcha();
 
   // ── Auth ──────────────────────────────────────────────────────
   const [userId, setUserId] = useState<string | null>(null);
@@ -220,6 +222,9 @@ export default function ApplicationPage() {
     setError(null);
 
     try {
+      // reCAPTCHA v3
+      if (!executeRecaptcha) throw new Error("reCAPTCHA not ready. Please refresh and try again.");
+      const captchaToken = await executeRecaptcha("application_submit");
       // Upload banner image
       let bannerUrl: string | null = null;
       if (bannerFile) {
@@ -248,6 +253,7 @@ export default function ApplicationPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          captchaToken,
           name, cuisine: resolvedCuisine, phone, email, website, hours,
           description, long_description: longDescription || null,
           banner_url: bannerUrl,

@@ -148,7 +148,7 @@ export default function RestaurantPage() {
               )}
             </p>
             <div className="flex gap-3 flex-wrap">
-              {r.website && (
+              {r.website ? (
                 <a
                   href={r.website}
                   target="_blank"
@@ -157,6 +157,10 @@ export default function RestaurantPage() {
                 >
                   Visit Website
                 </a>
+              ) : (
+                <span className="px-6 py-2.5 bg-slate-700/50 text-slate-500 font-bold rounded-lg text-sm cursor-not-allowed">
+                  Visit Website
+                </span>
               )}
               {r.menu_pdf && (
                 <a
@@ -359,6 +363,24 @@ export default function RestaurantPage() {
               </div>
             )}
           </div>
+
+          {/* Map */}
+          {(r.latitude && r.longitude) || r.address ? (
+            <div className="rounded-xl overflow-hidden border border-gold/15">
+              <iframe
+                title={`Map for ${r.name}`}
+                width="100%"
+                height="220"
+                loading="lazy"
+                src={
+                  r.latitude && r.longitude
+                    ? `https://www.openstreetmap.org/export/embed.html?bbox=${r.longitude - 0.005},${r.latitude - 0.005},${r.longitude + 0.005},${r.latitude + 0.005}&layer=mapnik&marker=${r.latitude},${r.longitude}`
+                    : `https://www.openstreetmap.org/export/embed.html?query=${encodeURIComponent(r.address ?? "")}&layer=mapnik`
+                }
+                className="w-full block"
+              />
+            </div>
+          ) : null}
 
           {/* Menu download */}
           {r.menu_pdf && (

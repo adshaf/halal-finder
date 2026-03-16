@@ -24,6 +24,7 @@ import {
   Filter,
   Download,
   Clock,
+  Plus,
 } from "lucide-react";
 import { HALAL_ICONS } from "@/lib/constants";
 import type { Restaurant } from "@/lib/constants";
@@ -1200,6 +1201,388 @@ function EditRestaurantModal({
 }
 
 // ────────────────────────────────────────────────────────────────────────────
+// Add Restaurant Modal
+// ────────────────────────────────────────────────────────────────────────────
+
+const emptyForm = {
+  name: "",
+  description: "",
+  long_description: "",
+  cuisine: "",
+  price: "",
+  location: "",
+  address: "",
+  phone: "",
+  email: "",
+  website: "",
+  hoursText: "",
+  hero_image: null as string | null,
+  gallery: [] as string[],
+  image: null as string | null,
+  halal_certified: false,
+  no_alcohol: false,
+  no_pork: false,
+  muslim_owned: false,
+  muslim_chefs: false,
+  prayer_room: false,
+  halal_chicken: false,
+  halal_beef: false,
+  seafood_options: false,
+  vegetarian_options: false,
+  vegan_options: false,
+  featured: false,
+  verified: false,
+};
+
+type NewRestaurantForm = typeof emptyForm;
+
+function AddRestaurantModal({
+  onClose,
+  onSaved,
+}: {
+  onClose: () => void;
+  onSaved: () => void;
+}) {
+  const [form, setForm] = useState<NewRestaurantForm>({ ...emptyForm });
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const [uploadingBanner, setUploadingBanner] = useState(false);
+  const [uploadingGallery, setUploadingGallery] = useState(false);
+  const bannerInputRef = useRef<HTMLInputElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
+  const uploadToken = useRef(Date.now().toString());
+
+  function set<K extends keyof NewRestaurantForm>(key: K, value: NewRestaurantForm[K]) {
+    setForm((prev) => ({ ...prev, [key]: value }));
+  }
+
+  async function uploadFile(file: File, folder: string): Promise<string | null> {
+    const fd = new FormData();
+    fd.append("file", file);
+    fd.append("folder", folder);
+    const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.url ?? null;
+  }
+
+  async function handleBannerUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingBanner(true);
+    const url = await uploadFile(file, `admin-new/${uploadToken.current}/banner`);
+    setUploadingBanner(false);
+    if (url) {
+      set("hero_image", url);
+      if (!form.image) set("image", url);
+    } else {
+      setError("Banner upload failed");
+    }
+    e.target.value = "";
+  }
+
+  async function handleGalleryUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files ?? []);
+    if (!files.length) return;
+    setUploadingGallery(true);
+    const urls: string[] = [];
+    for (const file of files) {
+      const url = await uploadFile(file, `admin-new/${uploadToken.current}/gallery`);
+      if (url) urls.push(url);
+    }
+    setUploadingGallery(false);
+    if (urls.length) {
+      set("gallery", [...form.gallery, ...urls]);
+      if (!form.image) set("image", urls[0]);
+    } else {
+      setError("Gallery upload failed");
+    }
+    e.target.value = "";
+  }
+
+  function removeGalleryImage(idx: number) {
+    const next = form.gallery.filter((_, i) => i !== idx);
+    set("gallery", next);
+    if (form.image === form.gallery[idx]) {
+      set("image", next[0] ?? form.hero_image ?? null);
+    }
+  }
+
+  async function handleSave() {
+    if (!form.name.trim()) {
+      setError("Restaurant name is required.");
+      return;
+    }
+    setSaving(true);
+    setError("");
+    const res = await fetch("/api/admin/restaurants", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...form,
+        description: form.description || null,
+        long_description: form.long_description || null,
+        cuisine: form.cuisine || null,
+        price: form.price || null,
+        location: form.location || null,
+        address: form.address || null,
+        phone: form.phone || null,
+        email: form.email || null,
+        website: form.website || null,
+        hero_image: form.hero_image,
+        gallery: form.gallery.length ? form.gallery : null,
+        image: form.image,
+      }),
+    });
+    const data = await res.json();
+    setSaving(false);
+    if (!res.ok) {
+      setError(data.error ?? "Failed to create listing.");
+    } else {
+      onSaved();
+    }
+  }
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [onClose]);
+
+  const inputCls =
+    "w-full bg-dark-bg border border-gold/15 focus:border-gold/40 rounded-lg px-3 py-2 text-slate-200 placeholder:text-slate-600 text-sm outline-none transition-colors";
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative bg-dark-surface border border-gold/15 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto admin-scroll shadow-2xl">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-gold/10 sticky top-0 bg-dark-surface z-10">
+          <h3 className="font-display font-bold text-slate-100 text-lg">
+            Add New Listing
+          </h3>
+          <button onClick={onClose} className="text-slate-400 hover:text-white transition-colors">
+            <X size={20} />
+          </button>
+        </div>
+
+        <div className="p-6 space-y-6">
+          {/* Basic info */}
+          <section>
+            <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">
+              Basic Info
+            </h4>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="col-span-2">
+                <label className="block text-xs text-slate-600 mb-1">
+                  Name <span className="text-red-400">*</span>
+                </label>
+                <input
+                  className={inputCls}
+                  value={form.name}
+                  onChange={(e) => set("name", e.target.value)}
+                  placeholder="e.g. Al Aseel Grill"
+                />
+              </div>
+              <div className="col-span-2">
+                <label className="block text-xs text-slate-600 mb-1">Short Description</label>
+                <textarea
+                  className={`${inputCls} resize-none`}
+                  rows={2}
+                  value={form.description}
+                  onChange={(e) => set("description", e.target.value)}
+                  placeholder="One-line tagline shown on cards"
+                />
+              </div>
+              <div className="col-span-2">
+                <label className="block text-xs text-slate-600 mb-1">Full Description</label>
+                <textarea
+                  className={`${inputCls} resize-none`}
+                  rows={3}
+                  value={form.long_description}
+                  onChange={(e) => set("long_description", e.target.value)}
+                  placeholder="Shown on the restaurant detail page"
+                />
+              </div>
+              {(
+                [
+                  ["Cuisine", "cuisine", "e.g. Lebanese"],
+                  ["Price ($  $$  $$$)", "price", "$"],
+                  ["Location (suburb display)", "location", "e.g. Lakemba, NSW"],
+                  ["Address", "address", "e.g. 12 Haldon St, Lakemba NSW 2195"],
+                  ["Phone", "phone", "02 9XXX XXXX"],
+                  ["Email", "email", "restaurant@example.com"],
+                  ["Website", "website", "https://…"],
+                ] as [string, keyof NewRestaurantForm, string][]
+              ).map(([label, key, placeholder]) => (
+                <div key={key}>
+                  <label className="block text-xs text-slate-600 mb-1">{label}</label>
+                  <input
+                    className={inputCls}
+                    value={(form[key] as string) ?? ""}
+                    onChange={(e) => set(key, e.target.value as NewRestaurantForm[typeof key])}
+                    placeholder={placeholder}
+                  />
+                </div>
+              ))}
+              <div className="col-span-2">
+                <label className="block text-xs text-slate-600 mb-1">
+                  Hours (one line per period, e.g. "Mon–Fri: 11:00–22:00")
+                </label>
+                <textarea
+                  className={`${inputCls} resize-none`}
+                  rows={3}
+                  value={form.hoursText}
+                  onChange={(e) => set("hoursText", e.target.value)}
+                  placeholder={"Mon–Fri: 11:00–22:00\nSat–Sun: 10:00–23:00"}
+                />
+              </div>
+            </div>
+          </section>
+
+          <div className="h-px bg-white/5" />
+
+          {/* Images */}
+          <section>
+            <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">
+              Images
+            </h4>
+
+            {/* Banner */}
+            <div className="mb-4">
+              <label className="block text-xs text-slate-600 mb-2">Banner Image (hero)</label>
+              {form.hero_image ? (
+                <div className="relative group rounded-lg overflow-hidden border border-gold/10 mb-2" style={{ height: 120 }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={form.hero_image} alt="Banner" className="w-full h-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => { set("hero_image", null); if (form.image === form.hero_image) set("image", form.gallery[0] ?? null); }}
+                    className="absolute top-1.5 right-1.5 bg-black/70 hover:bg-red-600 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <X size={12} />
+                  </button>
+                </div>
+              ) : (
+                <div className="rounded-lg border border-dashed border-gold/20 bg-dark-bg flex items-center justify-center h-20 mb-2 text-slate-600 text-xs">
+                  No banner image
+                </div>
+              )}
+              <input ref={bannerInputRef} type="file" accept="image/*" className="hidden" onChange={handleBannerUpload} />
+              <button
+                type="button"
+                onClick={() => bannerInputRef.current?.click()}
+                disabled={uploadingBanner}
+                className="flex items-center gap-1.5 text-xs text-gold hover:text-gold/80 transition-colors disabled:opacity-50"
+              >
+                {uploadingBanner && <Loader2 size={12} className="animate-spin" />}
+                {uploadingBanner ? "Uploading…" : form.hero_image ? "Replace banner" : "Upload banner"}
+              </button>
+            </div>
+
+            {/* Gallery */}
+            <div>
+              <label className="block text-xs text-slate-600 mb-2">Gallery Photos</label>
+              {form.gallery.length > 0 ? (
+                <div className="grid grid-cols-4 gap-2 mb-2">
+                  {form.gallery.map((url, i) => (
+                    <div key={i} className="relative group rounded-md overflow-hidden border border-gold/10 aspect-square">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={url} alt={`Gallery ${i + 1}`} className="w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => removeGalleryImage(i)}
+                        className="absolute top-1 right-1 bg-black/70 hover:bg-red-600 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X size={10} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="rounded-lg border border-dashed border-gold/20 bg-dark-bg flex items-center justify-center h-16 mb-2 text-slate-600 text-xs">
+                  No gallery images
+                </div>
+              )}
+              <input ref={galleryInputRef} type="file" accept="image/*" multiple className="hidden" onChange={handleGalleryUpload} />
+              <button
+                type="button"
+                onClick={() => galleryInputRef.current?.click()}
+                disabled={uploadingGallery}
+                className="flex items-center gap-1.5 text-xs text-gold hover:text-gold/80 transition-colors disabled:opacity-50"
+              >
+                {uploadingGallery && <Loader2 size={12} className="animate-spin" />}
+                {uploadingGallery ? "Uploading…" : "Add photos"}
+              </button>
+            </div>
+          </section>
+
+          <div className="h-px bg-white/5" />
+
+          {/* Halal attributes */}
+          <section>
+            <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">
+              Halal Attributes
+            </h4>
+            <div className="grid grid-cols-2 gap-2">
+              {HALAL_ICONS.map(({ key, label }) => (
+                <BoolToggle
+                  key={String(key)}
+                  label={label}
+                  checked={Boolean(form[key as keyof NewRestaurantForm])}
+                  onChange={(v) => set(key as keyof NewRestaurantForm, v as NewRestaurantForm[keyof NewRestaurantForm])}
+                />
+              ))}
+              <BoolToggle
+                label="Vegan Options"
+                checked={form.vegan_options}
+                onChange={(v) => set("vegan_options", v)}
+              />
+            </div>
+          </section>
+
+          <div className="h-px bg-white/5" />
+
+          {/* Admin flags */}
+          <section>
+            <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">
+              Admin
+            </h4>
+            <div className="flex gap-6">
+              <BoolToggle label="Featured" checked={form.featured} onChange={(v) => set("featured", v)} />
+              <BoolToggle label="Verified" checked={form.verified} onChange={(v) => set("verified", v)} />
+            </div>
+          </section>
+
+          {error && (
+            <p className="text-red-400 text-xs bg-red-400/10 border border-red-400/20 rounded-lg px-3 py-2">
+              {error}
+            </p>
+          )}
+
+          <div className="flex gap-3 pt-2">
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg bg-gold text-dark-bg font-bold text-sm hover:brightness-110 transition-all disabled:opacity-50"
+            >
+              {saving && <Loader2 size={14} className="animate-spin" />}
+              {saving ? "Creating…" : "Create Listing"}
+            </button>
+            <button
+              onClick={onClose}
+              className="px-6 py-2.5 rounded-lg border border-white/10 text-slate-400 hover:text-white text-sm transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ────────────────────────────────────────────────────────────────────────────
 // Tab: Restaurants
 // ────────────────────────────────────────────────────────────────────────────
 
@@ -1211,6 +1594,7 @@ function RestaurantsTab() {
   const [search, setSearch] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const [editTarget, setEditTarget] = useState<Restaurant | null>(null);
+  const [showAdd, setShowAdd] = useState(false);
 
   const PAGE_SIZE = 50;
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
@@ -1249,8 +1633,17 @@ function RestaurantsTab() {
             {totalCount} total · page {page} of {totalPages || 1}
           </p>
         </div>
-        {/* Search */}
-        <div className="flex items-center h-10 bg-dark-surface/60 border border-gold/15 rounded-lg overflow-hidden focus-within:border-gold/40 transition-colors">
+        <div className="flex items-center gap-3">
+          {/* Add listing */}
+          <button
+            onClick={() => setShowAdd(true)}
+            className="flex items-center gap-2 h-10 px-4 bg-gold text-dark-bg font-bold text-sm rounded-lg hover:brightness-110 transition-all"
+          >
+            <Plus size={15} />
+            Add Listing
+          </button>
+          {/* Search */}
+          <div className="flex items-center h-10 bg-dark-surface/60 border border-gold/15 rounded-lg overflow-hidden focus-within:border-gold/40 transition-colors">
           <Search className="ml-3 text-slate-500 shrink-0" size={15} />
           <input
             type="text"
@@ -1266,6 +1659,7 @@ function RestaurantsTab() {
           >
             Search
           </button>
+        </div>
         </div>
       </div>
 
@@ -1407,6 +1801,19 @@ function RestaurantsTab() {
           onSaved={() => {
             setEditTarget(null);
             load(page, search);
+          }}
+        />
+      )}
+
+      {showAdd && (
+        <AddRestaurantModal
+          onClose={() => setShowAdd(false)}
+          onSaved={() => {
+            setShowAdd(false);
+            load(1, "");
+            setPage(1);
+            setSearch("");
+            setSearchInput("");
           }}
         />
       )}

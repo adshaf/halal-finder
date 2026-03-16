@@ -14,22 +14,15 @@ const HalalFindStar = () => (
 
 const footerLinks = {
   Explore: [
-    { label: "Popular Cities", href: "/searchResults" },
-    { label: "Featured Lists", href: "/searchResults" },
-    { label: "Cuisine Guide", href: "/searchResults" },
-    { label: "Halal Standards", href: "/searchResults" },
+    { label: "How It Works", href: "/how-it-works" },
+    { label: "Halal Guide", href: "/halal-guide" },
   ],
-  "For Businesses": [
-    { label: "Partner with Us", href: "/join" },
-    { label: "Business Dashboard", href: "/join" },
-    { label: "Advertising", href: "/join" },
-    { label: "Verification Services", href: "/join" },
-  ],
-  Support: [
-    { label: "FAQ", href: "#" },
-    { label: "Safety Guidelines", href: "#" },
+  Legal: [
     { label: "Terms of Service", href: "/terms" },
     { label: "Privacy Policy", href: "/privacy" },
+  ],
+  Support: [
+    { label: "FAQ", href: "/faq" },
   ],
 };
 
@@ -45,10 +38,10 @@ export default function HomeFooter() {
               Halal<span className="text-gold">Bites</span>
             </span>
           </div>
-          <p className="text-slate-400 text-sm leading-relaxed mb-6">
+          {/* <p className="text-slate-400 text-sm leading-relaxed mb-6">
             Your guide to the best halal restaurants in Sydney - verified
             information, honest listings, zero compromise.
-          </p>
+          </p> */}
           <div className="flex gap-4">
             <a
               href="#"
@@ -99,7 +92,8 @@ export default function HomeFooter() {
       {/* Bottom bar */}
       <div className="max-w-7xl mx-auto pt-10 border-t border-gold/5">
         <p className="text-slate-500 text-xs">
-          © {new Date().getFullYear()} HalalBites. All rights reserved.
+          © {new Date().getFullYear()} HalalBites. All rights reserved. Made by
+          Shafstudio Web Design.
         </p>
       </div>
     </footer>

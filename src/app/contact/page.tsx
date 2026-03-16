@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Mail, Phone, MapPin, Send, CheckCircle2 } from "lucide-react";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import HomeNavbar from "@/components/home/HomeNavbar";
 import HomeFooter from "@/components/home/HomeFooter";
 
@@ -19,6 +20,8 @@ type ContactFormData = z.infer<typeof contactSchema>;
 
 export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
+  const [captchaError, setCaptchaError] = useState("");
+  const { executeRecaptcha } = useGoogleReCaptcha();
 
   const {
     register,
@@ -29,7 +32,24 @@ export default function ContactPage() {
   });
 
   const onSubmit = async (_data: ContactFormData) => {
-    // Simulate async submission — wire up to real endpoint/email service later
+    setCaptchaError("");
+
+    if (!executeRecaptcha) {
+      setCaptchaError("reCAPTCHA not ready. Please refresh and try again.");
+      return;
+    }
+    const captchaToken = await executeRecaptcha("contact_submit");
+    const captchaRes = await fetch("/api/verify-captcha", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token: captchaToken }),
+    });
+    if (!captchaRes.ok) {
+      setCaptchaError("Captcha verification failed. Please try again.");
+      return;
+    }
+
+    // TODO: wire up to real endpoint/email service
     await new Promise((r) => setTimeout(r, 800));
     setSubmitted(true);
   };
@@ -235,6 +255,12 @@ export default function ContactPage() {
                         </p>
                       )}
                     </div>
+
+                    {captchaError && (
+                      <p className="text-red-400 text-xs bg-red-400/10 border border-red-400/20 rounded-lg px-3 py-2">
+                        {captchaError}
+                      </p>
+                    )}
 
                     <button
                       type="submit"

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createMiddlewareClient } from "@/lib/supabase/middleware";
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   // 1. Refresh Supabase auth session on every request
   const { supabase, response } = createMiddlewareClient(req);
   const {
