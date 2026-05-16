@@ -28,6 +28,7 @@ import {
   Plus,
 } from "lucide-react";
 import { HALAL_ICONS } from "@/lib/constants";
+import { compressBanner, compressGallery } from "@/lib/compressImage";
 import type { Restaurant } from "@/lib/constants";
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -923,7 +924,7 @@ function EditRestaurantModal({
     const file = e.target.files?.[0];
     if (!file) return;
     setUploadingBanner(true);
-    const url = await uploadFile(file, `admin-edits/${form.id}/banner`);
+    const url = await uploadFile(await compressBanner(file), `admin-edits/${form.id}/banner`);
     setUploadingBanner(false);
     if (url) {
       set("hero_image", url);
@@ -940,7 +941,7 @@ function EditRestaurantModal({
     setUploadingGallery(true);
     const urls: string[] = [];
     for (const file of files) {
-      const url = await uploadFile(file, `admin-edits/${form.id}/gallery`);
+      const url = await uploadFile(await compressGallery(file), `admin-edits/${form.id}/gallery`);
       if (url) urls.push(url);
     }
     setUploadingGallery(false);
@@ -1385,7 +1386,7 @@ function AddRestaurantModal({
     if (!file) return;
     setUploadingBanner(true);
     const url = await uploadFile(
-      file,
+      await compressBanner(file),
       `admin-new/${uploadToken.current}/banner`,
     );
     setUploadingBanner(false);
@@ -1405,7 +1406,7 @@ function AddRestaurantModal({
     const urls: string[] = [];
     for (const file of files) {
       const url = await uploadFile(
-        file,
+        await compressGallery(file),
         `admin-new/${uploadToken.current}/gallery`,
       );
       if (url) urls.push(url);

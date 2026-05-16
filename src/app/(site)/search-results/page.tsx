@@ -582,7 +582,7 @@ function SearchResultsInner() {
           </aside>
 
           {/* Desktop sidebar */}
-          <aside className="hidden lg:block w-64 shrink-0 space-y-4">
+          <aside className="hidden lg:block w-64 shrink-0 space-y-4 sticky top-24 self-start max-h-[calc(100vh-7rem)] overflow-y-auto">
             <FilterPanel
               selectedCuisines={selectedCuisines}
               selectedPrice={selectedPrice}
