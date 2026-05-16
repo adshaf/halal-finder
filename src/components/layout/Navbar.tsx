@@ -68,7 +68,7 @@ export default function Navbar() {
           <Link href="/" className="flex items-center gap-3">
             <HalalFindStar />
             <span className="font-display text-2xl font-bold tracking-tight text-slate-100">
-              Halal<span className="text-gold">Bites</span>
+              Halal<span className="text-gold">Yums</span>
             </span>
           </Link>
 
@@ -172,7 +172,7 @@ export default function Navbar() {
           <div className="flex items-center gap-2">
             <HalalFindStar />
             <span className="font-display text-lg font-bold text-slate-100">
-              Halal<span className="text-gold">Bites</span>
+              Halal<span className="text-gold">Yums</span>
             </span>
           </div>
           <button

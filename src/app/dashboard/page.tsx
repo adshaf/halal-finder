@@ -9,7 +9,6 @@ import {
   MapPin,
   FileText,
   MessageSquare,
-  LogOut,
   Loader2,
   Trash2,
   ExternalLink,
@@ -194,21 +193,6 @@ export default function DashboardPage() {
     setReviews((prev) => prev.filter((r) => r.id !== reviewId));
   }
 
-  async function handleLogout() {
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    router.push("/");
-    router.refresh();
-  }
-
-  const userInitial =
-    user?.user_metadata?.full_name?.[0]?.toUpperCase() ??
-    user?.email?.[0]?.toUpperCase() ??
-    "U";
-
-  const displayName =
-    user?.user_metadata?.full_name ?? user?.email?.split("@")[0] ?? "User";
-
   if (loading) {
     return (
       <div className="min-h-screen bg-dark-bg flex items-center justify-center">
@@ -225,37 +209,7 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-dark-bg text-slate-200">
-      {/* Header */}
-      <div className="border-b border-gold/10 bg-warm-dark/60 backdrop-blur-sm px-6 py-5">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="size-11 rounded-full bg-gold/20 border border-gold/30 flex items-center justify-center text-gold font-bold text-lg">
-              {userInitial}
-            </div>
-            <div>
-              <p className="font-bold text-slate-100">{displayName}</p>
-              <p className="text-xs text-slate-500">{user?.email}</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <Link
-              href="/searchResults"
-              className="hidden sm:flex items-center gap-1.5 text-sm text-slate-400 hover:text-gold transition-colors"
-            >
-              Explore <ChevronRight size={14} />
-            </Link>
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-2 text-sm text-slate-500 hover:text-red-400 transition-colors"
-            >
-              <LogOut size={15} />
-              <span className="hidden sm:inline">Sign Out</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-4xl mx-auto px-6 py-8">
+      <div className="max-w-4xl mx-auto px-6 pt-28 pb-8">
         {/* Tabs */}
         <div className="flex gap-1 bg-dark-surface/60 border border-gold/10 rounded-xl p-1 mb-8 w-fit">
           {tabs.map((t) => (

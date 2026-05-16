@@ -17,7 +17,7 @@ export default function ApplicationConfirmPage() {
           Application Submitted!
         </h1>
         <p className="text-slate-400 leading-relaxed mb-8">
-          Thanks for contributing to HalalBites. Our team will review your
+          Thanks for contributing to HalalYums. Our team will review your
           submission and verify the details before it goes live. We&apos;ll
           notify you once it&apos;s approved.
         </p>

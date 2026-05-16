@@ -5,7 +5,7 @@ const STEPS = [
     icon: Users,
     title: "Community Submissions",
     description:
-      "Anyone with a free HalalBites account can submit a restaurant listing. We encourage the community to share places they've visited and know to be halal-friendly.",
+      "Anyone with a free HalalYums account can submit a restaurant listing. We encourage the community to share places they've visited and know to be halal-friendly.",
   },
   {
     icon: ClipboardList,
@@ -17,7 +17,7 @@ const STEPS = [
     icon: ShieldCheck,
     title: "Published & Maintained",
     description:
-      "Once approved, the listing is published on HalalBites. Details can be updated over time — by the restaurant, the community, or our team — to keep information current.",
+      "Once approved, the listing is published on HalalYums. Details can be updated over time — by the restaurant, the community, or our team — to keep information current.",
   },
 ];
 
@@ -29,7 +29,7 @@ export default function HowItWorksListings() {
           How Listings Are Added
         </h2>
         <p className="text-slate-400 mb-10 leading-relaxed">
-          Listings on HalalBites come from two sources: our admin team and
+          Listings on HalalYums come from two sources: our admin team and
           community submissions from registered users.
         </p>
 

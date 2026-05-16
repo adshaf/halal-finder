@@ -11,7 +11,7 @@ const values = [
     icon: Users,
     title: "Community Contributions",
     description:
-      "HalalBites grows through community input. Users can suggest restaurants and share information, helping build a directory that reflects the diverse needs of Muslims across Australia.",
+      "HalalYums grows through community input. Users can suggest restaurants and share information, helping build a directory that reflects the diverse needs of Muslims across Australia.",
   },
   {
     icon: Wand2,
@@ -31,7 +31,7 @@ export default function MissionSection() {
           </h2>
           <div className="h-1 w-20 bg-gold mx-auto rounded-full my-5" />
           <p className="text-lg text-slate-400 leading-relaxed text-center">
-            HalalBites was created to help Muslims in Australia easily discover
+            HalalYums was created to help Muslims in Australia easily discover
             halal dining options. We recognise that halal observance can vary
             from person to person, so our goal is to provide transparent
             information that allows everyone to decide for themselves what they

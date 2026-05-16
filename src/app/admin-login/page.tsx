@@ -14,7 +14,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Lock, Loader2, Eye, EyeOff } from "lucide-react";
 
-const HalalBitesStar = () => (
+const HalalYumsStar = () => (
   <svg className="size-6 text-dark-bg" fill="currentColor" viewBox="0 0 48 48">
     <path d="M12.0799 24L4 19.2479L9.95537 8.75216L18.04 13.4961L18.0446 4H29.9554L29.96 13.4961L38.0446 8.75216L44 19.2479L35.92 24L44 28.7521L38.0446 39.2479L29.96 34.5039L29.9554 44H18.0446L18.04 34.5039L9.95537 39.2479L4 28.7521L12.0799 24Z" />
   </svg>
@@ -61,10 +61,10 @@ export default function AdminLoginPage() {
         {/* Logo */}
         <div className="flex flex-col items-center mb-10">
           <div className="size-14 rounded-2xl bg-gold flex items-center justify-center mb-4 shadow-lg shadow-gold/20">
-            <HalalBitesStar />
+            <HalalYumsStar />
           </div>
           <h1 className="font-display text-2xl font-bold text-slate-100">
-            HalalBites
+            HalalYums
           </h1>
           <p className="text-slate-500 text-sm mt-1">Admin Console</p>
         </div>
@@ -121,7 +121,7 @@ export default function AdminLoginPage() {
         </div>
 
         <p className="text-center text-xs text-slate-700 mt-6">
-          HalalBites Admin — restricted access only
+          HalalYums Admin — restricted access only
         </p>
       </div>
     </div>

@@ -78,7 +78,7 @@ type DuplicateHit = {
 
 // ── Logo ─────────────────────────────────────────────────────────────────────
 
-const HalalBitesStar = () => (
+const HalalYumsStar = () => (
   <svg className="size-5 text-dark-bg" fill="currentColor" viewBox="0 0 48 48">
     <path d="M12.0799 24L4 19.2479L9.95537 8.75216L18.04 13.4961L18.0446 4H29.9554L29.96 13.4961L38.0446 8.75216L44 19.2479L35.92 24L44 28.7521L38.0446 39.2479L29.96 34.5039L29.9554 44H18.0446L18.04 34.5039L9.95537 39.2479L4 28.7521L12.0799 24Z" />
   </svg>
@@ -211,7 +211,7 @@ function DashboardTab({ onAddListing }: { onAddListing: () => void }) {
           Overview Dashboard
         </h2>
         <p className="text-gold/60 mt-1 text-sm">
-          Welcome back. Here is a live summary of HalalBites activity.
+          Welcome back. Here is a live summary of HalalYums activity.
         </p>
       </div>
 
@@ -2053,11 +2053,11 @@ export default function AdminPage() {
         {/* Logo */}
         <div className="p-6 flex items-center gap-3 border-b border-gold/10">
           <div className="size-10 rounded-full bg-gold flex items-center justify-center shrink-0">
-            <HalalBitesStar />
+            <HalalYumsStar />
           </div>
           <div>
             <h1 className="text-white text-lg font-display font-bold leading-none">
-              HalalBites
+              HalalYums
             </h1>
             <p className="text-slate-500 text-xs mt-1">Admin Console</p>
           </div>
@@ -2129,7 +2129,7 @@ export default function AdminPage() {
 
         <footer className="p-4 border-t border-gold/10 text-center">
           <p className="text-xs text-gold/30">
-            © 2025 HalalBites — Admin Console · v1.0.0
+            © 2025 HalalYums — Admin Console · v1.0.0
           </p>
         </footer>
       </main>

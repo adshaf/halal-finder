@@ -9,7 +9,7 @@ export default function HowItWorksDisclaimer() {
           Important: About Our Information
         </h2>
         <p className="text-slate-400 mb-8 leading-relaxed">
-          We want to be upfront about how halal information on HalalBites works.
+          We want to be upfront about how halal information on HalalYums works.
         </p>
 
         <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-6 md:p-8 mb-8">
@@ -17,7 +17,7 @@ export default function HowItWorksDisclaimer() {
             <AlertTriangle size={22} className="text-amber-400 shrink-0 mt-0.5" />
             <div className="space-y-3 text-slate-300 leading-relaxed">
               <p>
-                <strong className="text-slate-100">HalalBites does not independently verify or audit any restaurant.</strong>{" "}
+                <strong className="text-slate-100">HalalYums does not independently verify or audit any restaurant.</strong>{" "}
                 All halal attributes shown on a listing — such as &ldquo;Halal
                 Certified&rdquo;, &ldquo;No Alcohol&rdquo;, or &ldquo;Muslim
                 Owned&rdquo; — are based on information provided by the

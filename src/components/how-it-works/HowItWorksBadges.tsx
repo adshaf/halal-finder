@@ -74,7 +74,7 @@ export default function HowItWorksBadges() {
           Each listing displays icons that represent specific attributes of that
           restaurant. These are based on information provided by the restaurant
           or sourced from the community — they are not independently verified by
-          HalalBites.
+          HalalYums.
         </p>
 
         <div className="grid sm:grid-cols-2 gap-4">

@@ -21,9 +21,7 @@ const footerLinks = {
     { label: "Terms of Service", href: "/terms" },
     { label: "Privacy Policy", href: "/privacy" },
   ],
-  Support: [
-    { label: "FAQ", href: "/faq" },
-  ],
+  Support: [{ label: "FAQ", href: "/faq" }],
 };
 
 export default function HomeFooter() {
@@ -35,14 +33,14 @@ export default function HomeFooter() {
           <div className="flex items-center gap-3 mb-6">
             <HalalFindStar />
             <span className="font-display text-2xl font-bold tracking-tight text-slate-100">
-              Halal<span className="text-gold">Bites</span>
+              Halal<span className="text-gold">Yums</span>
             </span>
           </div>
           {/* <p className="text-slate-400 text-sm leading-relaxed mb-6">
             Your guide to the best halal restaurants in Sydney - verified
             information, honest listings, zero compromise.
           </p> */}
-          <div className="flex gap-4">
+          {/* <div className="flex gap-4">
             <a
               href="#"
               aria-label="Twitter"
@@ -64,7 +62,7 @@ export default function HomeFooter() {
             >
               <Mail size={20} />
             </a>
-          </div>
+          </div> */}
         </div>
 
         {/* Link columns */}
@@ -92,7 +90,7 @@ export default function HomeFooter() {
       {/* Bottom bar */}
       <div className="max-w-7xl mx-auto pt-10 border-t border-gold/5">
         <p className="text-slate-500 text-xs">
-          © {new Date().getFullYear()} HalalBites. All rights reserved. Made by
+          © {new Date().getFullYear()} HalalYums. All rights reserved. Made by
           Shafstudio Web Design.
         </p>
       </div>
