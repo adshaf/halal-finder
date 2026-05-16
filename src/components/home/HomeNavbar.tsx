@@ -152,7 +152,7 @@ export default function HomeNavbar() {
 
       {/* Mobile overlay */}
       <div
-        className={`fixed inset-0 z-40 bg-black/60 transition-opacity duration-300 md:hidden ${
+        className={`fixed inset-0 z-40 bg-black/60 transition-opacity duration-300 md:hidden cursor-pointer ${
           menuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
         onClick={() => setMenuOpen(false)}
