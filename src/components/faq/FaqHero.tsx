@@ -12,7 +12,7 @@ export default function FaqHero() {
           Frequently Asked<br className="hidden sm:block" /> Questions
         </h1>
         <p className="text-slate-400 text-lg max-w-2xl mx-auto leading-relaxed">
-          Everything you need to know about how HalalBites works — from reading
+          Everything you need to know about how HalalYums works — from reading
           our halal indicators to submitting a restaurant listing.
         </p>
       </div>

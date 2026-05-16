@@ -19,7 +19,7 @@ const notoSans = Noto_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "HalalBites | Sydney's Halal Restaurant Guide",
+  title: "HalalYums | Sydney's Halal Restaurant Guide",
   description:
     "Discover the best halal restaurants in Sydney. Verified listings with cuisine, location, hours, and halal credentials.",
 };

@@ -12,9 +12,9 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Terms & Conditions | HalalBites",
+  title: "Terms & Conditions | HalalYums",
   description:
-    "HalalBites terms and conditions — guidelines for using our platform, built on transparency, trust, and respect.",
+    "HalalYums terms and conditions — guidelines for using our platform, built on transparency, trust, and respect.",
 };
 
 export default function TermsPage() {
@@ -38,8 +38,8 @@ export default function TermsPage() {
           {/* Intro */}
           <section>
             <p className="text-lg leading-relaxed text-slate-300 font-display italic">
-              Welcome to HalalBites. These Terms and Conditions govern your use of
-              our platform and services. By accessing or using HalalBites, you
+              Welcome to HalalYums. These Terms and Conditions govern your use of
+              our platform and services. By accessing or using HalalYums, you
               agree to be bound by these guidelines. Please read them carefully
               before using the platform.
             </p>
@@ -50,26 +50,26 @@ export default function TermsPage() {
             <div className="flex items-center gap-3 mb-2">
               <BookOpen className="text-primary shrink-0" size={24} aria-hidden="true" />
               <h2 className="font-display text-2xl font-bold text-primary">
-                About HalalBites
+                About HalalYums
               </h2>
             </div>
             <div className="space-y-4 text-slate-300 leading-relaxed">
               <p>
-                HalalBites is an Australian halal restaurant discovery platform that
+                HalalYums is an Australian halal restaurant discovery platform that
                 helps the Muslim community and halal-conscious diners find, save, and
                 share halal dining options. Our directory is built from community
                 submissions reviewed and managed by our team.
               </p>
               <p>
-                HalalBites is a listing directory only. We are not a halal
+                HalalYums is a listing directory only. We are not a halal
                 certification body, and we do not independently audit or inspect any
                 restaurant on our platform. See the{" "}
                 <em>Halal Information Accuracy</em> section below for important
                 information about how we source and represent halal status.
               </p>
               <p className="text-slate-400 text-sm">
-                The HalalBites name, logo, and platform design are the property of
-                HalalBites. Restaurant listing information belongs to the respective
+                The HalalYums name, logo, and platform design are the property of
+                HalalYums. Restaurant listing information belongs to the respective
                 establishments.
               </p>
             </div>
@@ -85,7 +85,7 @@ export default function TermsPage() {
             </div>
             <div className="bg-dark-surface/60 p-6 rounded-xl border-l-4 border-gold">
               <p className="text-slate-300 leading-relaxed">
-                Halal status information displayed on HalalBites is sourced from
+                Halal status information displayed on HalalYums is sourced from
                 restaurant submissions, publicly available certification data, and
                 community reports. While we make reasonable efforts to keep listings
                 accurate and up to date, we cannot guarantee the ongoing halal
@@ -123,7 +123,7 @@ export default function TermsPage() {
                   Your Rights
                 </h3>
                 <ul className="space-y-3 text-slate-400 text-sm">
-                  <li>Access and browse the HalalBites directory freely.</li>
+                  <li>Access and browse the HalalYums directory freely.</li>
                   <li>Save restaurants to your personal saved list.</li>
                   <li>Submit new restaurant listings for review.</li>
                   <li>Report inaccurate or outdated listing information.</li>
@@ -156,7 +156,7 @@ export default function TermsPage() {
             </div>
             <div className="space-y-4 text-slate-300 leading-relaxed">
               <p>
-                Users may submit restaurants for inclusion in the HalalBites
+                Users may submit restaurants for inclusion in the HalalYums
                 directory. All submissions are reviewed by our team before being
                 published. By submitting a listing, you confirm that the information
                 provided is accurate to the best of your knowledge.
@@ -179,7 +179,7 @@ export default function TermsPage() {
             </div>
             <p className="text-slate-300 leading-relaxed">
               Your privacy is important to us. We collect only the data necessary to
-              provide and improve the HalalBites service and will never sell your
+              provide and improve the HalalYums service and will never sell your
               personal information to third parties. For full details on how we
               collect, use, and protect your data, please read our{" "}
               <Link
