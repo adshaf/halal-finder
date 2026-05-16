@@ -90,7 +90,7 @@ export default function HomeFooter() {
       {/* Bottom bar */}
       <div className="max-w-7xl mx-auto pt-10 border-t border-gold/5">
         <p className="text-slate-500 text-xs">
-          © {new Date().getFullYear()} HalalYums. All rights reserved. Made by
+          © {new Date().getFullYear()} halal yums. All rights reserved. Made by
           Shafstudio Web Design.
         </p>
       </div>

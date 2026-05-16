@@ -3,7 +3,7 @@ import Link from "next/link";
 import HalalGuideHero from "@/components/halal-guide/HalalGuideHero";
 
 export const metadata: Metadata = {
-  title: "Halal Guide | HalalYums",
+  title: "Halal Guide",
   description:
     "A guide to understanding halal food — what halal means, what makes food haram, how halal certification works in Australia, and tips for dining out.",
 };
@@ -187,7 +187,7 @@ export default function HalalGuidePage() {
                 "Certified restaurants will usually display their certificate. You can ask to see it.",
               ],
               [
-                "Use HalalYums filters",
+                "Use halal yums filters",
                 "Filter by 'Halal Certified', 'No Alcohol', or 'No Pork' to narrow down restaurants that match your requirements.",
               ],
             ].map(([term, desc]) => (

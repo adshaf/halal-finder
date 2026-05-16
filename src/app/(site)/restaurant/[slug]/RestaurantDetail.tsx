@@ -1,0 +1,331 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
+
+const RestaurantDetailMap = dynamic(
+  () => import("@/components/restaurant/RestaurantDetailMap"),
+  { ssr: false }
+);
+import Link from "next/link";
+import {
+  MapPin,
+  Clock,
+  Phone,
+  Mail,
+  Globe,
+  Heart,
+  ChevronRight,
+  FileText,
+  CheckCircle2,
+} from "lucide-react";
+import Image from "next/image";
+import { createClient } from "@/lib/supabase/client";
+import { HALAL_ICONS } from "@/lib/constants";
+import type { Restaurant } from "@/lib/constants";
+
+export default function RestaurantDetail({ restaurant: r }: { restaurant: Restaurant }) {
+  const [wishlisted, setWishlisted] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return;
+      setUserId(user.id);
+      supabase
+        .from("saved_restaurants")
+        .select("restaurant_id")
+        .eq("user_id", user.id)
+        .eq("restaurant_id", r.id)
+        .maybeSingle()
+        .then(({ data: saved }) => setWishlisted(!!saved));
+    });
+  }, [r.id]);
+
+  return (
+    <div className="bg-dark-bg min-h-screen">
+      {/* ── Hero ── */}
+      <section className="relative h-[65vh] w-full overflow-hidden">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: `linear-gradient(0deg, rgba(18,18,18,0.95) 0%, rgba(18,18,18,0.40) 55%, rgba(18,18,18,0.15) 100%), url('${r.hero_image}')`,
+          }}
+          role="img"
+          aria-label={r.name}
+        />
+
+        {/* Breadcrumb */}
+        <nav className="absolute top-28 left-0 right-0 px-6 md:px-20">
+          <div className="max-w-7xl mx-auto flex items-center gap-1.5 text-xs text-slate-400">
+            <Link href="/" className="hover:text-gold transition-colors">
+              Home
+            </Link>
+            <ChevronRight size={12} />
+            <Link
+              href="/searchResults"
+              className="hover:text-gold transition-colors"
+            >
+              Restaurants
+            </Link>
+            <ChevronRight size={12} />
+            <span className="text-slate-300">{r.name}</span>
+          </div>
+        </nav>
+
+        {/* Hero content */}
+        <div className="relative h-full flex flex-col justify-end px-6 md:px-20 pb-12 max-w-7xl mx-auto">
+          <div className="max-w-2xl">
+            <div className="flex items-center gap-2 mb-3">
+              {r.verified && (
+                <span className="inline-flex items-center gap-1 px-3 py-1 text-xs font-bold tracking-widest uppercase bg-primary/20 text-primary border border-primary/30 rounded-full">
+                  <CheckCircle2 size={12} /> Verified
+                </span>
+              )}
+              {r.featured && (
+                <span className="inline-block px-3 py-1 text-xs font-bold tracking-widest uppercase bg-gold text-dark-bg rounded-full">
+                  Featured
+                </span>
+              )}
+            </div>
+            <h1 className="text-4xl md:text-6xl font-display font-bold text-slate-100 mb-2 leading-tight">
+              {r.name}
+            </h1>
+            <p className="text-slate-400 text-sm mb-6 flex items-center gap-2">
+              <MapPin size={14} className="text-gold" />
+              {r.location}
+              {r.cuisine && (
+                <>
+                  <span className="text-slate-600">·</span>
+                  <span>{r.cuisine}</span>
+                </>
+              )}
+              {r.price && (
+                <>
+                  <span className="text-slate-600">·</span>
+                  <span>{r.price}</span>
+                </>
+              )}
+            </p>
+            <div className="flex gap-3 flex-wrap">
+              {r.website ? (
+                <a
+                  href={r.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-6 py-2.5 bg-gold text-dark-bg font-bold rounded-lg hover:brightness-110 transition-all text-sm"
+                >
+                  Visit Website
+                </a>
+              ) : (
+                <span className="px-6 py-2.5 bg-slate-700/50 text-slate-500 font-bold rounded-lg text-sm cursor-not-allowed">
+                  Visit Website
+                </span>
+              )}
+              {r.menu_pdf && (
+                <a
+                  href={r.menu_pdf}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-6 py-2.5 bg-transparent border border-gold text-gold font-bold rounded-lg hover:bg-gold/10 transition-all text-sm flex items-center gap-2"
+                >
+                  <FileText size={15} /> Download Menu
+                </a>
+              )}
+              <button
+                onClick={async () => {
+                  const supabase = createClient();
+                  if (!userId) {
+                    const { data: { user } } = await supabase.auth.getUser();
+                    if (!user) { window.location.href = "/auth"; return; }
+                    setUserId(user.id);
+                  }
+                  const uid = userId ?? (await supabase.auth.getUser()).data.user?.id;
+                  if (!uid) return;
+                  setWishlisted((v) => !v); // optimistic
+                  if (wishlisted) {
+                    await supabase.from("saved_restaurants").delete().eq("user_id", uid).eq("restaurant_id", r.id);
+                  } else {
+                    await supabase.from("saved_restaurants").insert({ user_id: uid, restaurant_id: r.id });
+                  }
+                }}
+                aria-label="Save to wishlist"
+                className="px-4 py-2.5 bg-transparent border border-white/20 rounded-lg hover:border-gold/40 transition-all"
+              >
+                <Heart
+                  size={18}
+                  className={
+                    wishlisted ? "text-red-400 fill-red-400" : "text-slate-400"
+                  }
+                />
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Halal attribute icons ── */}
+      <div className="bg-dark-surface/40 border-y border-gold/10">
+        <div className="max-w-7xl mx-auto px-6 md:px-20 py-6">
+          <div className="grid grid-cols-5 sm:grid-cols-10 gap-x-3 gap-y-4">
+            {HALAL_ICONS.map(({ key, label, file }) => {
+              const active = r[key] as boolean;
+              return (
+                <div key={key} className="flex flex-col items-center gap-1.5">
+                  <div className="relative w-15 h-15 md:w-20 md:h-20 rounded-lg overflow-hidden">
+                    <Image
+                      src={`/assets/halal-icons/${file}-${active ? "true" : "false"}.png`}
+                      alt={label}
+                      fill
+                      className="object-cover scale-[1.15]"
+                      unoptimized
+                    />
+                  </div>
+                  <span
+                    className={`text-[10px] font-medium text-center leading-tight ${active ? "text-primary" : "text-slate-500"}`}
+                  >
+                    {label}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Main content ── */}
+      <div className="max-w-7xl mx-auto px-6 md:px-20 py-14 grid grid-cols-1 lg:grid-cols-3 gap-12">
+        {/* Left: About + Gallery */}
+        <div className="lg:col-span-2 space-y-12">
+          {r.long_description && (
+            <section>
+              <h2 className="text-2xl font-display font-bold mb-4 text-slate-100">
+                About
+              </h2>
+              <p className="text-slate-400 leading-relaxed">
+                {r.long_description}
+              </p>
+            </section>
+          )}
+
+          {r.gallery && r.gallery.length > 0 && (
+            <section>
+              <h2 className="text-2xl font-display font-bold mb-6 text-slate-100">
+                Gallery
+              </h2>
+              <div className="grid grid-cols-2 gap-4">
+                {r.gallery.map((src, i) => (
+                  <div
+                    key={i}
+                    className="aspect-video rounded-xl overflow-hidden"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={src}
+                      alt={`${r.name} photo ${i + 1}`}
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
+
+        {/* Right: Contact + Hours */}
+        <aside className="space-y-5">
+          <div className="p-6 border border-gold/15 rounded-xl space-y-4 bg-dark-surface/60">
+            <h4 className="font-display font-bold text-slate-100 text-lg">
+              Location &amp; Hours
+            </h4>
+
+            {r.address && (
+              <div className="flex gap-3 text-sm text-slate-400">
+                <MapPin size={16} className="text-gold shrink-0 mt-0.5" />
+                <p>{r.address}</p>
+              </div>
+            )}
+
+            {r.hours && r.hours.length > 0 && (
+              <div className="flex gap-3 text-sm text-slate-400">
+                <Clock size={16} className="text-gold shrink-0 mt-0.5" />
+                <div className="space-y-1">
+                  {r.hours.map((h) => (
+                    <p key={h}>{h}</p>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="p-6 border border-gold/15 rounded-xl space-y-4 bg-dark-surface/60">
+            <h4 className="font-display font-bold text-slate-100 text-lg">
+              Contact
+            </h4>
+
+            {r.phone && (
+              <div className="flex gap-3 text-sm text-slate-400">
+                <Phone size={16} className="text-gold shrink-0 mt-0.5" />
+                <a
+                  href={`tel:${r.phone}`}
+                  className="hover:text-gold transition-colors"
+                >
+                  {r.phone}
+                </a>
+              </div>
+            )}
+
+            {r.email && (
+              <div className="flex gap-3 text-sm text-slate-400">
+                <Mail size={16} className="text-gold shrink-0 mt-0.5" />
+                <a
+                  href={`mailto:${r.email}`}
+                  className="hover:text-gold transition-colors break-all"
+                >
+                  {r.email}
+                </a>
+              </div>
+            )}
+
+            {r.website && (
+              <div className="flex gap-3 text-sm text-slate-400">
+                <Globe size={16} className="text-gold shrink-0 mt-0.5" />
+                <a
+                  href={r.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-gold transition-colors break-all"
+                >
+                  {r.website.replace(/^https?:\/\//, "")}
+                </a>
+              </div>
+            )}
+          </div>
+
+          {r.latitude && r.longitude ? (
+            <div className="rounded-xl overflow-hidden border border-gold/15 h-[220px]">
+              <RestaurantDetailMap
+                lat={r.latitude}
+                lng={r.longitude}
+                name={r.name}
+              />
+            </div>
+          ) : null}
+
+          {r.menu_pdf && (
+            <a
+              href={r.menu_pdf}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 w-full py-3 border border-gold/30 text-gold rounded-xl hover:bg-gold/10 transition-colors text-sm font-bold"
+            >
+              <FileText size={16} />
+              Download Menu (PDF)
+            </a>
+          )}
+        </aside>
+      </div>
+    </div>
+  );
+}

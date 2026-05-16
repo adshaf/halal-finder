@@ -67,7 +67,7 @@ export default function HomeNavbar() {
           <Link href="/" className="flex items-center gap-3">
             <HalalFindStar />
             <span className="font-display text-2xl font-bold tracking-tight text-slate-100">
-              Halal<span className="text-gold">Yums</span>
+              halal <span className="text-gold">yums</span>
             </span>
           </Link>
 
@@ -171,7 +171,7 @@ export default function HomeNavbar() {
           <div className="flex items-center gap-2">
             <HalalFindStar />
             <span className="font-display text-lg font-bold text-slate-100">
-              Halal<span className="text-gold">Yums</span>
+              halal <span className="text-gold">yums</span>
             </span>
           </div>
           <button

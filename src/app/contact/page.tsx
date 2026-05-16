@@ -76,7 +76,7 @@ export default function ContactPage() {
               <div className="bg-dark-surface/60 border border-gold/15 rounded-2xl p-8 space-y-8">
                 <div>
                   <h2 className="font-display text-xl font-bold text-slate-100 mb-1">
-                    HalalYums
+                    halal yums
                   </h2>
                   <p className="text-slate-500 text-sm leading-relaxed">
                     Sydney&apos;s trusted guide to halal dining — verified

@@ -4,9 +4,9 @@ import FaqContent from "@/components/faq/FaqContent";
 import FaqCta from "@/components/faq/FaqCta";
 
 export const metadata: Metadata = {
-  title: "FAQ | HalalYums",
+  title: "FAQ",
   description:
-    "Answers to common questions about HalalYums — how halal information is sourced, how to submit a restaurant, and how to get the most out of the platform.",
+    "Answers to common questions about halal yums — how halal information is sourced, how to submit a restaurant, and how to get the most out of the platform.",
 };
 
 export default function FaqPage() {

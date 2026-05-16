@@ -16,27 +16,27 @@ type Category = {
 
 const CATEGORIES: Category[] = [
   {
-    label: "About HalalYums",
+    label: "About halal yums",
     items: [
       {
-        question: "What is HalalYums?",
+        question: "What is halal yums?",
         answer:
-          "HalalYums is a directory of halal-friendly restaurants and eateries in Australia. We help Muslims and halal-conscious diners discover restaurants based on their halal requirements — from fully halal-certified venues to places that offer no-pork or no-alcohol options.",
+          "halal yums is a directory of halal-friendly restaurants and eateries in Australia. We help Muslims and halal-conscious diners discover restaurants based on their halal requirements — from fully halal-certified venues to places that offer no-pork or no-alcohol options.",
       },
       {
-        question: "Is HalalYums free to use?",
+        question: "Is halal yums free to use?",
         answer:
           "Yes — browsing, searching, and saving restaurants is completely free. Creating an account is also free and unlocks features like saving your favourite spots.",
       },
       {
-        question: "Which areas does HalalYums cover?",
+        question: "Which areas does halal yums cover?",
         answer:
           "We're currently focused on Australia, with listings growing across major cities. If you know a restaurant that isn't listed yet, you can submit it through our application form.",
       },
       {
-        question: "Who runs HalalYums?",
+        question: "Who runs halal yums?",
         answer:
-          "HalalYums is an independent platform built to serve the Muslim community and halal-conscious diners. We are not affiliated with any halal certification body. Our goal is to surface useful, accurate information — not to certify restaurants ourselves.",
+          "halal yums is an independent platform built to serve the Muslim community and halal-conscious diners. We are not affiliated with any halal certification body. Our goal is to surface useful, accurate information — not to certify restaurants ourselves.",
       },
     ],
   },
@@ -44,7 +44,7 @@ const CATEGORIES: Category[] = [
     label: "Using the Platform",
     items: [
       {
-        question: "Do I need an account to use HalalYums?",
+        question: "Do I need an account to use halal yums?",
         answer:
           "No — you can browse and search restaurants without an account. However, creating a free account lets you save restaurants to your favourites and submit new listings.",
       },
@@ -61,7 +61,7 @@ const CATEGORIES: Category[] = [
       {
         question: "Is there a mobile app?",
         answer:
-          "Not yet — HalalYums is currently a web app optimised for mobile browsers. A dedicated app may come in the future.",
+          "Not yet — halal yums is currently a web app optimised for mobile browsers. A dedicated app may come in the future.",
       },
     ],
   },

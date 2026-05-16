@@ -5,9 +5,9 @@ import HowItWorksListings from "@/components/how-it-works/HowItWorksListings";
 import HowItWorksDisclaimer from "@/components/how-it-works/HowItWorksDisclaimer";
 
 export const metadata: Metadata = {
-  title: "How It Works | HalalYums",
+  title: "How It Works | halal yums",
   description:
-    "Learn how HalalYums works — how listings are added, what the halal badges mean, and what to keep in mind when using the platform.",
+    "Learn how halal yums works — how listings are added, what the halal badges mean, and what to keep in mind when using the platform.",
 };
 
 export default function HowItWorksPage() {

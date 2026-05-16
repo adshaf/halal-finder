@@ -64,7 +64,7 @@ export default function AdminLoginPage() {
             <HalalYumsStar />
           </div>
           <h1 className="font-display text-2xl font-bold text-slate-100">
-            HalalYums
+            halal yums
           </h1>
           <p className="text-slate-500 text-sm mt-1">Admin Console</p>
         </div>
@@ -121,7 +121,7 @@ export default function AdminLoginPage() {
         </div>
 
         <p className="text-center text-xs text-slate-700 mt-6">
-          HalalYums Admin — restricted access only
+          halal yums Admin — restricted access only
         </p>
       </div>
     </div>

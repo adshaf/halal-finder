@@ -86,7 +86,7 @@ export default function Footer() {
       {/* Bottom bar */}
       <div className="max-w-7xl mx-auto pt-10 border-t border-gold/5">
         <p className="text-slate-500 text-xs">
-          © 2025 HalalYums. All rights reserved.
+          © 2025 halal yums. All rights reserved.
         </p>
       </div>
     </footer>

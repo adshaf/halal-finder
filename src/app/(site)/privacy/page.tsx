@@ -10,9 +10,9 @@ import {
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | HalalYums",
+  title: "Privacy Policy",
   description:
-    "How HalalYums collects, uses, and protects your personal information.",
+    "How halal yums collects, uses, and protects your personal information.",
 };
 
 export default function PrivacyPage() {
@@ -36,7 +36,7 @@ export default function PrivacyPage() {
           {/* Intro */}
           <section>
             <p className="text-lg leading-relaxed text-slate-300 font-display italic">
-              At HalalYums, we take your privacy seriously. This policy explains
+              At halal yums, we take your privacy seriously. This policy explains
               what information we collect when you use our platform to discover
               halal dining options across Australia, how we use it, and how we
               keep it secure.
@@ -52,7 +52,7 @@ export default function PrivacyPage() {
               </h2>
             </div>
             <div className="space-y-4 text-slate-300 leading-relaxed">
-              <p>We collect only what is necessary to provide the HalalYums service:</p>
+              <p>We collect only what is necessary to provide the halal yums service:</p>
               <ul className="list-disc pl-6 space-y-2">
                 <li>
                   <strong className="text-slate-100">Account data:</strong> Your
@@ -129,12 +129,12 @@ export default function PrivacyPage() {
               </h2>
             </div>
             <p className="text-slate-300 leading-relaxed">
-              HalalYums uses Google reCAPTCHA v3 on forms (sign up, sign in,
+              halal yums uses Google reCAPTCHA v3 on forms (sign up, sign in,
               listing submissions, and contact). reCAPTCHA collects hardware and
               software information, such as device and application data, and sends
               this to Google for analysis. This data is used solely to determine
               whether form submissions are made by a human or an automated bot.
-              By using HalalYums, you agree to Google&apos;s{" "}
+              By using halal yums, you agree to Google&apos;s{" "}
               <a
                 href="https://policies.google.com/privacy"
                 target="_blank"
@@ -167,7 +167,7 @@ export default function PrivacyPage() {
             <div className="space-y-4 text-slate-300 leading-relaxed">
               <p>
                 We do not sell your personal data. We use the following third-party
-                services to operate HalalYums:
+                services to operate halal yums:
               </p>
               <ul className="list-disc pl-6 space-y-2">
                 <li>
