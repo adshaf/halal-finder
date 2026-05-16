@@ -129,7 +129,7 @@ function BoolToggle({
 // Tab: Dashboard
 // ────────────────────────────────────────────────────────────────────────────
 
-function DashboardTab() {
+function DashboardTab({ onAddListing }: { onAddListing: () => void }) {
   const [stats, setStats] = useState<Stats | null>(null);
   const [recentApps, setRecentApps] = useState<Application[]>([]);
   const [geocoding, setGeocoding] = useState(false);
@@ -143,7 +143,7 @@ function DashboardTab() {
     fetch("/api/admin/applications")
       .then((r) => r.json())
       .then((data: Application[]) =>
-        setRecentApps(Array.isArray(data) ? data.slice(0, 5) : [])
+        setRecentApps(Array.isArray(data) ? data.slice(0, 5) : []),
       );
   }, []);
 
@@ -217,30 +217,50 @@ function DashboardTab() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {kpis.map(({ label, value, trend, trendColor, icon: Icon, iconBg, iconColor, barColor }) => (
-          <div
-            key={label}
-            className="bg-dark-surface/60 p-6 rounded-2xl border border-gold/10 relative overflow-hidden"
-          >
-            <div className="flex justify-between items-start mb-4">
-              <div className={`size-12 rounded-xl ${iconBg} flex items-center justify-center`}>
-                <Icon size={22} className={iconColor} />
+        {kpis.map(
+          ({
+            label,
+            value,
+            trend,
+            trendColor,
+            icon: Icon,
+            iconBg,
+            iconColor,
+            barColor,
+          }) => (
+            <div
+              key={label}
+              className="bg-dark-surface/60 p-6 rounded-2xl border border-gold/10 relative overflow-hidden"
+            >
+              <div className="flex justify-between items-start mb-4">
+                <div
+                  className={`size-12 rounded-xl ${iconBg} flex items-center justify-center`}
+                >
+                  <Icon size={22} className={iconColor} />
+                </div>
+                <span
+                  className={`${trendColor} text-xs font-bold flex items-center gap-1`}
+                >
+                  {trend}
+                </span>
               </div>
-              <span className={`${trendColor} text-xs font-bold flex items-center gap-1`}>
-                {trend}
-              </span>
+              <p className="text-gold/60 text-sm font-medium">{label}</p>
+              <h3 className="text-3xl font-bold mt-1 text-slate-100">
+                {stats === null ? (
+                  <Loader2
+                    size={22}
+                    className="animate-spin inline text-slate-600"
+                  />
+                ) : (
+                  (value ?? 0).toLocaleString()
+                )}
+              </h3>
+              <div
+                className={`absolute bottom-0 left-0 w-full h-1 bg-linear-to-r ${barColor} to-transparent opacity-50`}
+              />
             </div>
-            <p className="text-gold/60 text-sm font-medium">{label}</p>
-            <h3 className="text-3xl font-bold mt-1 text-slate-100">
-              {stats === null ? (
-                <Loader2 size={22} className="animate-spin inline text-slate-600" />
-              ) : (
-                (value ?? 0).toLocaleString()
-              )}
-            </h3>
-            <div className={`absolute bottom-0 left-0 w-full h-1 bg-linear-to-r ${barColor} to-transparent opacity-50`} />
-          </div>
-        ))}
+          ),
+        )}
       </div>
 
       {/* Recent Applications */}
@@ -284,9 +304,14 @@ function DashboardTab() {
               </thead>
               <tbody className="divide-y divide-gold/5">
                 {recentApps.map((app) => (
-                  <tr key={app.id} className="hover:bg-dark-surface/60 transition-colors">
+                  <tr
+                    key={app.id}
+                    className="hover:bg-dark-surface/60 transition-colors"
+                  >
                     <td className="px-6 py-4">
-                      <p className="font-bold text-sm text-slate-100">{app.name}</p>
+                      <p className="font-bold text-sm text-slate-100">
+                        {app.name}
+                      </p>
                       <p className="text-gold/40 text-xs">{app.email ?? "—"}</p>
                     </td>
                     <td className="px-6 py-4 text-sm text-slate-400">
@@ -294,7 +319,11 @@ function DashboardTab() {
                     </td>
                     <td className="px-6 py-4 text-sm text-gold/50">
                       {new Date(app.submitted_at).toLocaleString("en-AU", {
-                        day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit",
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
                       })}
                     </td>
                     <td className="px-6 py-4 text-sm text-gold/50">
@@ -346,21 +375,27 @@ function DashboardTab() {
       {/* Geocode tool */}
       <div className="bg-dark-surface/60 rounded-2xl border border-gold/10 p-6">
         <h3 className="font-bold text-slate-100 text-sm mb-4">Admin Tools</h3>
-        <button
-          onClick={handleGeocode}
-          disabled={geocoding}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-gold/20 text-slate-300 hover:border-gold/40 hover:text-white text-sm transition-colors disabled:opacity-50"
-        >
-          {geocoding ? (
-            <Loader2 size={14} className="animate-spin" />
-          ) : (
-            <MapPinIcon size={14} />
-          )}
-          {geocoding ? "Geocoding…" : "Geocode Missing Coordinates"}
-        </button>
-        <p className="text-xs text-slate-600 mt-2">
-          Fills lat/lng for any restaurants missing coordinates using Nominatim.
-        </p>
+        <div className="flex flex-wrap gap-3">
+          <button
+            onClick={handleGeocode}
+            disabled={geocoding}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-gold/20 text-slate-300 hover:border-gold/40 hover:text-white text-sm transition-colors disabled:opacity-50"
+          >
+            {geocoding ? (
+              <Loader2 size={14} className="animate-spin" />
+            ) : (
+              <MapPinIcon size={14} />
+            )}
+            {geocoding ? "Geocoding…" : "Geocode Missing Coordinates"}
+          </button>
+          <button
+            onClick={onAddListing}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-gold/20 text-gold hover:border-gold/40 hover:bg-gold/5 text-sm transition-colors"
+          >
+            <Plus size={14} />
+            Add New Listing
+          </button>
+        </div>
         {geocodeResult && (
           <p className="text-xs text-slate-400 mt-1">{geocodeResult}</p>
         )}
@@ -372,11 +407,13 @@ function DashboardTab() {
           onClose={() => setReviewId(null)}
           onDone={() => {
             setReviewId(null);
-            fetch("/api/admin/stats").then((r) => r.json()).then(setStats);
+            fetch("/api/admin/stats")
+              .then((r) => r.json())
+              .then(setStats);
             fetch("/api/admin/applications")
               .then((r) => r.json())
               .then((data: Application[]) =>
-                setRecentApps(Array.isArray(data) ? data.slice(0, 5) : [])
+                setRecentApps(Array.isArray(data) ? data.slice(0, 5) : []),
               );
           }}
         />
@@ -488,7 +525,7 @@ function ReviewModal({
                     </p>
                     <p className="text-slate-300">{val}</p>
                   </div>
-                ) : null
+                ) : null,
               )}
             </div>
 
@@ -506,7 +543,9 @@ function ReviewModal({
                 <p className="text-xs text-slate-600 uppercase tracking-wider mb-1">
                   Full Description
                 </p>
-                <p className="text-slate-300 text-sm whitespace-pre-line">{app.long_description}</p>
+                <p className="text-slate-300 text-sm whitespace-pre-line">
+                  {app.long_description}
+                </p>
               </div>
             )}
 
@@ -548,18 +587,31 @@ function ReviewModal({
             {/* Banner image */}
             {app.banner_url && (
               <div>
-                <p className="text-xs text-slate-600 uppercase tracking-wider mb-2">Banner Image</p>
-                <img src={app.banner_url} alt="Banner" className="w-full h-36 object-cover rounded-xl border border-gold/10" />
+                <p className="text-xs text-slate-600 uppercase tracking-wider mb-2">
+                  Banner Image
+                </p>
+                <Image
+                  src={app.banner_url}
+                  alt="Banner"
+                  className="w-full h-36 object-cover rounded-xl border border-gold/10"
+                />
               </div>
             )}
 
             {/* Gallery images */}
             {app.image_urls && app.image_urls.length > 0 && (
               <div>
-                <p className="text-xs text-slate-600 uppercase tracking-wider mb-2">Gallery Photos</p>
+                <p className="text-xs text-slate-600 uppercase tracking-wider mb-2">
+                  Gallery Photos
+                </p>
                 <div className="grid grid-cols-3 gap-2">
                   {app.image_urls.map((url, i) => (
-                    <img key={i} src={url} alt={`Photo ${i + 1}`} className="aspect-square object-cover rounded-lg border border-gold/10" />
+                    <Image
+                      key={i}
+                      src={url}
+                      alt={`Photo ${i + 1}`}
+                      className="aspect-square object-cover rounded-lg border border-gold/10"
+                    />
                   ))}
                 </div>
               </div>
@@ -853,7 +905,10 @@ function EditRestaurantModal({
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
-  async function uploadFile(file: File, folder: string): Promise<string | null> {
+  async function uploadFile(
+    file: File,
+    folder: string,
+  ): Promise<string | null> {
     const fd = new FormData();
     fd.append("file", file);
     fd.append("folder", folder);
@@ -959,7 +1014,9 @@ function EditRestaurantModal({
             </h4>
             <div className="grid grid-cols-2 gap-3">
               <div className="col-span-2">
-                <label className="block text-xs text-slate-600 mb-1">Name</label>
+                <label className="block text-xs text-slate-600 mb-1">
+                  Name
+                </label>
                 <input
                   className={inputCls}
                   value={form.name}
@@ -1009,14 +1066,17 @@ function EditRestaurantModal({
                     className={inputCls}
                     value={(form[key] as string) ?? ""}
                     onChange={(e) =>
-                      set(key, (e.target.value || null) as Restaurant[typeof key])
+                      set(
+                        key,
+                        (e.target.value || null) as Restaurant[typeof key],
+                      )
                     }
                   />
                 </div>
               ))}
               <div className="col-span-2">
                 <label className="block text-xs text-slate-600 mb-1">
-                  Hours (one line per period, e.g. "Mon–Fri: 11:00–22:00")
+                  Hours (one line per period, e.g. Mon–Fri: 11:00 AM–10:00 PM)
                 </label>
                 <textarea
                   className={`${inputCls} resize-none`}
@@ -1026,8 +1086,11 @@ function EditRestaurantModal({
                     set(
                       "hours",
                       e.target.value
-                        ? e.target.value.split("\n").map((l) => l.trim()).filter(Boolean)
-                        : null
+                        ? e.target.value
+                            .split("\n")
+                            .map((l) => l.trim())
+                            .filter(Boolean)
+                        : null,
                     )
                   }
                 />
@@ -1045,16 +1108,26 @@ function EditRestaurantModal({
 
             {/* Banner / Hero */}
             <div className="mb-4">
-              <label className="block text-xs text-slate-600 mb-2">Banner Image (hero)</label>
+              <label className="block text-xs text-slate-600 mb-2">
+                Banner Image (hero)
+              </label>
               {form.hero_image ? (
-                <div className="relative group rounded-lg overflow-hidden border border-gold/10 mb-2" style={{ height: 120 }}>
+                <div
+                  className="relative group rounded-lg overflow-hidden border border-gold/10 mb-2"
+                  style={{ height: 120 }}
+                >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={form.hero_image} alt="Banner" className="w-full h-full object-cover" />
+                  <img
+                    src={form.hero_image}
+                    alt="Banner"
+                    className="w-full h-full object-cover"
+                  />
                   <button
                     type="button"
                     onClick={() => {
                       set("hero_image", null);
-                      if (form.image === form.hero_image) set("image", form.gallery?.[0] ?? null);
+                      if (form.image === form.hero_image)
+                        set("image", form.gallery?.[0] ?? null);
                     }}
                     className="absolute top-1.5 right-1.5 bg-black/70 hover:bg-red-600 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
                   >
@@ -1066,27 +1139,48 @@ function EditRestaurantModal({
                   No banner image
                 </div>
               )}
-              <input ref={bannerInputRef} type="file" accept="image/*" className="hidden" onChange={handleBannerUpload} />
+              <input
+                ref={bannerInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleBannerUpload}
+              />
               <button
                 type="button"
                 onClick={() => bannerInputRef.current?.click()}
                 disabled={uploadingBanner}
                 className="flex items-center gap-1.5 text-xs text-gold hover:text-gold/80 transition-colors disabled:opacity-50"
               >
-                {uploadingBanner ? <Loader2 size={12} className="animate-spin" /> : null}
-                {uploadingBanner ? "Uploading…" : form.hero_image ? "Replace banner" : "Upload banner"}
+                {uploadingBanner ? (
+                  <Loader2 size={12} className="animate-spin" />
+                ) : null}
+                {uploadingBanner
+                  ? "Uploading…"
+                  : form.hero_image
+                    ? "Replace banner"
+                    : "Upload banner"}
               </button>
             </div>
 
             {/* Gallery */}
             <div>
-              <label className="block text-xs text-slate-600 mb-2">Gallery Photos</label>
+              <label className="block text-xs text-slate-600 mb-2">
+                Gallery Photos
+              </label>
               {(form.gallery ?? []).length > 0 ? (
                 <div className="grid grid-cols-4 gap-2 mb-2">
                   {(form.gallery ?? []).map((url, i) => (
-                    <div key={i} className="relative group rounded-md overflow-hidden border border-gold/10 aspect-square">
+                    <div
+                      key={i}
+                      className="relative group rounded-md overflow-hidden border border-gold/10 aspect-square"
+                    >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={url} alt={`Gallery ${i + 1}`} className="w-full h-full object-cover" />
+                      <img
+                        src={url}
+                        alt={`Gallery ${i + 1}`}
+                        className="w-full h-full object-cover"
+                      />
                       <button
                         type="button"
                         onClick={() => removeGalleryImage(i)}
@@ -1102,22 +1196,35 @@ function EditRestaurantModal({
                   No gallery images
                 </div>
               )}
-              <input ref={galleryInputRef} type="file" accept="image/*" multiple className="hidden" onChange={handleGalleryUpload} />
+              <input
+                ref={galleryInputRef}
+                type="file"
+                accept="image/*"
+                multiple
+                className="hidden"
+                onChange={handleGalleryUpload}
+              />
               <button
                 type="button"
                 onClick={() => galleryInputRef.current?.click()}
                 disabled={uploadingGallery}
                 className="flex items-center gap-1.5 text-xs text-gold hover:text-gold/80 transition-colors disabled:opacity-50"
               >
-                {uploadingGallery ? <Loader2 size={12} className="animate-spin" /> : null}
+                {uploadingGallery ? (
+                  <Loader2 size={12} className="animate-spin" />
+                ) : null}
                 {uploadingGallery ? "Uploading…" : "Add photos"}
               </button>
             </div>
 
             {/* Card thumbnail override */}
             <div className="mt-4">
-              <label className="block text-xs text-slate-600 mb-1">Card Thumbnail URL</label>
-              <p className="text-xs text-slate-700 mb-1.5">Auto-set from gallery/banner. Override here if needed.</p>
+              <label className="block text-xs text-slate-600 mb-1">
+                Card Thumbnail URL
+              </label>
+              <p className="text-xs text-slate-700 mb-1.5">
+                Auto-set from gallery/banner. Override here if needed.
+              </p>
               <input
                 className={inputCls}
                 value={form.image ?? ""}
@@ -1252,11 +1359,17 @@ function AddRestaurantModal({
   const galleryInputRef = useRef<HTMLInputElement>(null);
   const uploadToken = useRef(Date.now().toString());
 
-  function set<K extends keyof NewRestaurantForm>(key: K, value: NewRestaurantForm[K]) {
+  function set<K extends keyof NewRestaurantForm>(
+    key: K,
+    value: NewRestaurantForm[K],
+  ) {
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
-  async function uploadFile(file: File, folder: string): Promise<string | null> {
+  async function uploadFile(
+    file: File,
+    folder: string,
+  ): Promise<string | null> {
     const fd = new FormData();
     fd.append("file", file);
     fd.append("folder", folder);
@@ -1270,7 +1383,10 @@ function AddRestaurantModal({
     const file = e.target.files?.[0];
     if (!file) return;
     setUploadingBanner(true);
-    const url = await uploadFile(file, `admin-new/${uploadToken.current}/banner`);
+    const url = await uploadFile(
+      file,
+      `admin-new/${uploadToken.current}/banner`,
+    );
     setUploadingBanner(false);
     if (url) {
       set("hero_image", url);
@@ -1287,7 +1403,10 @@ function AddRestaurantModal({
     setUploadingGallery(true);
     const urls: string[] = [];
     for (const file of files) {
-      const url = await uploadFile(file, `admin-new/${uploadToken.current}/gallery`);
+      const url = await uploadFile(
+        file,
+        `admin-new/${uploadToken.current}/gallery`,
+      );
       if (url) urls.push(url);
     }
     setUploadingGallery(false);
@@ -1354,14 +1473,20 @@ function AddRestaurantModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
+      <div
+        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+        onClick={onClose}
+      />
       <div className="relative bg-dark-surface border border-gold/15 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto admin-scroll shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gold/10 sticky top-0 bg-dark-surface z-10">
           <h3 className="font-display font-bold text-slate-100 text-lg">
             Add New Listing
           </h3>
-          <button onClick={onClose} className="text-slate-400 hover:text-white transition-colors">
+          <button
+            onClick={onClose}
+            className="text-slate-400 hover:text-white transition-colors"
+          >
             <X size={20} />
           </button>
         </div>
@@ -1385,7 +1510,9 @@ function AddRestaurantModal({
                 />
               </div>
               <div className="col-span-2">
-                <label className="block text-xs text-slate-600 mb-1">Short Description</label>
+                <label className="block text-xs text-slate-600 mb-1">
+                  Short Description
+                </label>
                 <textarea
                   className={`${inputCls} resize-none`}
                   rows={2}
@@ -1395,7 +1522,9 @@ function AddRestaurantModal({
                 />
               </div>
               <div className="col-span-2">
-                <label className="block text-xs text-slate-600 mb-1">Full Description</label>
+                <label className="block text-xs text-slate-600 mb-1">
+                  Full Description
+                </label>
                 <textarea
                   className={`${inputCls} resize-none`}
                   rows={3}
@@ -1408,7 +1537,11 @@ function AddRestaurantModal({
                 [
                   ["Cuisine", "cuisine", "e.g. Lebanese"],
                   ["Price ($  $$  $$$)", "price", "$"],
-                  ["Location (suburb display)", "location", "e.g. Lakemba, NSW"],
+                  [
+                    "Location (suburb display)",
+                    "location",
+                    "e.g. Lakemba, NSW",
+                  ],
                   ["Address", "address", "e.g. 12 Haldon St, Lakemba NSW 2195"],
                   ["Phone", "phone", "02 9XXX XXXX"],
                   ["Email", "email", "restaurant@example.com"],
@@ -1416,25 +1549,29 @@ function AddRestaurantModal({
                 ] as [string, keyof NewRestaurantForm, string][]
               ).map(([label, key, placeholder]) => (
                 <div key={key}>
-                  <label className="block text-xs text-slate-600 mb-1">{label}</label>
+                  <label className="block text-xs text-slate-600 mb-1">
+                    {label}
+                  </label>
                   <input
                     className={inputCls}
                     value={(form[key] as string) ?? ""}
-                    onChange={(e) => set(key, e.target.value as NewRestaurantForm[typeof key])}
+                    onChange={(e) =>
+                      set(key, e.target.value as NewRestaurantForm[typeof key])
+                    }
                     placeholder={placeholder}
                   />
                 </div>
               ))}
               <div className="col-span-2">
                 <label className="block text-xs text-slate-600 mb-1">
-                  Hours (one line per period, e.g. "Mon–Fri: 11:00–22:00")
+                  Hours (one line per period, e.g. Mon–Fri: 11:00 AM–10:00 PM)
                 </label>
                 <textarea
                   className={`${inputCls} resize-none`}
                   rows={3}
                   value={form.hoursText}
                   onChange={(e) => set("hoursText", e.target.value)}
-                  placeholder={"Mon–Fri: 11:00–22:00\nSat–Sun: 10:00–23:00"}
+                  placeholder={"Mon–Fri: 11:00 AM–10:00 PM\nSat–Sun: 10:00 AM–11:00 PM"}
                 />
               </div>
             </div>
@@ -1450,14 +1587,27 @@ function AddRestaurantModal({
 
             {/* Banner */}
             <div className="mb-4">
-              <label className="block text-xs text-slate-600 mb-2">Banner Image (hero)</label>
+              <label className="block text-xs text-slate-600 mb-2">
+                Banner Image (hero)
+              </label>
               {form.hero_image ? (
-                <div className="relative group rounded-lg overflow-hidden border border-gold/10 mb-2" style={{ height: 120 }}>
+                <div
+                  className="relative group rounded-lg overflow-hidden border border-gold/10 mb-2"
+                  style={{ height: 120 }}
+                >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={form.hero_image} alt="Banner" className="w-full h-full object-cover" />
+                  <img
+                    src={form.hero_image}
+                    alt="Banner"
+                    className="w-full h-full object-cover"
+                  />
                   <button
                     type="button"
-                    onClick={() => { set("hero_image", null); if (form.image === form.hero_image) set("image", form.gallery[0] ?? null); }}
+                    onClick={() => {
+                      set("hero_image", null);
+                      if (form.image === form.hero_image)
+                        set("image", form.gallery[0] ?? null);
+                    }}
                     className="absolute top-1.5 right-1.5 bg-black/70 hover:bg-red-600 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
                   >
                     <X size={12} />
@@ -1468,27 +1618,48 @@ function AddRestaurantModal({
                   No banner image
                 </div>
               )}
-              <input ref={bannerInputRef} type="file" accept="image/*" className="hidden" onChange={handleBannerUpload} />
+              <input
+                ref={bannerInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleBannerUpload}
+              />
               <button
                 type="button"
                 onClick={() => bannerInputRef.current?.click()}
                 disabled={uploadingBanner}
                 className="flex items-center gap-1.5 text-xs text-gold hover:text-gold/80 transition-colors disabled:opacity-50"
               >
-                {uploadingBanner && <Loader2 size={12} className="animate-spin" />}
-                {uploadingBanner ? "Uploading…" : form.hero_image ? "Replace banner" : "Upload banner"}
+                {uploadingBanner && (
+                  <Loader2 size={12} className="animate-spin" />
+                )}
+                {uploadingBanner
+                  ? "Uploading…"
+                  : form.hero_image
+                    ? "Replace banner"
+                    : "Upload banner"}
               </button>
             </div>
 
             {/* Gallery */}
             <div>
-              <label className="block text-xs text-slate-600 mb-2">Gallery Photos</label>
+              <label className="block text-xs text-slate-600 mb-2">
+                Gallery Photos
+              </label>
               {form.gallery.length > 0 ? (
                 <div className="grid grid-cols-4 gap-2 mb-2">
                   {form.gallery.map((url, i) => (
-                    <div key={i} className="relative group rounded-md overflow-hidden border border-gold/10 aspect-square">
+                    <div
+                      key={i}
+                      className="relative group rounded-md overflow-hidden border border-gold/10 aspect-square"
+                    >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={url} alt={`Gallery ${i + 1}`} className="w-full h-full object-cover" />
+                      <img
+                        src={url}
+                        alt={`Gallery ${i + 1}`}
+                        className="w-full h-full object-cover"
+                      />
                       <button
                         type="button"
                         onClick={() => removeGalleryImage(i)}
@@ -1504,14 +1675,23 @@ function AddRestaurantModal({
                   No gallery images
                 </div>
               )}
-              <input ref={galleryInputRef} type="file" accept="image/*" multiple className="hidden" onChange={handleGalleryUpload} />
+              <input
+                ref={galleryInputRef}
+                type="file"
+                accept="image/*"
+                multiple
+                className="hidden"
+                onChange={handleGalleryUpload}
+              />
               <button
                 type="button"
                 onClick={() => galleryInputRef.current?.click()}
                 disabled={uploadingGallery}
                 className="flex items-center gap-1.5 text-xs text-gold hover:text-gold/80 transition-colors disabled:opacity-50"
               >
-                {uploadingGallery && <Loader2 size={12} className="animate-spin" />}
+                {uploadingGallery && (
+                  <Loader2 size={12} className="animate-spin" />
+                )}
                 {uploadingGallery ? "Uploading…" : "Add photos"}
               </button>
             </div>
@@ -1530,7 +1710,12 @@ function AddRestaurantModal({
                   key={String(key)}
                   label={label}
                   checked={Boolean(form[key as keyof NewRestaurantForm])}
-                  onChange={(v) => set(key as keyof NewRestaurantForm, v as NewRestaurantForm[keyof NewRestaurantForm])}
+                  onChange={(v) =>
+                    set(
+                      key as keyof NewRestaurantForm,
+                      v as NewRestaurantForm[keyof NewRestaurantForm],
+                    )
+                  }
                 />
               ))}
               <BoolToggle
@@ -1549,8 +1734,16 @@ function AddRestaurantModal({
               Admin
             </h4>
             <div className="flex gap-6">
-              <BoolToggle label="Featured" checked={form.featured} onChange={(v) => set("featured", v)} />
-              <BoolToggle label="Verified" checked={form.verified} onChange={(v) => set("verified", v)} />
+              <BoolToggle
+                label="Featured"
+                checked={form.featured}
+                onChange={(v) => set("featured", v)}
+              />
+              <BoolToggle
+                label="Verified"
+                checked={form.verified}
+                onChange={(v) => set("verified", v)}
+              />
             </div>
           </section>
 
@@ -1586,7 +1779,13 @@ function AddRestaurantModal({
 // Tab: Restaurants
 // ────────────────────────────────────────────────────────────────────────────
 
-function RestaurantsTab() {
+function RestaurantsTab({
+  showAdd,
+  setShowAdd,
+}: {
+  showAdd: boolean;
+  setShowAdd: (v: boolean) => void;
+}) {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -1594,24 +1793,20 @@ function RestaurantsTab() {
   const [search, setSearch] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const [editTarget, setEditTarget] = useState<Restaurant | null>(null);
-  const [showAdd, setShowAdd] = useState(false);
 
   const PAGE_SIZE = 50;
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
 
-  const load = useCallback(
-    (p: number, q: string) => {
-      setLoading(true);
-      fetch(`/api/admin/restaurants?page=${p}&q=${encodeURIComponent(q)}`)
-        .then((r) => r.json())
-        .then((d) => {
-          setRestaurants(d.data ?? []);
-          setTotalCount(d.count ?? 0);
-          setLoading(false);
-        });
-    },
-    []
-  );
+  const load = useCallback((p: number, q: string) => {
+    setLoading(true);
+    fetch(`/api/admin/restaurants?page=${p}&q=${encodeURIComponent(q)}`)
+      .then((r) => r.json())
+      .then((d) => {
+        setRestaurants(d.data ?? []);
+        setTotalCount(d.count ?? 0);
+        setLoading(false);
+      });
+  }, []);
 
   useEffect(() => {
     load(page, search);
@@ -1644,22 +1839,22 @@ function RestaurantsTab() {
           </button>
           {/* Search */}
           <div className="flex items-center h-10 bg-dark-surface/60 border border-gold/15 rounded-lg overflow-hidden focus-within:border-gold/40 transition-colors">
-          <Search className="ml-3 text-slate-500 shrink-0" size={15} />
-          <input
-            type="text"
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-            placeholder="Name, cuisine, location…"
-            className="bg-transparent px-3 text-slate-200 placeholder:text-slate-500 text-sm outline-none w-56"
-          />
-          <button
-            onClick={handleSearch}
-            className="h-full px-3 bg-gold/10 border-l border-gold/15 text-gold text-xs font-semibold hover:bg-gold/20 transition-colors"
-          >
-            Search
-          </button>
-        </div>
+            <Search className="ml-3 text-slate-500 shrink-0" size={15} />
+            <input
+              type="text"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+              placeholder="Name, cuisine, location…"
+              className="bg-transparent px-3 text-slate-200 placeholder:text-slate-500 text-sm outline-none w-56"
+            />
+            <button
+              onClick={handleSearch}
+              className="h-full px-3 bg-gold/10 border-l border-gold/15 text-gold text-xs font-semibold hover:bg-gold/20 transition-colors"
+            >
+              Search
+            </button>
+          </div>
         </div>
       </div>
 
@@ -1690,10 +1885,7 @@ function RestaurantsTab() {
               </thead>
               <tbody className="divide-y divide-gold/5">
                 {restaurants.map((r) => (
-                  <tr
-                    key={r.id}
-                    className="hover:bg-white/2 transition-colors"
-                  >
+                  <tr key={r.id} className="hover:bg-white/2 transition-colors">
                     <td className="px-5 py-3.5">
                       <div className="flex items-center gap-3">
                         {r.image && (
@@ -1725,7 +1917,10 @@ function RestaurantsTab() {
                     </td>
                     <td className="px-5 py-3.5 text-center">
                       {r.verified ? (
-                        <CheckCircle2 size={16} className="text-primary inline" />
+                        <CheckCircle2
+                          size={16}
+                          className="text-primary inline"
+                        />
                       ) : (
                         <span className="text-slate-700 text-xs">—</span>
                       )}
@@ -1836,6 +2031,7 @@ type Tab = (typeof NAV)[number]["label"];
 export default function AdminPage() {
   const router = useRouter();
   const [tab, setTab] = useState<Tab>("Dashboard");
+  const [showAdd, setShowAdd] = useState(false);
   const [pendingCount, setPendingCount] = useState<number | null>(null);
 
   // Load pending count for sidebar badge
@@ -1917,9 +2113,18 @@ export default function AdminPage() {
       {/* Main */}
       <main className="flex-1 flex flex-col min-w-0">
         <div className="flex-1 p-8 overflow-auto">
-          {tab === "Dashboard" && <DashboardTab />}
+          {tab === "Dashboard" && (
+            <DashboardTab
+              onAddListing={() => {
+                setTab("Restaurants");
+                setShowAdd(true);
+              }}
+            />
+          )}
           {tab === "Applications" && <ApplicationsTab />}
-          {tab === "Restaurants" && <RestaurantsTab />}
+          {tab === "Restaurants" && (
+            <RestaurantsTab showAdd={showAdd} setShowAdd={setShowAdd} />
+          )}
         </div>
 
         <footer className="p-4 border-t border-gold/10 text-center">

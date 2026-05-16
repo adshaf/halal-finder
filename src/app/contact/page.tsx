@@ -94,10 +94,10 @@ export default function ContactPage() {
                         Email
                       </p>
                       <a
-                        href="mailto:hello@halalbites.com.au"
+                        href="mailto:ad.shafstudio@gmail.com"
                         className="text-slate-300 text-sm hover:text-gold transition-colors"
                       >
-                        hello@halalbites.com.au
+                        ad.shafstudio@gmail.com
                       </a>
                     </div>
                   </div>

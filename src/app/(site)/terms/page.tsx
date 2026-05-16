@@ -1,12 +1,12 @@
 import {
   BookOpen,
   Scale,
-  Copyright,
   ShieldCheck,
   CheckCircle2,
   AlertCircle,
   CalendarDays,
   Mail,
+  TriangleAlert,
 } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
@@ -29,7 +29,7 @@ export default function TermsPage() {
           </h1>
           <div className="flex items-center gap-2 text-slate-400 font-medium">
             <CalendarDays size={16} aria-hidden="true" />
-            <span>Last updated: March 2025</span>
+            <span>Last updated: March 2026</span>
           </div>
         </div>
 
@@ -40,8 +40,8 @@ export default function TermsPage() {
             <p className="text-lg leading-relaxed text-slate-300 font-display italic">
               Welcome to HalalBites. These Terms and Conditions govern your use of
               our platform and services. By accessing or using HalalBites, you
-              agree to be bound by these guidelines, which are built upon
-              principles of transparency, honesty, and mutual respect.
+              agree to be bound by these guidelines. Please read them carefully
+              before using the platform.
             </p>
           </section>
 
@@ -50,15 +50,60 @@ export default function TermsPage() {
             <div className="flex items-center gap-3 mb-2">
               <BookOpen className="text-primary shrink-0" size={24} aria-hidden="true" />
               <h2 className="font-display text-2xl font-bold text-primary">
-                Introduction
+                About HalalBites
               </h2>
             </div>
             <div className="space-y-4 text-slate-300 leading-relaxed">
               <p>
-                Our goal is to provide an exceptional directory of premium Halal
-                dining experiences. We invite all users to engage with our
-                platform and each other with the utmost integrity and
-                consideration for our shared community.
+                HalalBites is an Australian halal restaurant discovery platform that
+                helps the Muslim community and halal-conscious diners find, save, and
+                share halal dining options. Our directory is built from community
+                submissions reviewed and managed by our team.
+              </p>
+              <p>
+                HalalBites is a listing directory only. We are not a halal
+                certification body, and we do not independently audit or inspect any
+                restaurant on our platform. See the{" "}
+                <em>Halal Information Accuracy</em> section below for important
+                information about how we source and represent halal status.
+              </p>
+              <p className="text-slate-400 text-sm">
+                The HalalBites name, logo, and platform design are the property of
+                HalalBites. Restaurant listing information belongs to the respective
+                establishments.
+              </p>
+            </div>
+          </section>
+
+          {/* Halal Information Accuracy */}
+          <section className="space-y-4">
+            <div className="flex items-center gap-3 mb-2">
+              <TriangleAlert className="text-primary shrink-0" size={24} aria-hidden="true" />
+              <h2 className="font-display text-2xl font-bold text-primary">
+                Halal Information Accuracy
+              </h2>
+            </div>
+            <div className="bg-dark-surface/60 p-6 rounded-xl border-l-4 border-gold">
+              <p className="text-slate-300 leading-relaxed">
+                Halal status information displayed on HalalBites is sourced from
+                restaurant submissions, publicly available certification data, and
+                community reports. While we make reasonable efforts to keep listings
+                accurate and up to date, we cannot guarantee the ongoing halal
+                compliance of any listed establishment.
+              </p>
+            </div>
+            <div className="space-y-3 text-slate-300 leading-relaxed">
+              <p>
+                Certification status, ingredients, and preparation methods can change
+                without notice. We strongly encourage users to verify halal status
+                directly with the restaurant — particularly for stricter dietary
+                requirements — before dining.
+              </p>
+              <p>
+                A <strong className="text-slate-100">Verified</strong> badge on a
+                listing indicates that the information was confirmed by someone with
+                authority over the restaurant (e.g. an owner or manager). It does not
+                constitute an independent halal audit or guarantee of compliance.
               </p>
             </div>
           </section>
@@ -78,10 +123,11 @@ export default function TermsPage() {
                   Your Rights
                 </h3>
                 <ul className="space-y-3 text-slate-400 text-sm">
-                  <li>Right to privacy and data protection.</li>
-                  <li>Right to access our directory and curated recommendations freely.</li>
-                  <li>Right to report inaccurate listings or unethical behaviour.</li>
-                  <li>Right to close your account at any time.</li>
+                  <li>Access and browse the HalalBites directory freely.</li>
+                  <li>Save restaurants to your personal saved list.</li>
+                  <li>Submit new restaurant listings for review.</li>
+                  <li>Report inaccurate or outdated listing information.</li>
+                  <li>Request deletion of your account and associated data at any time.</li>
                 </ul>
               </div>
               <div className="p-6 rounded-xl bg-dark-surface/60 border border-gold/15">
@@ -91,34 +137,34 @@ export default function TermsPage() {
                 </h3>
                 <ul className="space-y-3 text-slate-400 text-sm">
                   <li>Maintaining the confidentiality of your account credentials.</li>
-                  <li>Providing honest and constructive reviews and feedback.</li>
-                  <li>Refraining from posting false or misleading information.</li>
-                  <li>Respecting the intellectual property of the platform and its partners.</li>
+                  <li>Submitting only accurate and honest listing information.</li>
+                  <li>Not submitting duplicate, spam, or misleading listings.</li>
+                  <li>Respecting the intellectual property of the platform.</li>
+                  <li>Not attempting to manipulate or scrape the platform.</li>
                 </ul>
               </div>
             </div>
           </section>
 
-          {/* Intellectual Property */}
+          {/* Listing Submissions */}
           <section className="space-y-4">
             <div className="flex items-center gap-3 mb-2">
-              <Copyright className="text-primary shrink-0" size={24} aria-hidden="true" />
+              <CheckCircle2 className="text-primary shrink-0" size={24} aria-hidden="true" />
               <h2 className="font-display text-2xl font-bold text-primary">
-                Intellectual Property
+                Listing Submissions
               </h2>
             </div>
-            <p className="text-slate-300 leading-relaxed">
-              All content on HalalBites — including restaurant listings,
-              photography, written descriptions, brand identity, and design
-              elements — is the property of HalalBites or its respective content
-              partners. This material is protected under applicable copyright and
-              intellectual property laws.
-            </p>
-            <div className="bg-dark-surface/60 p-6 rounded-xl border-l-4 border-gold">
-              <p className="italic text-slate-300 font-medium">
-                &ldquo;We encourage the sharing of our curated recommendations,
-                provided content is attributed to HalalBites and used for personal,
-                non-commercial purposes only.&rdquo;
+            <div className="space-y-4 text-slate-300 leading-relaxed">
+              <p>
+                Users may submit restaurants for inclusion in the HalalBites
+                directory. All submissions are reviewed by our team before being
+                published. By submitting a listing, you confirm that the information
+                provided is accurate to the best of your knowledge.
+              </p>
+              <p>
+                We reserve the right to approve, reject, edit, or remove any listing
+                at our discretion. Submissions that are found to be false, misleading,
+                or submitted in bad faith may result in account suspension.
               </p>
             </div>
           </section>
@@ -128,14 +174,14 @@ export default function TermsPage() {
             <div className="flex items-center gap-3 mb-2">
               <ShieldCheck className="text-primary shrink-0" size={24} aria-hidden="true" />
               <h2 className="font-display text-2xl font-bold text-primary">
-                Privacy &amp; Data Ethics
+                Privacy &amp; Data
               </h2>
             </div>
             <p className="text-slate-300 leading-relaxed">
-              Your privacy is a trust we take seriously. We collect only the
-              data necessary to improve your experience and will never sell your
-              personal information to third parties. For a full breakdown of how
-              we protect and manage your data, please refer to our{" "}
+              Your privacy is important to us. We collect only the data necessary to
+              provide and improve the HalalBites service and will never sell your
+              personal information to third parties. For full details on how we
+              collect, use, and protect your data, please read our{" "}
               <Link
                 href="/privacy"
                 className="text-gold underline font-bold underline-offset-4 hover:text-gold/80 transition-colors"
@@ -155,14 +201,14 @@ export default function TermsPage() {
                   Questions about our terms?
                 </h2>
                 <p className="text-slate-300 mb-4">
-                  Our team is here to help you understand your rights and our
-                  shared responsibilities.
+                  If you have any questions about these Terms and Conditions or
+                  need to report a listing issue, please get in touch.
                 </p>
                 <a
-                  href="mailto:support@halalbites.com.au"
+                  href="mailto:ad.shafstudio@gmail.com"
                   className="inline-flex items-center gap-2 text-gold font-bold hover:underline underline-offset-4"
                 >
-                  support@halalbites.com.au
+                  ad.shafstudio@gmail.com
                 </a>
               </div>
             </div>

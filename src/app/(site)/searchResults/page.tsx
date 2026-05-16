@@ -34,7 +34,7 @@ const MapView = dynamic(() => import("@/components/search/MapView"), {
 
 // Columns fetched for the map — skips heavy text fields not needed for pins/modal
 const MAP_COLUMNS = [
-  "id", "slug", "name", "cuisine", "price", "location", "image",
+  "id", "slug", "name", "cuisine", "price", "location", "image", "hero_image",
   "verified", "featured", "latitude", "longitude",
   "halal_certified", "no_alcohol", "no_pork", "muslim_owned",
   "muslim_chefs", "prayer_room", "halal_chicken", "halal_beef",
@@ -633,7 +633,7 @@ function SearchResultsInner() {
                       {/* Image */}
                       <div className="relative overflow-hidden">
                         <Image
-                          src={r.image ?? "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600"}
+                          src={r.hero_image ?? r.image ?? "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600"}
                           alt={r.name}
                           width={600}
                           height={220}

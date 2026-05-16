@@ -44,10 +44,10 @@ export default function HowItWorksDisclaimer() {
             <strong className="text-slate-300">Spotted something incorrect?</strong>{" "}
             If a listing has wrong or outdated information, please contact us at{" "}
             <a
-              href="mailto:support@halalbites.com.au"
+              href="mailto:ad.shafstudio@gmail.com"
               className="text-gold underline underline-offset-4 hover:text-gold/80 transition-colors"
             >
-              support@halalbites.com.au
+              ad.shafstudio@gmail.com
             </a>
             . We review all reports and update listings promptly.
           </p>
