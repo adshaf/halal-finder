@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { HALAL_ICONS, CUISINE_REGIONS } from "@/lib/constants";
+import { compressBanner, compressGallery } from "@/lib/compressImage";
 import type { Restaurant } from "@/lib/constants";
 
 // ── Nominatim address suggestion ─────────────────────────────────
@@ -164,14 +165,18 @@ export default function ApplicationPage() {
   // ── Banner image ──────────────────────────────────────────────
   const [bannerFile, setBannerFile] = useState<File | null>(null);
   const [bannerPreview, setBannerPreview] = useState<string | null>(null);
+  const [compressingBanner, setCompressingBanner] = useState(false);
   const bannerInputRef = useRef<HTMLInputElement>(null);
 
-  function selectBanner(files: FileList | null) {
+  async function selectBanner(files: FileList | null) {
     const file = files?.[0];
     if (!file) return;
     if (bannerPreview) URL.revokeObjectURL(bannerPreview);
-    setBannerFile(file);
-    setBannerPreview(URL.createObjectURL(file));
+    setCompressingBanner(true);
+    const compressed = await compressBanner(file);
+    setCompressingBanner(false);
+    setBannerFile(compressed);
+    setBannerPreview(URL.createObjectURL(compressed));
   }
 
   function removeBanner() {
@@ -183,13 +188,17 @@ export default function ApplicationPage() {
   // ── Gallery images ────────────────────────────────────────────
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [compressingGallery, setCompressingGallery] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  function addImages(files: FileList | null) {
+  async function addImages(files: FileList | null) {
     if (!files) return;
     const newFiles = Array.from(files).slice(0, 3 - imageFiles.length);
-    const newPreviews = newFiles.map((f) => URL.createObjectURL(f));
-    setImageFiles((prev) => [...prev, ...newFiles]);
+    setCompressingGallery(true);
+    const compressed = await Promise.all(newFiles.map(compressGallery));
+    setCompressingGallery(false);
+    const newPreviews = compressed.map((f) => URL.createObjectURL(f));
+    setImageFiles((prev) => [...prev, ...compressed]);
     setImagePreviews((prev) => [...prev, ...newPreviews]);
   }
 
@@ -566,7 +575,12 @@ export default function ApplicationPage() {
               Used as the full-width hero image on the restaurant page. Landscape format recommended.
             </p>
 
-            {bannerPreview ? (
+            {compressingBanner ? (
+              <div className="w-full border-2 border-dashed border-gold/20 rounded-xl py-8 flex flex-col items-center gap-2 text-slate-500">
+                <Loader2 size={20} className="animate-spin" />
+                <span className="text-sm">Compressing image…</span>
+              </div>
+            ) : bannerPreview ? (
               <div className="relative rounded-xl overflow-hidden border border-gold/15 mb-0">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={bannerPreview} alt="Banner preview" className="w-full h-48 object-cover" />
@@ -625,7 +639,12 @@ export default function ApplicationPage() {
               </div>
             )}
 
-            {imageFiles.length < 3 && (
+            {compressingGallery ? (
+              <div className="w-full border-2 border-dashed border-gold/20 rounded-xl py-8 flex flex-col items-center gap-2 text-slate-500">
+                <Loader2 size={20} className="animate-spin" />
+                <span className="text-sm">Compressing images…</span>
+              </div>
+            ) : imageFiles.length < 3 ? (
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
@@ -635,7 +654,7 @@ export default function ApplicationPage() {
                 <span className="text-sm">Click to add photos</span>
                 <span className="text-xs text-slate-600">JPG, PNG, WEBP — max 5 MB each</span>
               </button>
-            )}
+            ) : null}
             <input
               ref={fileInputRef}
               type="file"

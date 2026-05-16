@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Menu, X, LogOut, LayoutDashboard, ChevronDown } from "lucide-react";
+import { Menu, X, LogOut, LayoutDashboard, ChevronDown, Trash2, AlertTriangle, Loader2 } from "lucide-react";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { createClient } from "@/lib/supabase/client";
 
@@ -27,6 +27,9 @@ const navLinks = [
 export default function HomeNavbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
   const pathname = usePathname();
   const router = useRouter();
   const { user } = useAuth();
@@ -52,6 +55,20 @@ export default function HomeNavbar() {
     await supabase.auth.signOut();
     router.push("/");
     router.refresh();
+  }
+
+  async function handleDeleteAccount() {
+    setDeleting(true);
+    setDeleteError("");
+    const res = await fetch("/api/user/delete", { method: "DELETE" });
+    if (res.ok) {
+      router.push("/");
+      router.refresh();
+    } else {
+      const data = await res.json();
+      setDeleteError(data.error ?? "Something went wrong. Please try again.");
+      setDeleting(false);
+    }
   }
 
   const userInitial =
@@ -102,7 +119,7 @@ export default function HomeNavbar() {
                 </button>
 
                 {dropdownOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-48 bg-dark-bg border border-gold/15 rounded-xl shadow-xl overflow-hidden z-50">
+                  <div className="absolute right-0 top-full mt-2 w-52 bg-dark-bg border border-gold/15 rounded-xl shadow-xl overflow-hidden z-50">
                     <Link
                       href="/dashboard"
                       className="flex items-center gap-3 px-4 py-3 text-sm text-slate-300 hover:text-gold hover:bg-gold/5 transition-colors"
@@ -112,11 +129,21 @@ export default function HomeNavbar() {
                     </Link>
                     <button
                       onClick={handleLogout}
-                      className="w-full flex items-center gap-3 px-4 py-3 text-sm text-slate-400 hover:text-red-400 hover:bg-red-400/5 transition-colors border-t border-gold/10"
+                      className="w-full flex items-center gap-3 px-4 py-3 text-sm text-slate-300 hover:text-gold hover:bg-gold/5 transition-colors border-t border-gold/10"
                     >
                       <LogOut size={15} />
                       Sign Out
                     </button>
+                    {/* Clearly separated delete option */}
+                    <div className="border-t border-red-400/20 mt-0">
+                      <button
+                        onClick={() => { setDropdownOpen(false); setShowDeleteModal(true); }}
+                        className="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-400/60 hover:text-red-400 hover:bg-red-400/5 transition-colors"
+                      >
+                        <Trash2 size={15} />
+                        Delete Account
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
@@ -223,13 +250,22 @@ export default function HomeNavbar() {
         {/* Auth pinned to bottom */}
         <div className="px-6 py-6 border-t border-gold/10 flex flex-col gap-3">
           {user ? (
-            <button
-              onClick={handleLogout}
-              className="text-center text-sm font-medium text-red-400 hover:text-red-300 py-3 transition-colors flex items-center justify-center gap-2"
-            >
-              <LogOut size={15} />
-              Sign Out
-            </button>
+            <>
+              <button
+                onClick={handleLogout}
+                className="text-center text-sm font-medium text-slate-300 hover:text-gold py-3 transition-colors flex items-center justify-center gap-2"
+              >
+                <LogOut size={15} />
+                Sign Out
+              </button>
+              <button
+                onClick={() => { setMenuOpen(false); setShowDeleteModal(true); }}
+                className="text-center text-xs font-medium text-red-400/50 hover:text-red-400/80 py-2 transition-colors flex items-center justify-center gap-2 border-t border-red-400/10 pt-3"
+              >
+                <Trash2 size={13} />
+                Delete Account
+              </button>
+            </>
           ) : (
             <>
               <Link
@@ -248,6 +284,65 @@ export default function HomeNavbar() {
           )}
         </div>
       </nav>
+
+      {/* Delete account confirmation modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-2000 flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+            onClick={() => !deleting && setShowDeleteModal(false)}
+          />
+          <div className="relative bg-dark-surface border border-red-400/20 rounded-2xl w-full max-w-sm shadow-2xl p-6">
+            <button
+              onClick={() => { setShowDeleteModal(false); setDeleteError(""); }}
+              disabled={deleting}
+              className="absolute top-4 right-4 text-slate-500 hover:text-slate-300 transition-colors"
+            >
+              <X size={18} />
+            </button>
+
+            <div className="flex justify-center mb-4">
+              <div className="size-12 rounded-full bg-red-400/10 border border-red-400/20 flex items-center justify-center">
+                <AlertTriangle size={22} className="text-red-400" />
+              </div>
+            </div>
+
+            <h3 className="font-display font-bold text-slate-100 text-lg text-center mb-2">
+              Delete your account?
+            </h3>
+            <p className="text-sm text-slate-400 text-center mb-1">
+              This is permanent and cannot be undone.
+            </p>
+            <p className="text-xs text-slate-500 text-center mb-6">
+              Your saved restaurants and profile will be removed. Any restaurant submissions you've made will remain in our database.
+            </p>
+
+            {deleteError && (
+              <p className="text-red-400 text-xs bg-red-400/10 border border-red-400/20 rounded-lg px-3 py-2 mb-4 text-center">
+                {deleteError}
+              </p>
+            )}
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => { setShowDeleteModal(false); setDeleteError(""); }}
+                disabled={deleting}
+                className="flex-1 py-2.5 rounded-lg border border-white/10 text-slate-400 hover:text-white text-sm transition-colors disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteAccount}
+                disabled={deleting}
+                className="flex-1 py-2.5 rounded-lg bg-red-500 hover:bg-red-400 text-white font-bold text-sm transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {deleting && <Loader2 size={15} className="animate-spin" />}
+                {deleting ? "Deleting…" : "Yes, delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

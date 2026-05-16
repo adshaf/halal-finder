@@ -104,23 +104,6 @@ export default function ContactPage() {
 
                   <div className="flex items-start gap-4">
                     <div className="w-9 h-9 rounded-lg bg-gold/10 border border-gold/20 flex items-center justify-center shrink-0">
-                      <Phone size={15} className="text-gold" />
-                    </div>
-                    <div>
-                      <p className="text-xs text-slate-500 mb-0.5 font-medium uppercase tracking-wider">
-                        Phone
-                      </p>
-                      <a
-                        href="tel:+61200000000"
-                        className="text-slate-300 text-sm hover:text-gold transition-colors"
-                      >
-                        +61 2 0000 0000
-                      </a>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-4">
-                    <div className="w-9 h-9 rounded-lg bg-gold/10 border border-gold/20 flex items-center justify-center shrink-0">
                       <MapPin size={15} className="text-gold" />
                     </div>
                     <div>
