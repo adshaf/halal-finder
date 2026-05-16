@@ -33,7 +33,7 @@ export default function HomeFooter() {
           <div className="flex items-center gap-3 mb-6">
             <HalalFindStar />
             <span className="font-display text-2xl font-bold tracking-tight text-slate-100">
-              Halal<span className="text-gold">Yums</span>
+              halal <span className="text-gold">yums</span>
             </span>
           </div>
           {/* <p className="text-slate-400 text-sm leading-relaxed mb-6">
