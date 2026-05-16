@@ -64,7 +64,7 @@ export default function RestaurantDetail({ restaurant: r }: { restaurant: Restau
             </Link>
             <ChevronRight size={12} />
             <Link
-              href="/searchResults"
+              href="/search-results"
               className="hover:text-gold transition-colors"
             >
               Restaurants

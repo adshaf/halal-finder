@@ -14,10 +14,10 @@ const HalalFindStar = () => (
 
 const footerLinks = {
   Explore: [
-    { label: "Popular Cities", href: "/searchResults" },
-    { label: "Featured Lists", href: "/searchResults" },
-    { label: "Cuisine Guide", href: "/searchResults" },
-    { label: "Halal Standards", href: "/searchResults" },
+    { label: "Popular Cities", href: "/search-results" },
+    { label: "Featured Lists", href: "/search-results" },
+    { label: "Cuisine Guide", href: "/search-results" },
+    { label: "Halal Standards", href: "/search-results" },
   ],
   "For Businesses": [
     { label: "Partner with Us", href: "/join" },

@@ -11,7 +11,7 @@ export default function HeroSection() {
   const handleSearch = () => {
     const q = query.trim();
     router.push(
-      q ? `/searchResults?q=${encodeURIComponent(q)}` : "/searchResults",
+      q ? `/search-results?q=${encodeURIComponent(q)}` : "/search-results",
     );
   };
 

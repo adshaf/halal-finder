@@ -245,7 +245,7 @@ export default function DashboardPage() {
                 icon={<Heart size={32} className="text-gold/40" />}
                 title="No saved restaurants yet"
                 description="Bookmark restaurants while exploring to find them here."
-                cta={{ label: "Explore restaurants", href: "/searchResults" }}
+                cta={{ label: "Explore restaurants", href: "/search-results" }}
               />
             ) : (
               <div className="grid sm:grid-cols-2 gap-4">
@@ -357,7 +357,7 @@ export default function DashboardPage() {
                 icon={<MessageSquare size={32} className="text-gold/40" />}
                 title="No reviews written yet"
                 description="Visit a restaurant page and share your experience."
-                cta={{ label: "Explore restaurants", href: "/searchResults" }}
+                cta={{ label: "Explore restaurants", href: "/search-results" }}
               />
             ) : (
               <div className="space-y-3">
