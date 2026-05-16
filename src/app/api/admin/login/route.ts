@@ -1,13 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import { adminLoginRateLimit, getIp } from "@/lib/ratelimit";
+import { adminLoginRateLimiter, getIp } from "@/lib/ratelimit";
 
 export async function POST(req: NextRequest) {
-  const { success } = await adminLoginRateLimit.limit(getIp(req));
-  if (!success)
+  try {
+    await adminLoginRateLimiter.consume(getIp(req));
+  } catch {
     return NextResponse.json(
       { error: "Too many attempts — please wait before trying again" },
       { status: 429 }
     );
+  }
 
   const { password } = await req.json();
 

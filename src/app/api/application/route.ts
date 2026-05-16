@@ -2,7 +2,6 @@ import { createClient as createAdminClient } from "@supabase/supabase-js";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { NextRequest } from "next/server";
-import { applyRateLimit, getIp } from "@/lib/ratelimit";
 import { verifyRecaptcha } from "@/lib/recaptcha";
 
 function adminClient() {
@@ -13,15 +12,6 @@ function adminClient() {
 }
 
 export async function POST(req: NextRequest) {
-  // ── Rate limit ────────────────────────────────────────────────
-  const { success } = await applyRateLimit.limit(getIp(req));
-  if (!success) {
-    return Response.json(
-      { error: "Too many submissions. Please try again later." },
-      { status: 429 }
-    );
-  }
-
   // ── Auth — must be signed in ──────────────────────────────────
   const cookieStore = await cookies();
   const supabase = createServerClient(
