@@ -20,7 +20,7 @@ const HalalFindStar = () => (
 
 const navLinks = [
   { label: "Home", href: "/" },
-  { label: "Explore", href: "/searchResults" },
+  { label: "Explore", href: "/search-results" },
   { label: "Contact", href: "/contact" },
 ];
 

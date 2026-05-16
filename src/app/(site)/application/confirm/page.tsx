@@ -53,7 +53,7 @@ export default function ApplicationConfirmPage() {
             View My Applications <ChevronRight size={15} />
           </Link>
           <Link
-            href="/searchResults"
+            href="/search-results"
             className="flex-1 flex items-center justify-center gap-2 bg-dark-surface border border-gold/20 text-slate-300 font-semibold px-6 py-3 rounded-xl hover:border-gold/40 transition-colors text-sm"
           >
             <Search size={14} /> Explore Restaurants

@@ -36,3 +36,18 @@ export async function PUT(
   if (error) return Response.json({ error: error.message }, { status: 500 });
   return Response.json({ ok: true });
 }
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  if (!checkAuth(req))
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+
+  const { id } = await params;
+  const supabase = adminClient();
+  const { error } = await supabase.from("restaurants").delete().eq("id", id);
+
+  if (error) return Response.json({ error: error.message }, { status: 500 });
+  return Response.json({ ok: true });
+}

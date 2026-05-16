@@ -53,7 +53,7 @@ export default function FeaturedCollections() {
             </p>
           </div>
           <Link
-            href="/searchResults"
+            href="/search-results"
             className="text-gold font-bold flex items-center gap-2 hover:underline decoration-2 underline-offset-4"
           >
             View All <ArrowRight size={16} />

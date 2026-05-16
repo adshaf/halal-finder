@@ -452,7 +452,7 @@ function SearchResultsInner() {
 
   const handleSearch = () => {
     const q = inputValue.trim();
-    router.push(`/searchResults?q=${encodeURIComponent(q)}`);
+    router.push(`/search-results?q=${encodeURIComponent(q)}`);
   };
 
   // Map: client-side filter the pre-fetched lightweight dataset
@@ -512,7 +512,7 @@ function SearchResultsInner() {
             />
             {inputValue && (
               <button
-                onClick={() => { setInputValue(""); router.push("/searchResults"); }}
+                onClick={() => { setInputValue(""); router.push("/search-results"); }}
                 className="text-slate-500 hover:text-slate-300 px-2"
               >
                 <X size={16} />
