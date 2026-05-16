@@ -13,11 +13,12 @@ export default function HalalGuidePage() {
     <div>
       <HalalGuideHero />
 
-      <div className="max-w-4xl mx-auto px-6 py-16 space-y-16">
+      <div className="px-6 py-16">
+      <div className="max-w-4xl mx-auto space-y-16">
         {/* What is Halal */}
         <section className="space-y-4">
           <h2 className="font-display text-2xl font-bold text-gold">
-            What Does Halal Mean?
+            What does halal mean?
           </h2>
           <p className="text-slate-300 leading-relaxed">
             &ldquo;Halal&rdquo; is an Arabic word meaning <em>permissible</em>.
@@ -25,7 +26,7 @@ export default function HalalGuidePage() {
             dietary law. The opposite is <em>haram</em>, meaning forbidden.
           </p>
           <p className="text-slate-400 leading-relaxed">
-            For most Muslims, eating halal is a religious obligation — not a
+            For most Muslims, eating halal is a religious obligation, not a
             preference. This makes accurate, reliable information about
             restaurant practices genuinely important.
           </p>
@@ -36,7 +37,7 @@ export default function HalalGuidePage() {
         {/* What makes food haram */}
         <section className="space-y-4">
           <h2 className="font-display text-2xl font-bold text-gold">
-            What Makes Food Haram?
+            What makes food haram?
           </h2>
           <p className="text-slate-300 leading-relaxed">
             The main categories of haram food and drink are:
@@ -49,7 +50,7 @@ export default function HalalGuidePage() {
               ],
               [
                 "Alcohol",
-                "in any form — including wine used in cooking, beer-battered food, and alcohol-based flavourings.",
+                "in any form, including wine used in cooking, beer-battered food, and alcohol-based flavourings.",
               ],
               [
                 "Improperly slaughtered meat",
@@ -65,7 +66,7 @@ export default function HalalGuidePage() {
               ],
             ].map(([term, desc]) => (
               <li key={term} className="flex gap-3">
-                <span className="text-primary mt-1 shrink-0">—</span>
+                <span className="text-primary shrink-0">—</span>
                 <span>
                   <strong className="text-slate-200">{term}:</strong> {desc}
                 </span>
@@ -79,11 +80,11 @@ export default function HalalGuidePage() {
         {/* Halal slaughter */}
         <section className="space-y-4">
           <h2 className="font-display text-2xl font-bold text-gold">
-            Halal Slaughter (Dhabiha)
+            Halal slaughter (dhabiha)
           </h2>
           <p className="text-slate-300 leading-relaxed">
             For meat to be halal, the animal must be slaughtered according to
-            dhabiha — a method prescribed in Islamic law. The key requirements
+            dhabiha, a method prescribed in Islamic law. The key requirements
             are:
           </p>
           <ul className="space-y-3 text-slate-400 leading-relaxed list-none">
@@ -95,7 +96,7 @@ export default function HalalGuidePage() {
               "The animal must not have been stunned in a way that causes death prior to slaughter (though pre-slaughter stunning is accepted by some certification bodies if the animal survives).",
             ].map((point) => (
               <li key={point} className="flex gap-3">
-                <span className="text-primary mt-1 shrink-0">—</span>
+                <span className="text-primary shrink-0">—</span>
                 <span>{point}</span>
               </li>
             ))}
@@ -113,10 +114,10 @@ export default function HalalGuidePage() {
         {/* Seafood */}
         <section className="space-y-4">
           <h2 className="font-display text-2xl font-bold text-gold">
-            Is Seafood Halal?
+            Is seafood halal?
           </h2>
           <p className="text-slate-300 leading-relaxed">
-            Generally, yes — seafood is considered halal by the majority of
+            Generally, yes. Seafood is considered halal by the majority of
             Islamic scholars. Fish and most seafood do not require slaughter in
             the same way as land animals.
           </p>
@@ -138,7 +139,7 @@ export default function HalalGuidePage() {
         {/* Certification in Australia */}
         <section className="space-y-4">
           <h2 className="font-display text-2xl font-bold text-gold">
-            Halal Certification in Australia
+            Halal certification in Australia
           </h2>
           <p className="text-slate-300 leading-relaxed">
             In Australia, halal certification is voluntary — there is no
@@ -154,7 +155,7 @@ export default function HalalGuidePage() {
             stunning.
           </p>
           <p className="text-slate-400 leading-relaxed">
-            A halal certificate is not permanent — it requires renewal and
+            A halal certificate is not permanent; it requires renewal and
             ongoing compliance. If a restaurant displays a certificate, it is
             worth checking the issuing body and expiry date if formal
             certification is important to you.
@@ -166,7 +167,7 @@ export default function HalalGuidePage() {
         {/* Dining tips */}
         <section className="space-y-4">
           <h2 className="font-display text-2xl font-bold text-gold">
-            Tips for Dining Out
+            Tips for dining out
           </h2>
           <ul className="space-y-3 text-slate-400 leading-relaxed list-none">
             {[
@@ -192,7 +193,7 @@ export default function HalalGuidePage() {
               ],
             ].map(([term, desc]) => (
               <li key={term} className="flex gap-3">
-                <span className="text-primary mt-1 shrink-0">—</span>
+                <span className="text-primary shrink-0">—</span>
                 <span>
                   <strong className="text-slate-200">{term}:</strong> {desc}
                 </span>
@@ -200,6 +201,7 @@ export default function HalalGuidePage() {
             ))}
           </ul>
         </section>
+      </div>
       </div>
     </div>
   );

@@ -13,7 +13,7 @@ const HalalFindStar = () => (
 );
 
 const footerLinks = {
-  Explore: [
+  Guides: [
     { label: "How It Works", href: "/how-it-works" },
     { label: "Halal Guide", href: "/halal-guide" },
   ],
