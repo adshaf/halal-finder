@@ -68,13 +68,13 @@ export default function HowItWorksBadges() {
     <section className="py-16 px-6 border-b border-gold/10">
       <div className="max-w-4xl mx-auto">
         <h2 className="font-display text-3xl font-bold text-gold mb-3">
-          Understanding the Badges
+          Understanding the badges
         </h2>
         <p className="text-slate-400 mb-10 leading-relaxed">
           Each listing displays icons that represent specific attributes of that
           restaurant. These are based on information provided by the restaurant
           or sourced from the community — they are not independently verified by
-          HalalYums.
+          halal yums.
         </p>
 
         <div className="grid sm:grid-cols-2 gap-4">

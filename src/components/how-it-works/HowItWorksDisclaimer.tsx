@@ -6,10 +6,10 @@ export default function HowItWorksDisclaimer() {
     <section className="py-16 px-6 border-b border-gold/10">
       <div className="max-w-4xl mx-auto">
         <h2 className="font-display text-3xl font-bold text-gold mb-3">
-          Important: About Our Information
+          Important: about our information
         </h2>
         <p className="text-slate-400 mb-8 leading-relaxed">
-          We want to be upfront about how halal information on HalalYums works.
+          We want to be upfront about how halal information on halal yums works.
         </p>
 
         <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-6 md:p-8 mb-8">
@@ -17,10 +17,10 @@ export default function HowItWorksDisclaimer() {
             <AlertTriangle size={22} className="text-amber-400 shrink-0 mt-0.5" />
             <div className="space-y-3 text-slate-300 leading-relaxed">
               <p>
-                <strong className="text-slate-100">HalalYums does not independently verify or audit any restaurant.</strong>{" "}
-                All halal attributes shown on a listing — such as &ldquo;Halal
-                Certified&rdquo;, &ldquo;No Alcohol&rdquo;, or &ldquo;Muslim
-                Owned&rdquo; — are based on information provided by the
+                <strong className="text-slate-100">halal yums does not independently verify or audit any restaurant.</strong>{" "}
+                All halal attributes shown on a listing, such as "Halal
+                Certified", "No Alcohol", or "Muslim
+                Owned", are based on information provided by the
                 restaurant, submitted by community members, or sourced from
                 publicly available details.
               </p>
@@ -32,7 +32,7 @@ export default function HowItWorksDisclaimer() {
               </p>
               <p className="font-medium text-slate-200">
                 If halal compliance is important to you, always verify directly
-                with the restaurant before dining — especially for formal halal
+                with the restaurant before dining, especially for formal halal
                 certification.
               </p>
             </div>

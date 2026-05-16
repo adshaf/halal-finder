@@ -3,9 +3,9 @@ import { Users, ShieldCheck, ClipboardList } from "lucide-react";
 const STEPS = [
   {
     icon: Users,
-    title: "Community Submissions",
+    title: "Community submissions",
     description:
-      "Anyone with a free HalalYums account can submit a restaurant listing. We encourage the community to share places they've visited and know to be halal-friendly.",
+      "Anyone with a free halal yums account can submit a restaurant listing. We encourage the community to share places they've visited and know to be halal-friendly.",
   },
   {
     icon: ClipboardList,
@@ -17,7 +17,7 @@ const STEPS = [
     icon: ShieldCheck,
     title: "Published & Maintained",
     description:
-      "Once approved, the listing is published on HalalYums. Details can be updated over time — by the restaurant, the community, or our team — to keep information current.",
+      "Once approved, the listing is published on halal yums. Details can be updated over time — by the restaurant, the community, or our team — to keep information current.",
   },
 ];
 
@@ -26,10 +26,10 @@ export default function HowItWorksListings() {
     <section className="py-16 px-6 border-b border-gold/10">
       <div className="max-w-4xl mx-auto">
         <h2 className="font-display text-3xl font-bold text-gold mb-3">
-          How Listings Are Added
+          How listings are added
         </h2>
         <p className="text-slate-400 mb-10 leading-relaxed">
-          Listings on HalalYums come from two sources: our admin team and
+          Listings on halal yums come from two sources: our admin team and
           community submissions from registered users.
         </p>
 

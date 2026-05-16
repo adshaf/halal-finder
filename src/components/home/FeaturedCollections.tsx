@@ -43,7 +43,7 @@ export default function FeaturedCollections() {
     <section className="py-24 px-6 lg:px-20 bg-dark-bg text-slate-100">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex justify-between items-end mb-12">
+        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-6 mb-12">
           <div>
             <h2 className="font-display text-4xl font-bold mb-4">
               Featured Restaurants

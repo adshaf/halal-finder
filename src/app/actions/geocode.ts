@@ -20,7 +20,7 @@ export async function geocodeAddress(address: string): Promise<GeoResult> {
     const res = await fetch(url.toString(), {
       headers: {
         // Nominatim requires a descriptive User-Agent identifying your app
-        "User-Agent": "HalalYums/1.0 (halalyums.com.au)",
+        "User-Agent": "halal yums/1.0 (halalyums.com.au)",
       },
       next: { revalidate: 0 }, // never cache geocode results
     });

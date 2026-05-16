@@ -212,7 +212,7 @@ function DashboardTab({ onAddListing }: { onAddListing: () => void }) {
           Overview Dashboard
         </h2>
         <p className="text-gold/60 mt-1 text-sm">
-          Welcome back. Here is a live summary of HalalYums activity.
+          Welcome back. Here is a live summary of halal yums activity.
         </p>
       </div>
 
@@ -2058,7 +2058,7 @@ export default function AdminPage() {
           </div>
           <div>
             <h1 className="text-white text-lg font-display font-bold leading-none">
-              HalalYums
+              halal yums
             </h1>
             <p className="text-slate-500 text-xs mt-1">Admin Console</p>
           </div>
@@ -2130,7 +2130,7 @@ export default function AdminPage() {
 
         <footer className="p-4 border-t border-gold/10 text-center">
           <p className="text-xs text-gold/30">
-            © 2025 HalalYums — Admin Console · v1.0.0
+            © 2025 halal yums — Admin Console · v1.0.0
           </p>
         </footer>
       </main>

@@ -13,7 +13,7 @@ export default function Home() {
         <HeroSection />
         <MissionSection />
         <FeaturedCollections />
-        <CTASection />
+        {/* <CTASection /> */}
       </main>
       <HomeFooter />
     </div>

@@ -13,7 +13,7 @@ const HalalFindStar = () => (
 );
 
 const footerLinks = {
-  Explore: [
+  Guides: [
     { label: "How It Works", href: "/how-it-works" },
     { label: "Halal Guide", href: "/halal-guide" },
   ],
@@ -33,7 +33,7 @@ export default function HomeFooter() {
           <div className="flex items-center gap-3 mb-6">
             <HalalFindStar />
             <span className="font-display text-2xl font-bold tracking-tight text-slate-100">
-              Halal<span className="text-gold">Yums</span>
+              halal <span className="text-gold">yums</span>
             </span>
           </div>
           {/* <p className="text-slate-400 text-sm leading-relaxed mb-6">
@@ -90,7 +90,7 @@ export default function HomeFooter() {
       {/* Bottom bar */}
       <div className="max-w-7xl mx-auto pt-10 border-t border-gold/5">
         <p className="text-slate-500 text-xs">
-          © {new Date().getFullYear()} HalalYums. All rights reserved. Made by
+          © {new Date().getFullYear()} halal yums. All rights reserved. Made by
           Shafstudio Web Design.
         </p>
       </div>

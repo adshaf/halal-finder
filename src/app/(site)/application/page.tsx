@@ -107,7 +107,7 @@ export default function ApplicationPage() {
           `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
             addressInput + ", Australia"
           )}&format=json&countrycodes=au&limit=5&addressdetails=1`,
-          { headers: { "User-Agent": "HalalYums/1.0" } }
+          { headers: { "User-Agent": "halal yums/1.0" } }
         );
         const data: AddressSuggestion[] = await res.json();
         setSuggestions(data);
