@@ -19,6 +19,7 @@ import {
   AlertTriangle,
   ExternalLink,
   Pencil,
+  Trash2,
   TrendingUp,
   UserPlus,
   Filter,
@@ -1794,6 +1795,8 @@ function RestaurantsTab({
   const [search, setSearch] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const [editTarget, setEditTarget] = useState<Restaurant | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Restaurant | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const PAGE_SIZE = 50;
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
@@ -1951,6 +1954,13 @@ function RestaurantsTab({
                         >
                           <ExternalLink size={14} />
                         </a>
+                        <button
+                          onClick={() => setDeleteTarget(r)}
+                          className="text-red-500 hover:text-red-400 transition-colors"
+                          title="Delete"
+                        >
+                          <Trash2 size={14} />
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -1999,6 +2009,49 @@ function RestaurantsTab({
             load(page, search);
           }}
         />
+      )}
+
+      {deleteTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-dark-surface border border-red-500/30 rounded-2xl p-8 w-full max-w-md shadow-2xl">
+            <div className="flex items-start gap-4 mb-6">
+              <AlertTriangle size={22} className="text-red-400 shrink-0 mt-0.5" />
+              <div>
+                <h3 className="font-display font-bold text-slate-100 text-lg mb-1">
+                  Delete restaurant
+                </h3>
+                <p className="text-slate-400 text-sm">
+                  Are you sure you want to delete{" "}
+                  <span className="text-slate-100 font-semibold">{deleteTarget.name}</span>?
+                  This action cannot be undone.
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setDeleteTarget(null)}
+                disabled={deleting}
+                className="px-4 py-2 text-sm rounded-lg border border-gold/20 text-slate-400 hover:text-slate-200 transition-colors disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={async () => {
+                  setDeleting(true);
+                  await fetch(`/api/admin/restaurants/${deleteTarget.id}`, { method: "DELETE" });
+                  setDeleting(false);
+                  setDeleteTarget(null);
+                  load(page, search);
+                }}
+                disabled={deleting}
+                className="px-4 py-2 text-sm rounded-lg bg-red-600 hover:bg-red-500 text-white font-semibold transition-colors disabled:opacity-50 flex items-center gap-2"
+              >
+                {deleting && <Loader2 size={14} className="animate-spin" />}
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {showAdd && (
