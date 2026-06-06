@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Menu, X, LogOut, LayoutDashboard, ChevronDown } from "lucide-react";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { createClient } from "@/lib/supabase/client";
@@ -27,16 +27,9 @@ const navLinks = [
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const pathname = usePathname();
   const router = useRouter();
   const { user } = useAuth();
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  // Close menu on route change
-  useEffect(() => {
-    setMenuOpen(false);
-    setDropdownOpen(false);
-  }, [pathname]);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -205,6 +198,7 @@ export default function Navbar() {
             <Link
               key={link.label}
               href={link.href}
+              onClick={() => setMenuOpen(false)}
               className="text-slate-300 hover:text-gold font-medium py-4 border-b border-white/5 transition-colors"
             >
               {link.label}
@@ -213,6 +207,7 @@ export default function Navbar() {
           {user && (
             <Link
               href="/dashboard"
+              onClick={() => setMenuOpen(false)}
               className="text-slate-300 hover:text-gold font-medium py-4 border-b border-white/5 transition-colors flex items-center gap-2"
             >
               <LayoutDashboard size={16} />
@@ -235,12 +230,14 @@ export default function Navbar() {
             <>
               <Link
                 href="/auth"
+                onClick={() => setMenuOpen(false)}
                 className="text-center text-sm font-medium text-slate-300 hover:text-white py-3 transition-colors"
               >
                 Log In
               </Link>
               <Link
                 href="/auth"
+                onClick={() => setMenuOpen(false)}
                 className="text-center bg-gold text-dark-bg px-6 py-3 rounded-full text-sm font-bold hover:brightness-110 transition-all"
               >
                 Sign Up

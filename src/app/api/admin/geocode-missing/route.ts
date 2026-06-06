@@ -2,9 +2,6 @@ import { createClient } from "@supabase/supabase-js";
 import { geocodeAddress } from "@/app/actions/geocode";
 import type { NextRequest } from "next/server";
 
-// Uses the service role key to bypass RLS for admin writes.
-// Add SUPABASE_SERVICE_ROLE_KEY to your .env.local and Vercel env vars.
-// Find it in: Supabase dashboard → Project Settings → API → service_role key.
 function adminClient() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -12,9 +9,18 @@ function adminClient() {
   );
 }
 
+function checkAuth(req: NextRequest) {
+  const secret =
+    process.env.ADMIN_SESSION_SECRET ?? process.env.ADMIN_PASSWORD;
+  return req.cookies.get("admin_auth")?.value === secret;
+}
+
 const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-export async function POST(_req: NextRequest) {
+export async function POST(req: NextRequest) {
+  if (!checkAuth(req))
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
     return Response.json(
       { error: "SUPABASE_SERVICE_ROLE_KEY not set in environment" },
