@@ -93,12 +93,12 @@ const CATEGORIES: Category[] = [
       {
         question: "Can I submit a restaurant I don't own?",
         answer:
-          "Yes — community members are welcome to submit restaurants they've visited. Just make sure the information you provide is accurate to the best of your knowledge. The restaurant will be reviewed by our team before going live.",
+          "Yes — community members are welcome to submit restaurants they've visited. Just make sure the information you provide is accurate to the best of your knowledge. The application will be vetted by our team for obvious mistakes before going live.",
       },
       {
         question: "What information do I need to submit a listing?",
         answer:
-          "At minimum, we need the restaurant name and location. Additional details like cuisine type, halal attributes, phone number, website, and opening hours all help make the listing more useful — but they're optional at submission stage.",
+          "We will need the restaurant name and location, cuisine type, halal attributes, contact details, opening hours & the like to help make the listing more useful.",
       },
     ],
   },

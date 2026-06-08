@@ -6,7 +6,7 @@ export default function HowItWorksHero() {
           Guide
         </div>
         <h1 className="font-display text-5xl md:text-6xl font-bold text-gold mb-6">
-          How <span class="text-white">halal</span> yums Works
+          How <span className="text-white">halal</span> yums Works
         </h1>
         <p className="text-slate-400 text-lg max-w-2xl leading-relaxed">
           halal yums helps you discover halal-friendly restaurants across
